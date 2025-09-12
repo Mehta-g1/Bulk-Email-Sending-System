@@ -2,49 +2,93 @@
 {% load static %}
 {% block content %}
 
-<div class="container card col-5 mt-5 p-4 rounded-4 shadow-lg createUser-card">
+<div class="container card col-12 mt-5 p-4 rounded-4 shadow-lg">
     <form id="registerForm" action="/signing-up/" method="POST">
-        <h2>Create new account</h2> <hr>
+        <h2 class="text-center">Create New Account</h2>
+        <hr>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success">{{ message }}</div>
             {% endfor %}
         {% endif %}
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="name" class="form-label"><b>Enter full name</b></label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Personal Information</h4>
+                <div class="mb-3">
+                    <label for="name" class="form-label"><b>Enter full name</b></label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
+                </div>
+                <div class="mb-3">
+                    <label for="personalEmail" class="form-label"><b>Personal Email</b></label>
+                    <input type="email" class="form-control" id="personalEmail" name="personalEmail" placeholder="Personal Email">
+                </div>
+                <div class="mb-3">
+                    <label for="dob" class="form-label"><b>Date of Birth</b></label>
+                    <input type="date" class="form-control" id="dob" name="dob">
+                </div>
+                <div class="mb-3">
+                    <label for="fatherName" class="form-label"><b>Father's Name</b></label>
+                    <input type="text" class="form-control" id="fatherName" name="fatherName" placeholder="Father's Name">
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label"><b>Address</b></label>
+                    <textarea class="form-control" id="address" name="address" rows="3" placeholder="Your Address"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Professional Information</h4>
+                <div class="mb-3">
+                    <label for="post" class="form-label"><b>Post/Designation</b></label>
+                    <input type="text" class="form-control" id="post" name="post" placeholder="Your Post or Designation">
+                </div>
+                <div class="mb-3">
+                    <label for="department" class="form-label"><b>Department</b></label>
+                    <input type="text" class="form-control" id="department" name="department" placeholder="Your Department">
+                </div>
+                <div class="mb-3">
+                    <label for="about_you" class="form-label"><b>About You</b></label>
+                    <textarea class="form-control" id="about_you" name="about_you" rows="3" placeholder="Tell us something about yourself"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Account Information</h4>
+                <div class="mb-3">
+                    <label for="email" class="form-label"><b>Email address</b> <span class="text-danger"><i>(This will be your login username)</i></span></label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email for sending mail">
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label"><b>Login Password</b></label>
+                    <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Make a strong login password">
+                    <small id="loginStrength" class="text-success ">Create a secure password (min 8 characters, including letters, numbers & symbols) to keep your account safe.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="loginConfirmPassword" class="form-label"><b>Confirm Login Password</b></label>
+                    <input type="password" class="form-control" id="loginConfirmPassword" name="loginConfirmPassword" placeholder="Confirm login password">
+                    <small id="loginMatch" class="text-danger"></small>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label for="emailPassword" class="form-label"><b>Email Password for Configuration</b></label>
+                    <input type="password" class="form-control" id="emailPassword" name="emailPassword" placeholder="Email Configuration Password">
+                    <div class="text-success" role="alert">
+                        <strong>Note:</strong> Please use your App Password (not your normal email password) for security. An App Password is a 16-digit passcode that gives a less secure app or device permission to access your Google Account. 
+                        <a href="https://support.google.com/accounts/answer/185833?hl=en" target="_blank">Learn more about App Passwords</a>.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="emailConfirmPassword" class="form-label"><b>Confirm Email Password for Configuration</b></label>
+                    <input type="password" class="form-control" id="emailConfirmPassword" name="emailConfirmPassword" placeholder="Confirm Email Configuration Password">
+                    <small id="emailMatch" class="text-danger"></small>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="email" class="form-label"><b>Email address</b> <span class="text-danger"><i>(Your email will be your login username)</i></span></label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email for sending mail">
-        </div> <hr>
-
-        <div class="mb-3">
-            <label for="loginPassword" class="form-label"><b>Login Password</b> <span class="text-danger"><i>Create a secure password (min 8 characters, including letters, numbers & symbols).</i></span></label>
-            <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Make a strong login password">
-            <small id="loginStrength" class="text-danger"></small>
+        <div class="d-grid mt-3">
+            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
         </div>
-        <div class="mb-3">
-            <label for="loginConfirmPassword" class="form-label"><b>Confirm Login Password</b> </label>
-            <input type="password" class="form-control" id="loginConfirmPassword" name="loginConfirmPassword" placeholder="Confirm login password">
-            <small id="loginMatch" class="text-danger"></small>
-        </div> <hr>
-
-        <div class="mb-3">
-            <label for="emailPassword" class="form-label"><b>Email Password for Configuration</b> <span class="text-danger"><i>Please use your App Password (not your normal email password) for security.</i></span></label>
-            <input type="password" class="form-control" id="emailPassword" name="emailPassword" placeholder="Email Configuration Password">
-        </div>
-        <div class="mb-3">
-            <label for="emailConfirmPassword" class="form-label"><b>Confirm Email Password for Configuration</b></label>
-            <input type="password" class="form-control" id="emailConfirmPassword" name="emailConfirmPassword" placeholder="Confirm Email Configuration Password">
-            <small id="emailMatch" class="text-danger"></small>
-        </div>
-        
-        <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
-        <p class="mt-2">Already have a account? <a href="/">Login</a></p>
+        <p class="mt-3 text-center">Already have an account? <a href="/">Login</a></p>
     </form>
 </div>
-<script src=" {% static "js/CreateUser/main.js" %} "></script>
+<script src="{% static "js/CreateUser/main.js" %}"></script>
 {% endblock %}

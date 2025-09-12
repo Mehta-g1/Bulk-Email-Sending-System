@@ -2,36 +2,42 @@
 
 {% load static %}
 {% block content %}
-<div class="login">
-    
-    <div class="ontainer card col-4 mt-5 p-4 rounded-4 shadow-lg Login-card">
-        <form  method="POST" action='/verify/'>
-            {% csrf_token %}
-            <h2>Login Page</h2> 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <hr>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" name='email' aria-describedby="emailHelp">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5 shadow-lg">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Login to Your Account</h3>
+                    <hr>
+                    <form method="POST" action='/auth/'>
+                        {% csrf_token %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="exampleInputEmail1" name='email' aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <p class="mt-3 text-center">Don't have an account? <a href="{% url "signUp" %}">Sign Up</a></p>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" id="exampleInputPassword1">
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <p>Don't have account? <a href=" {% url "signUp" %} ">SignUp</a></p>
-        </form>
+        </div>
     </div>
 </div>
 
-<script src=" {% static "js/CreateUser/main.js" %} "></script>
+<script src="{% static "js/CreateUser/main.js" %}"></script>
 
 {% endblock %}

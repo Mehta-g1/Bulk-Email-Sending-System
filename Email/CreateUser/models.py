@@ -13,6 +13,19 @@ class emailUsers(models.Model):
     use_tls = models.BooleanField(default=True)
     login_password = models.CharField(max_length=50, null=False, default="test1234")
 
+    # Disignation info
+
+    post = models.CharField(max_length=100, null=True)
+    department = models.CharField(max_length=150, null=True)
+    about_you = models.CharField(max_length=500, null=True, default='')
+
+    # Personal info
+
+    personalEmail = models.EmailField(null=True)
+    dob = models.DateField(auto_now=True, null=True)
+    fatherName = models.CharField(max_length=150, null=True)
+    address = models.CharField(max_length=500, default='', null=True)
+
 
     def __str__(self):
         return f"{self.name}   -{self.email_address}"

@@ -1,13 +1,15 @@
 from django.shortcuts import render,redirect
 from .models import emailUsers, Receipent
-from django.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
 from .utils import send_bulk_email
 
 def Login(request):
+    if 'user_id' in request.session:
+        del request.session['user_id'] 
     return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
 
-def verify(request) :
+def Authenticate(request) :
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get('password')
@@ -41,22 +43,30 @@ def signingUp(request):
         email = request.POST.get('email')
         login_password = request.POST.get('loginPassword')
         email_password = request.POST.get("emailPassword")
-
-        print("---------------\nName:",name)
-        print("Email:", email)
-        print("login_password:", login_password)
-        print("Email Password:", email_password)
-        print("----------------\n\n")
+        post = request.POST.get('post')
+        department = request.POST.get('department')
+        about_you = request.POST.get('about_you')
+        personalEmail = request.POST.get('personalEmail')
+        dob = request.POST.get('dob')
+        fatherName = request.POST.get('fatherName')
+        address = request.POST.get('address')
 
         emailUsers.objects.create(
-            name = name,
-            email_address = email,
-            email_password = email_password,
-            login_password = login_password
+            name=name,
+            email_address=email,
+            email_password=email_password,
+            login_password=login_password,
+            post=post,
+            department=department,
+            about_you=about_you,
+            personalEmail=personalEmail,
+            dob=dob,
+            fatherName=fatherName,
+            address=address
         )
-        messages.success(request,"SignUp successfully ! ✅")
+        messages.success(request, "SignUp successfully ! ✅")
         return redirect("/")
-    return render(request, 'CreateUser/signUp.html', {'title':'SignUp Page'})
+    return render(request, 'CreateUser/signUp.html', {'title': 'SignUp Page'})
 
 
 
@@ -77,11 +87,36 @@ def dashboard(request):
 
     return render(request, 'CreateUser/dashboard.html',{'title':title, 'receipients':receipient_list})
 
+def profile(request):
+    user_id = request.session.get("user_id")
+
+    user = get_object_or_404(emailUsers, pk=user_id)
+    if user:
+
+        data = {
+            'title': user.name,
+            'name':user.name,
+            'email':user.email_address,
+            'emailPassword':user.email_password,
+            'loginPassword':user.login_password,
+            'f_name':user.fatherName,
+            'dob':user.dob,
+            'about':user.about_you,
+            'post':user.post,
+            'personalEmail':user.personalEmail,
+            'address':user.address,
+            'department':user.department
+        }
+        
+        return render(request, "CreateUser/viewProfile.html", context=data)
+    messages.error(request, "Something went wrong !")
+    return redirect('dashboard')
 
 
 def logout(request):
-    request.session.flush()
-
+    if 'user_id' in request.session:
+        del request.session['user_id'] 
+    messages.success(request, "Logged out successfully !")
     return redirect("/")
 
 
@@ -92,3 +127,5 @@ def sendMail(request):
     send_bulk_email(user_id)
     messages.success(request, "Mail successfully sent")
     return redirect('dashboard')
+
+

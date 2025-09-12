@@ -1,0 +1,48 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}{{ name }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="profile-card-2 card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">User Profile</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <img src="https://i.imgur.com/bDLhJiP.jpg" alt="User" class="img-fluid rounded-circle mb-3" style="width: 150px;">
+                    <h5 class="card-title">{{ name }}</h5>
+                    <p class="card-text text-muted">{{ post|default:"N/A" }}</p>
+                </div>
+                <div class="col-md-8">
+                    <h5>About</h5>
+                    <p>{{ about|default:"No information provided." }}</p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Official Details</h5>
+                            <p><strong>Email:</strong> {{ email }}</p>
+                            <p><strong>Department:</strong> {{ department|default:"N/A" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Personal Details</h5>
+                            <p><strong>Personal Email:</strong> {{ personalEmail|default:"N/A" }}</p>
+                            <p><strong>Father's Name:</strong> {{ f_name|default:"N/A" }}</p>
+                            <p><strong>Date of Birth:</strong> {{ dob|date:"d M Y"|default:"N/A" }}</p>
+                            <p><strong>Address:</strong> {{ address|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a href="#" class="btn btn-outline-primary mx-1">Edit Profile</a>
+            <a href="#" class="btn btn-outline-warning mx-1">Change Login Password</a>
+            <a href="#" class="btn btn-outline-info mx-1">Change Email Password</a>
+            <a href="{% url "dashboard" %}" class="btn btn-secondary mx-1">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
