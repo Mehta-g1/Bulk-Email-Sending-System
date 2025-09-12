@@ -1,0 +1,37 @@
+{% extends "CreateUser/base.html" %}
+
+{% load static %}
+{% block content %}
+<div class="login">
+    
+    <div class="ontainer card col-4 mt-5 p-4 rounded-4 shadow-lg Login-card">
+        <form  method="POST" action='/verify/'>
+            {% csrf_token %}
+            <h2>Login Page</h2> 
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <hr>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" name='email' aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <p>Don't have account? <a href=" {% url "signUp" %} ">SignUp</a></p>
+        </form>
+    </div>
+</div>
+
+<script src=" {% static "js/CreateUser/main.js" %} "></script>
+
+{% endblock %}

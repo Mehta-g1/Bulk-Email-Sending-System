@@ -1,0 +1,50 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container card col-5 mt-5 p-4 rounded-4 shadow-lg createUser-card">
+    <form id="registerForm" action="/signing-up/" method="POST">
+        <h2>Create new account</h2> <hr>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label"><b>Enter full name</b></label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label"><b>Email address</b> <span class="text-danger"><i>(Your email will be your login username)</i></span></label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email for sending mail">
+        </div> <hr>
+
+        <div class="mb-3">
+            <label for="loginPassword" class="form-label"><b>Login Password</b> <span class="text-danger"><i>Create a secure password (min 8 characters, including letters, numbers & symbols).</i></span></label>
+            <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Make a strong login password">
+            <small id="loginStrength" class="text-danger"></small>
+        </div>
+        <div class="mb-3">
+            <label for="loginConfirmPassword" class="form-label"><b>Confirm Login Password</b> </label>
+            <input type="password" class="form-control" id="loginConfirmPassword" name="loginConfirmPassword" placeholder="Confirm login password">
+            <small id="loginMatch" class="text-danger"></small>
+        </div> <hr>
+
+        <div class="mb-3">
+            <label for="emailPassword" class="form-label"><b>Email Password for Configuration</b> <span class="text-danger"><i>Please use your App Password (not your normal email password) for security.</i></span></label>
+            <input type="password" class="form-control" id="emailPassword" name="emailPassword" placeholder="Email Configuration Password">
+        </div>
+        <div class="mb-3">
+            <label for="emailConfirmPassword" class="form-label"><b>Confirm Email Password for Configuration</b></label>
+            <input type="password" class="form-control" id="emailConfirmPassword" name="emailConfirmPassword" placeholder="Confirm Email Configuration Password">
+            <small id="emailMatch" class="text-danger"></small>
+        </div>
+        
+        <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
+        <p class="mt-2">Already have a account? <a href="/">Login</a></p>
+    </form>
+</div>
+<script src=" {% static "js/CreateUser/main.js" %} "></script>
+{% endblock %}

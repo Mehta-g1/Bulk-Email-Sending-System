@@ -1,0 +1,49 @@
+{% extends "CreateUser/base.html" %}
+
+
+{% load static %}
+{% block content %}
+
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<h1>Dashboard </h1>
+
+<a class = "btn btn-danger"href="{% url "logout" %}">Logout</a>
+
+<br><br>
+<table >
+<thead>
+    <tr>
+        <th>Sr.</th>
+        <th>Name</th>
+        <th>Email</th>
+</tr>
+</thead>
+
+<tbody>
+{% for r in receipients %}
+
+    <tr >
+        <td>{{forloop.counter}}</td>
+        <td>{{r.name}}</td>
+        <td>{{r.email}}</td>
+    </tr>
+    
+
+{% endfor %}
+</tbody>
+</table>
+
+<a class="btn btn-primary m-4" href=" {% url "send-mail" %} ">Send to all</a>
+
+<script src=" {% static "js/CreateUser/main.js" %} "></script>
+{% endblock %}
