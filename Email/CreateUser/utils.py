@@ -10,10 +10,8 @@ def getReceipentList(user_id):
 
 
 def send_bulk_email(user_id):
-    # DB se user fetch karo
     account = emailUsers.objects.get(id=user_id)
     try:
-    # Dynamic SMTP connection
         connection = get_connection(
             host=account.email_host,
             port=account.email_port,
