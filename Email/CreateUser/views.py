@@ -185,25 +185,31 @@ def forgot_password(request):
             messages.success(request, "Reset link sent to registered email")
             return redirect('Login')
         else:
-            messages(request, )
+            messages(request, "Something went wrong !, May be user does not exists !")
     return render(request, 'CreateUser/forgot_password.html')
 
 def reset_password(request, token):
 
-    if check_token(token):
-        return render(request,'CreateUser/expirePage.html',{'title':'Page has been expired'})
-    Token = get_object_or_404(reset_link, token=token)
-
-    user = Token.user
-    
     if request.method == "POST":
+        Token = get_object_or_404(reset_link, token=token)
+        user = Token.user
         new_password = request.POST.get('password')
         user.login_password = new_password
-
-        user.save()
         Token.is_attempted = True
+        
+        Token.save()
+        user.save()
+        messages.success(request,"Password changed successfully !")
+        return redirect("Login")
+    
+    if check_token(token):
+        return render(request, 'CreateUser/resetPassword.html',{'token':token})
 
-    return
+    return render(request, 'CreateUser/expirePage.html')
+
+            
+
+    return  redirect('Login')
 
     
 # logout views

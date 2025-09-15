@@ -1,4 +1,4 @@
-from django.core.mail import EmailMessage, get_connection, send_mail
+from django.core.mail import EmailMessage, get_connection, send_mail, EmailMultiAlternatives
 from .models import emailUsers, Receipent, reset_link
 from django.conf import settings
 from django.utils.timezone import now
@@ -44,33 +44,43 @@ def send_bulk_email(user_id):
 def send_forget_password_link(user_email, token):
     """
     Sends a password reset link to the given user email.
-    
-    Parameters:
-        user_email (str): The email address of the user who requested reset
-        token (str): A unique reset token (generated in view)
     """
-
-    # Reset link (example: http://127.0.0.1:8000/reset-password/<token>/)
-    reset_link = f"http://127.0.0.1:8000/reset-password/{token}/"
+    reset_link = f"http://127.0.0.1:8000/user/reset-password/{token}/"
 
     subject = "Reset Your Password"
-    message = f"""
-    We received a request to reset your password.
-
-    Please click the link below to reset your password:
-    {reset_link}
-
-    If you did not request this, you can safely ignore this email.
-
-    Thanks,
-    Your Company Team
-    """
-
-    from_email = settings.DEFAULT_FROM_EMAIL  # use company noreply email
+    from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user_email]
 
-    send_mail(subject, message, from_email, recipient_list)
+    # Plain text fallback (in case user's email doesn't support HTML)
+    text_content = f"Please reset your password using the following link: {reset_link}"
 
+    # HTML content
+    html_content = f"""
+    <html>
+    <body>
+        <p>We received a request to reset your password.</p>
+        <p>
+            <a href="{reset_link}" style="
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: #fff;
+                background-color: #007bff;
+                text-decoration: none;
+                border-radius: 5px;
+                margin: 10px 0;
+            ">Reset Password</a>
+        </p>
+        <p>If you did not request this, you can safely ignore this email.</p>
+        <p>Thanks,<br>Your Company Team</p>
+    </body>
+    </html>
+    """
+
+    # Create email
+    msg = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def check_token(token):
     Token = get_object_or_404(reset_link, token = token)
