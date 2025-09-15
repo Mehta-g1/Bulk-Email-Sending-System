@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 
 # Create your models here.
 
@@ -20,9 +20,9 @@ class emailUsers(models.Model):
     about_you = models.CharField(max_length=500, null=True, default='')
 
     # Personal info
-
+    image = models.ImageField(upload_to='images/', default='default.png')
     personalEmail = models.EmailField(null=True)
-    dob = models.DateField(auto_now=True, null=True)
+    dob = models.DateField(default=datetime.now, null=True)
     fatherName = models.CharField(max_length=150, null=True)
     address = models.CharField(max_length=500, default='', null=True)
 
@@ -38,3 +38,15 @@ class Receipent(models.Model):
 
     def __str__(self):
         return f"{self.name}   -{self.email}"
+    
+
+
+class reset_link(models.Model):
+    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
+    token = models.CharField(max_length=50, null=True)
+    datetime = models.DateTimeField(default=datetime.now)
+    new_password = models.CharField(max_length=20, null=True)
+    is_attempted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.name}  -Date: {self.date} - Token: {self.token}"

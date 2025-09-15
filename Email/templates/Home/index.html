@@ -1,0 +1,77 @@
+{% extends 'Home/base.html' %}
+
+{% block title %}Home - Email Sender{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand p-2 rounded-3 bg-secondry fw-bolder" href="#">Email Sender</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link fw-bolder m-2" href="{% url 'documentation' %}">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bolder m-2" href="#">About</a>
+                </li>
+                <li class="nav-item fw-bolder m-2">
+                    <a class="nav-link" href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </li>
+                <li class="nav-item fw-bolder m-2">
+                    <a class="btn btn-primary" href="{% url 'Login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="hero-section text-center text-white">
+    <div class="container">
+        <h1 class="display-4">Send Emails with Ease</h1>
+        <p class="lead">A powerful and reliable solution for all your email needs.</p>
+        <a href="{% url 'Login' %}" class="btn btn-lg btn-primary">Get Started</a>
+    </div>
+</main>
+
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ user_count }}</h3>
+                        <p class="card-text">Registered Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h3 class="card-title">99.9%</h3>
+                        <p class="card-text">Uptime</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h3 class="card-title">24/7</h3>
+                        <p class="card-text">Support</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-dark text-white text-center py-3">
+    <div class="container">
+        <p>&copy; 2025 Email Sender. All Rights Reserved.</p>
+    </div>
+</footer>
+{% endblock %}

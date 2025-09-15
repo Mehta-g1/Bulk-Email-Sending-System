@@ -9,10 +9,20 @@
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0">User Profile</h4>
         </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4 text-center">
-                    {% comment %} <img src="https://i.imgur.com/bDLhJiP.jpg" alt="User" class="img-fluid rounded-circle mb-3" style="width: 150px;"> {% endcomment %}
+                    <img src=" {{image.url}} " alt="User" class="img-fluid rounded-circle mb-3" style="width: 150px;">
                     <h5 class="card-title">{{ name }}</h5>
                     <p class="card-text text-muted">{{ post|default:"N/A" }}</p>
                 </div>
@@ -27,7 +37,7 @@
                             <p><strong>Department:</strong> {{ department|default:"N/A" }}</p>
                         </div>
                         <div class="col-md-6">
-                            <h5>Personal Details</h5>
+                            <h5><strong>Personal Details</strong></h5> 
                             <p><strong>Personal Email:</strong> {{ personalEmail|default:"N/A" }}</p>
                             <p><strong>Father's Name:</strong> {{ f_name|default:"N/A" }}</p>
                             <p><strong>Date of Birth:</strong> {{ dob|date:"d M Y"|default:"N/A" }}</p>
@@ -38,10 +48,12 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="#" class="btn btn-outline-primary mx-1">Edit Profile</a>
-            <a href="#" class="btn btn-outline-warning mx-1">Change Login Password</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary mx-1">Edit Profile</a>
+            <a href=" {% url "change_password" %} " class="btn btn-outline-warning mx-1">Change Login Password</a>
             <a href="#" class="btn btn-outline-info mx-1">Change Email Password</a>
             <a href="{% url "dashboard" %}" class="btn btn-secondary mx-1">Back to Dashboard</a>
+            <a class=" btn btn-danger" href="{% url "logout" %}">Logout</a>
+
         </div>
     </div>
 </div>

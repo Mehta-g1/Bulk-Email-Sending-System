@@ -1,0 +1,57 @@
+{% extends "CreateUser/base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h3 class="card-title text-center fw-bolder">Edit Profile</h3>
+                    <hr>
+                    <form method="POST" action="{% url 'edit_profile_process' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bolder">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bolder">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email_address }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="personalEmail" class="form-label fw-bolder">Personal Email</label>
+                            <input type="email" class="form-control" id="personalEmail" name="personalEmail" value="{{ user.personalEmail }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="post" class="form-label fw-bolder">Post</label>
+                            <input type="text" class="form-control" id="post" name="post" value="{{ user.post }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="department" class="form-label fw-bolder">Department</label>
+                            <input type="text" class="form-control" id="department" name="department" value="{{ user.department }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="about_you" class="form-label fw-bolder">About You</label>
+                            <textarea class="form-control" id="about_you" name="about_you" rows="3">{{ user.about_you }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fatherName" class="form-label fw-bolder">Father's Name</label>
+                            <input type="text" class="form-control" id="fatherName" name="fatherName" value="{{ user.fatherName }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label fw-bolder">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3">{{ user.address }}</textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning fw-bolder pt-3 pb-3 mt-3">Save Changes</button>
+                            <a href=" {% url "profile" %} " class='btn btn-primary pt-3 pb-3 mt-3'>Back to profile</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

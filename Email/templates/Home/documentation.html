@@ -1,0 +1,63 @@
+{% extends 'Home/base.html' %}
+
+{% block title %}Documentation - Email Sender{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Documentation</h1>
+
+    <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Introduction</h2>
+        </div>
+        <div class="card-body">
+            <p>Welcome to the Email Sender documentation. This guide provides all the information you need to use our bulk email sending system effectively. Whether you're a developer integrating our system or a user managing campaigns, this documentation will walk you through the features and functionalities.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Getting Started</h2>
+        </div>
+        <div class="card-body">
+            <h3 class="h6">1. Sign Up and Log In</h3>
+            <p>To begin, you need to create an account. Navigate to the <a href="{% url 'signUp' %}">Sign Up</a> page and fill in your details. Once registered, you can log in using your credentials on the <a href="{% url 'Login' %}">Login</a> page.</p>
+
+            <h3 class="h6">2. Dashboard Overview</h3>
+            <p>After logging in, you will be redirected to your dashboard. The dashboard provides a central hub for all your email-related activities, including sending emails, managing recipients, and viewing your profile.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
+        <div class="card-header">
+            <h2 class="h5 mb-0">How to Use the System</h2>
+        </div>
+        <div class="card-body">
+            <h3 class="h6">Sending Emails</h3>
+            <p>From the dashboard, you can easily send emails to a list of recipients. Simply compose your message, select your recipients, and click send. The system will handle the rest, ensuring your emails are delivered promptly.</p>
+
+            <h3 class="h6">Managing Recipients</h3>
+            <p>You can add, edit, and delete recipients from your contact list. This allows you to maintain a clean and up-to-date list of contacts for your email campaigns.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Developer Information</h2>
+        </div>
+        <div class="card-body">
+            <p>This project is built with Django, a high-level Python web framework. For more information on Django, visit the <a href="https://www.djangoproject.com/" target="_blank">official Django website</a>.</p>
+            <p>The source code for this project is available on GitHub. You can access it here: <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" target="_blank">https://github.com/Mehta-g1/Bulk-Email-Sending-System.git</a></p>
+        </div>
+    </div>
+
+    <div class="card" style="background-color: #212121; color: #e0e0e0;">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Support</h2>
+        </div>
+        <div class="card-body">
+            <p>If you encounter any issues or have any questions, please feel free to open an issue on our <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git/issues" target="_blank">GitHub repository</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

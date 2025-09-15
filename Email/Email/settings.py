@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "CreateUser",
+    "Home",
+    "django_browser_reload",
 ]
 
 MIDDLEWARE = [
@@ -48,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "Email.urls"
@@ -69,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Email.wsgi.application"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 
 # Database
@@ -113,16 +115,27 @@ USE_I18N = True
 
 USE_TZ = True
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+
+DEFAULT_FROM_EMAIL = "django.mail75@gmail.com"
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "django.mail75@gmail.com"   # company mail id
+EMAIL_HOST_PASSWORD = "gtpu filz wshy oksh"     # app password (not normal password)
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / "static",   # if you keep static folder inside project
+    os.path.join(BASE_DIR, 'static'),
 ]
-
 # Media files (optional if you want to upload images/files)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
