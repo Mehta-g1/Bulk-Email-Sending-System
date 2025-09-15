@@ -65,7 +65,7 @@ def signingUp(request):
             address=address
         )
         messages.success(request, "Sign up completed successfully!")
-        return redirect("/")
+        return redirect("Login")
     return render(request, 'CreateUser/signUp.html', {'title': 'SignUp Page'})
 
 # View user dashboard
