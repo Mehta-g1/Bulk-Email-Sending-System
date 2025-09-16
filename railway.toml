@@ -1,0 +1,6 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pip install -r Email/requirements.txt && python Email/manage.py collectstatic --noinput"
+
+[deploy]
+startCommand = "gunicorn Email.wsgi:application --chdir Email --bind 0.0.0.0:${PORT}"
