@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     setTimeout(function () {
-        let alerts = document.querySelectorAll('.alert');
+        let alerts = document.querySelectorAll('.alert1');
         alerts.forEach(function (alert) {
             let bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
         });
-    }, 1500);
+    }, 2000);
 
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {

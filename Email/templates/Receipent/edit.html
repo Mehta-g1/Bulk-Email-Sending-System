@@ -1,0 +1,48 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}Edit Recipient{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title text-center fw-bolder">✏️ Edit Recipient</h3>
+          <hr>
+          <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label class="form-label fw-bolder">Name</label>
+              <input type="text" name="name" class="form-control" value="{{ receipient.name }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bolder">Email</label>
+              <input type="email" name="email" class="form-control" value="{{ receipient.email }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bolder">Category</label>
+              <input type="text" name="receipent_category" class="form-control" value="{{ receipient.receipent_category }}">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bolder">Comment</label>
+              <textarea name="comment" class="form-control">{{ receipient.comment }}</textarea>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary fw-bolder">💾 Update Recipient</button>
+              <a href="{% url 'dashboard' %}" class="btn btn-secondary fw-bolder">⬅ Back to Dashboard</a>
+              {% comment %} <a href="{% url 'delete_recipient' r.id %}"  class="btn btn-danger fw-bolder">🗑 Delete</a> {% endcomment %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

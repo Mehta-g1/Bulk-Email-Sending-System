@@ -1,0 +1,31 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}Recipient Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="width: 28rem; border-radius: 15px;">
+        <div class="card-body text-center">
+            <h3 class="card-title mb-3">{{ receipient.name }}</h3>
+            <p class="card-text">
+                <strong>Email:</strong> {{ receipient.email }} <br>
+                <strong>Category:</strong> {{ receipient.receipent_category|default:"N/A" }} <br>
+                <strong>Comment:</strong> {{ receipient.comment|default:"No comment" }} <br>
+                <strong>Added Date:</strong> {{ receipient.added_date|date:"d M Y, H:i" }} <br>
+                <strong>Send Time:</strong> {{ receipient.send_time }}
+            </p>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">⬅ Back</a>
+                <a href="{% url 'edit_recepient' receipient.id %}" class="btn btn-warning">✏ Edit</a>
+                <a href="{% url 'delete_recipient' receipient.id %}" 
+                   class="btn btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this recipient?');">
+                   🗑 Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

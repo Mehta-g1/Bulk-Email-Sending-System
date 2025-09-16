@@ -4,6 +4,8 @@ from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
 from .utils import send_bulk_email, check_token, send_forget_password_link
 from django.utils.crypto import get_random_string
+from django.db.models import Q
+from django.utils.timezone import now
 # Login view
 def Login(request):
     if 'user_id' in request.session:
@@ -74,16 +76,45 @@ def dashboard(request):
     if not user_id:
         messages.warning(request, "Login first")
         return redirect('/')
+    
     user = emailUsers.objects.get(id=user_id)
 
     recipients = Receipent.objects.filter(Sender__id=user_id)
-    receipient_list = []
-    for receipient in recipients:
-        receipient_list.append( {'name':receipient.name,'email':receipient.email} )
+
+    search_query = ""
+    if request.method == "POST":
+        search_query = request.POST.get("search", "").strip()
+        if search_query:
+            recipients = recipients.filter(
+                Q(name__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(receipent_category__icontains=search_query) |
+                Q(comment__icontains=search_query)
+            )
+
+    receipient_list = [
+        {
+            'id':r.id,
+            'name': r.name,
+            'email': r.email,
+            'category': r.receipent_category,
+            'comment': r.comment
+        }
+        for r in recipients
+    ]
 
     title = f"Welcome, {user.name}"
 
-    return render(request, 'CreateUser/dashboard.html',{'title':title, 'receipients':receipient_list})
+    return render(
+        request,
+        'CreateUser/dashboard.html',
+        {
+            'title': title,
+            'receipients': receipient_list,
+            'username': user.name,
+            'search_query': search_query 
+        }
+    )
 
 # Views user profile
 def profile(request):
@@ -218,6 +249,92 @@ def logout(request):
         del request.session['user_id'] 
     messages.success(request, "Logged out successfully !")
     return redirect("Login")
+
+def viewReceipent(request, receipient_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect('Login')
+
+    receipient = get_object_or_404(Receipent, id=receipient_id, Sender__id=user_id)
+
+    return render(request, "Receipent/view.html", {
+        "receipient": receipient
+    })
+
+
+def editReceipent(request, receipient_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")  
+    user = get_object_or_404(emailUsers, pk=user_id)
+
+    receipent = get_object_or_404(Receipent, Sender=user, pk=receipient_id)
+
+    if request.method == "POST":
+        receipent.name = request.POST.get('name')
+        receipent.email = request.POST.get('email')
+        receipent.receipent_category = request.POST.get('category')
+        receipent.comment = request.POST.get('comment')
+        receipent.added_date = now()
+
+        receipent.save()
+        messages.success(request, "Receipient details update successfully !")
+        return redirect('dashboard')
+        
+
+    return render(request, "Receipent/edit.html", {
+        "receipient": receipent
+    })
+
+
+
+    # Delete Recipient
+
+def deleteRecipient(request, receipient_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")  
+
+    # get logged in user
+    user = get_object_or_404(emailUsers, id=user_id)
+
+    # get recipient only if it belongs to this user
+    recipient = get_object_or_404(Receipent, id=receipient_id, Sender=user)
+
+    # delete
+    recipient.delete()
+    messages.success(request, "Recipient deleted successfully.")
+    return redirect("dashboard")
+
+ # Add new receipent
+
+def addReceipent(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect('Login')
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        category = request.POST.get('category')
+        comment = request.POST.get('comments')
+
+        user = get_object_or_404(emailUsers, pk=user_id)
+        Receipent.objects.create(
+            Sender = user,
+            email = email,
+            name = name,
+            receipent_category = category,
+            comment = comment,
+        )
+        messages.success(request, "Receipient added successfuly !")
+        return redirect('dashboard')
+    return render(request, 'Receipent/add.html',{'title':'Add Recipient'})
+
 
 # send mail view (Only for testing )
 

@@ -30,16 +30,16 @@ class emailUsers(models.Model):
     def __str__(self):
         return f"{self.name}   -{self.email_address}"
     
-
 class Receipent(models.Model):
     Sender = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
     email = models.CharField(max_length=200, null=False, unique=False)
     name = models.CharField(max_length=150, null=False, default="Customer")
-
+    receipent_category = models.CharField(max_length=100, null=True)
+    comment = models.CharField(max_length=200, null=True)
+    added_date = models.DateTimeField(auto_now=True)
+    send_time = models.IntegerField(default=0)
     def __str__(self):
         return f"{self.name}   -{self.email}"
-    
-
 
 class reset_link(models.Model):
     user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
@@ -49,4 +49,6 @@ class reset_link(models.Model):
     is_attempted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.name}  -Date: {self.date} - Token: {self.token}"
+        return f"{self.user.name}  -Date: {self.datetime} - Token: {self.token}"
+    
+

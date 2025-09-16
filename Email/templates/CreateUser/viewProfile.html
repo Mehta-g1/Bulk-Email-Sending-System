@@ -6,8 +6,9 @@
 {% block content %}
 <div class="container my-5">
     <div class="profile-card-2 card">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">User Profile</h4>
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+            <h4 class="mb-0 ms-2">User Profile</h4>
+            <span class='me-2'><a href=" {% url "dashboard" %} "><i class="fa-solid fa-xmark fa-xl" style="color: #a61c1c;"></i></a></span>
         </div>
 
             {% if messages %}

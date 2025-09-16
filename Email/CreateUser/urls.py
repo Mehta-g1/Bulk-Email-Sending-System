@@ -14,4 +14,9 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('reset-password/<str:token>/', views.reset_password, name='reset_password'),
     path('edit-profile-process/',views.edit_profile_process, name='edit_profile_process'),
+    path('receipient/add/', views.addReceipent, name="add_recepient"),
+    path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
+    path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
+    path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recipient"),
+
 ]

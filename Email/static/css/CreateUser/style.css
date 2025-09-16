@@ -120,3 +120,8 @@ body {
 .form-control:focus{
     background-color: #6c757db5;
 }
+
+
+.search-input{
+    width: 400px;
+}

@@ -1,0 +1,69 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %} About Us {% endblock %}
+
+{% block content %}
+<div class="container about-page">
+    <div class="row">
+        <div class="col-12">
+            <a href="{% url 'home' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <div class="about-header text-center">
+                <h1>About Our Email Sending Service</h1>
+                <p class="lead">A robust solution for all your email marketing needs.</p>
+            </div>
+
+            <div class="about-section">
+                <h2>Our Mission</h2>
+                <p>Our mission is to democratize email marketing by providing an accessible, affordable, and powerful platform for users of all scales. We aim to simplify the complexities of email communication, enabling our users to build meaningful relationships with their audience, one email at a time.</p>
+            </div>
+
+            <div class="about-section">
+                <h2>Our Vision</h2>
+                <p>We envision a world where every business and individual can effortlessly reach their audience. We are committed to continuous innovation, striving to be at the forefront of email communication technology and to create a platform that not only meets but anticipates the needs of our users.</p>
+            </div>
+
+            <div class="about-section developer-section py-4">
+                <h2 class="mb-4">Meet the Developer</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        <img src="{% static 'images/photok.jpg' %}" alt="Developer Image" class="developer-img rounded-circle shadow-lg" width="220" height="220" style="object-fit: cover; transition: transform 0.3s;">
+                    </div>
+                    <div class="col-md-8">
+                        <p class="mb-3">As the developer behind this project, I focused on building a clean, efficient, and scalable email sending solution. My expertise in web development and database management drove the architecture of this application, utilizing modern technologies to ensure a seamless user experience. This project was an opportunity to apply my skills in creating a practical tool that solves a real-world problem. I'm passionate about building high-quality software and am always interested in feedback and collaboration from the open-source community.</p>
+                        <div class="social-links d-flex justify-content-md-end justify-content-center gap-3 mt-2">
+                            <a href="#" target="_blank" class="social-icon" style="font-size: 2rem; color: #0077b5; transition: color 0.2s, transform 0.2s;">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" target="_blank" class="social-icon" style="font-size: 2rem; color: #0077b5; transition: color 0.2s, transform 0.2s;">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" target="_blank" class="social-icon" style="font-size: 2rem; color: #1da1f2; transition: color 0.2s, transform 0.2s;">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .developer-img:hover {
+                    transform: scale(1.05);
+                }
+                .social-icon:hover {
+                    color: #0056b3 !important;
+                    transform: translateY(-4px) scale(1.1);
+                }
+            </style>
+
+            <div class="about-cta text-center">
+                <a href="{% url 'contact_us' %}" class="btn btn-outline-light btn-lg">Contact Us</a>
+                <a href="{% url 'Login' %}" class="btn btn-primary btn-lg">Get Started</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

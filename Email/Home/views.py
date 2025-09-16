@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from CreateUser.models import emailUsers
+from .models import Contact
+from django.contrib import messages
 
 def Home(request):
     user_count = emailUsers.objects.count()
@@ -8,3 +10,24 @@ def Home(request):
 
 def documentation(request):
     return render(request, 'Home/documentation.html')
+
+def contact_us(request):
+    if request.method == 'POST':
+        user_type = request.POST.get('user_type')
+        email = request.POST.get('email')
+        query = request.POST.get('query')
+        suggestion = request.POST.get('suggestion')
+
+        contact = Contact(
+            user_type=user_type,
+            email=email,
+            query=query,
+            suggestion=suggestion
+        )
+        contact.save()
+        messages.success(request, 'Your message has been sent successfully!')
+        return redirect('contact_us')
+    return render(request, 'Home/contact.html')
+
+def about_us(request):
+    return render(request, 'Home/about.html')
