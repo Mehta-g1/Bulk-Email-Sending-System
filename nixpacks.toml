@@ -1,5 +1,5 @@
 [phases.build]
-cmds = ["pip install -r requirements.txt", "python Email/manage.py collectstatic --noinput"]
+cmds = ["cd Email && python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "gunicorn Email.wsgi"
+cmd = "gunicorn Email.wsgi:application --chdir Email --bind 0.0.0.0:${PORT}"
