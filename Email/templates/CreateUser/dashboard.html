@@ -7,17 +7,25 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-            <a class="navbar-brand fs-3" href="#">Dashboard</a>
+        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
         <h2>Welcome, {{username}}</h2>
-        <div class="profile me-5">
-            <a class="btn btn-light rounded-5" href=" {% url "profile" %} ">
-                <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+        
+        <div>
+  
+            <a href="{% url "templates" %}" class="btn btn-warning me-2">
+                <i class="fa-solid fa-envelope-open-text"></i> Configure Mail Templates
             </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+
+            <div class="profile me-5">
+                <a class="btn btn-light rounded-5 me-4" href=" {% url "profile" %} ">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                </a>
             
+            </div>
         </div>
     </div>
 </nav>
@@ -49,12 +57,15 @@
             </form>
         </div>
         <div>
-            <a class="btn btn-primary me-2" href='{% url "add_recepient" %}'>Add Recipient</a>
-            <button class="btn btn-success me-2">Send to Selected</button>
-            <a class=" btn btn-danger" href="{% url "logout" %}">Logout</a>
+            <a class="btn btn-primary me-2" href='{% url "add_recepient" %}'>
+                <i class="fa-solid fa-user-plus"></i>  Add Recipient
+            </a>
+            <button type="submit" class="btn btn-success me-2" form="recipientsForm">
+                <i class="fa-solid fa-paper-plane"></i> Send to Selected
+            </button>
+            
         </div>
     </div>
-
 
     <div class="table-responsive rounded-4">
         {% if search_query %}
@@ -63,41 +74,48 @@
             </div>
         
         {% endif %}
-        <table class="table table-dark table-striped table-hover ">
-            <thead>
-                <tr>
-                    <th scope="col"><input type="checkbox" id="selectAll"></th>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope='col'>Category</th>
-                    <th scope='col'>Comments</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody class='rounded-4'>
-                {% for r in receipients %}
-                <tr>
-                    <td><input type="checkbox" class="recipient-checkbox"></td>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ r.name }}</td>
-                    <td>{{ r.email }}</td>
-                    <td>{{r.category}}</td>
-                    <td>{{r.comment}}</td>
-                    <td>
-                        <a class="btn btn-sm btn-info" href=' {% url "view_recepient" r.id %}'>View</a>
-                        <a href="{% url 'edit_recepient' r.id %}"
-                        class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{% url 'delete_recipient' r.id %}" 
-                            class="btn btn-danger"
-                            onclick="return confirm('Are you sure you want to delete this recipient?');">
-                            🗑 Delete
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <form method="post" id="recipientsForm" action=" {% url "send-mail" %} ">
+            {% csrf_token %}
+            <table class="table table-dark table-striped table-hover ">
+                <thead>
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll"></th>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Comments</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class='rounded-4'>
+                    {% for r in receipients %}
+                    <tr >
+                        
+                        <td><input type="checkbox" name="selected" value="{{ r.id }}" class="recipient-checkbox"></td>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ r.name }}</td>
+                        <td>{{ r.email }}</td>
+                        <td>{{ r.category }}</td>
+                        <td>{{ r.comment }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-info" href="{% url 'view_recepient' r.id %}">
+                                <i class="fa-solid fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'edit_recepient' r.id %}" class="btn btn-sm btn-warning">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_recipient' r.id %}" class="btn btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this recipient?');">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+
     </div>
 </div>
 

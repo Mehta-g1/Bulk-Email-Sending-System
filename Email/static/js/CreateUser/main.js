@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const selectAllCheckbox = document.getElementById('selectAll');
     const recipientCheckboxes = document.querySelectorAll('.recipient-checkbox');
 
     if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
+        selectAllCheckbox.addEventListener('change', function () {
             recipientCheckboxes.forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
-        registerForm.addEventListener('submit', function(event) {
+        registerForm.addEventListener('submit', function (event) {
             const inputs = registerForm.querySelectorAll('input, textarea');
             let allFieldsFilled = true;
 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-document.querySelector("form").addEventListener("submit", function(e) {
+document.querySelector("form").addEventListener("submit", function (e) {
     let current = document.getElementById("current_password").value.trim();
     let newPass = document.getElementById("new_password").value.trim();
     let confirmPass = document.getElementById("confirm_password").value.trim();
@@ -68,6 +68,13 @@ document.querySelector("form").addEventListener("submit", function(e) {
         e.preventDefault();
         return;
     }
+});
+
+
+
+document.getElementById("selectAll").addEventListener("change", function (e) {
+    let checkboxes = document.querySelectorAll(".recipient-checkbox");
+    checkboxes.forEach(cb => cb.checked = e.target.checked);
 });
 
 

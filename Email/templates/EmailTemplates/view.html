@@ -1,0 +1,84 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}Edit Email Template{% endblock %}
+
+{% block content %}
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <a class="navbar-brand fs-3" href=" {% url "templates" %} ">📧 Mail Templates</a>
+
+        <h2>Welcome, {{username}}</h2>
+        
+        <div>
+  
+            <a href="{% url "templates" %}" class="btn btn-warning me-2 fw-bolder">
+                <i class="fa-solid fa-envelope-open-text"></i> Back to Email Templates
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+
+            <div class="profile me-5">
+                <a class="btn btn-light rounded-5 me-4" href=" {% url "profile" %} ">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                </a>
+            
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="card col-6 p-4 shadow mx-auto mt-3">
+    <div class="heading d-flex justify-content-between">
+        <h2 class="mb-1 fw-bold">Email Template</h2> 
+        <a href="{% url "templates" %}"> <i class="fa-solid fa-xmark fa-2xl" style="color: #e60a0a;"></i> </a>
+    </div> <hr>
+ 
+        
+        <!-- Template Name -->
+        <div class="mb-1">
+            <label class="form-label fw-bold">Template Name</label>
+            <input type="text" class="form-control text-light" value="{{name}}" name='name' readonly>
+        </div>
+        <!-- Template id -->
+        <div class="mb-1">
+            <label class="form-label fw-bold">Template id</label>
+            <input type="text" class="form-control text-light" value="{{id}}" name='name' readonly>
+        </div>
+        <!-- Created at -->
+        <div class="mb-1">
+            <label class="form-label fw-bold">Created Date & Time</label>
+            <input type="text" class="form-control text-light" value="{{created_at}}" name='name' readonly>
+        </div>
+        <!-- Updated at -->
+        <div class="mb-1">
+            <label class="form-label fw-bold">Last Update Date</label>
+            <input type="text" class="form-control text-light" value="{{updated_at}}" name='name' readonly>
+        </div>
+
+        <!-- Subject -->
+        <div class="mb-1">
+            <label class="form-label fw-bold">Subject</label>
+            <input type="text" class="form-control text-light" value="{{subject}}" name='subject' readonly>
+        </div>
+
+        <!-- Body -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Email Body</label>
+            <textarea class="form-control text-light" rows="5" name="body" readonly>{{body}}</textarea>
+        </div>
+        <div class='d-flex justify-content-evenly'>
+            <a href="{% url "templates" %}" class="btn btn-warning me-2 fw-bolder">
+                <i class="fa-solid fa-envelope-open-text"></i> Back to Email Templates
+            </a>
+            <a href=" {% url "editTemplate" id %} " class="btn btn-sm btn-warning">✏ Edit</a>
+            <a href=" {% url "deleteTemplate" id %} " class="btn btn-sm btn-danger">✏ Delete</a>
+        </div>
+   
+</div>
+{% endblock %}

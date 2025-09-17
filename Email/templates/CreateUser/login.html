@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <h3 class="card-title text-center fw-bolder">Login to Your Account</h3>
                     <hr>
-                    <form method="POST" action='/user/auth/'>
+                    <form method="POST" action=" {% url 'Login' %} ">
                         {% csrf_token %}
                         {% if messages %}
                             {% for message in messages %}

@@ -101,7 +101,9 @@ body {
 }
 
 .profile {
-  transition: transform 0.3s ease-in; /* Use 'transition' for the effect, and 'ease-in' is a single value */
+  transition: transform 0.3s ease-in; /* Use 'transition' for the effect, and 'ease-in' is a single */
+  width: 100px;
+  display:contents;
 }
 
 .profile:hover {
@@ -123,5 +125,5 @@ body {
 
 
 .search-input{
-    width: 400px;
+    width: 350px;
 }

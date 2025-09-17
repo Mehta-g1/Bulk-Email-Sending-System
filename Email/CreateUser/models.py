@@ -7,7 +7,7 @@ from datetime import datetime
 class emailUsers(models.Model):
     name = models.CharField(max_length=100)
     email_address = models.EmailField(unique=True)
-    email_password = models.CharField(max_length=200)   # ⚠️ Plain text me mat rakho
+    email_password = models.CharField(max_length=200)   
     email_host = models.CharField(max_length=100, default="smtp.gmail.com")
     email_port = models.IntegerField(default=587)
     use_tls = models.BooleanField(default=True)

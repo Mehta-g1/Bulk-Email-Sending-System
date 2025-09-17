@@ -4,6 +4,7 @@
 
 {% block content %}
 <div class="container py-5">
+    <a href="{% url 'home' %}" class="btn btn-primary mb-4">Back to Home</a>
     <h1 class="mb-4">Documentation</h1>
 
     <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
@@ -23,7 +24,16 @@
             <h3 class="h6">1. Sign Up and Log In</h3>
             <p>To begin, you need to create an account. Navigate to the <a href="{% url 'signUp' %}">Sign Up</a> page and fill in your details. Once registered, you can log in using your credentials on the <a href="{% url 'Login' %}">Login</a> page.</p>
 
-            <h3 class="h6">2. Dashboard Overview</h3>
+            <h3 class="h6">2. App-Specific Passwords</h3>
+            <p>To send emails, you need to use an "App Password" from your email provider (e.g., Gmail, Outlook). This is a 16-digit code that gives a third-party app or device permission to access your email account. It's more secure than using your main password.</p>
+            <p>For instructions on how to generate an app password for your email provider, please refer to their official documentation:</p>
+            <ul>
+                <li><a href="https://support.google.com/accounts/answer/185833" target="_blank">Google/Gmail</a></li>
+                <li><a href="https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944" target="_blank">Microsoft/Outlook</a></li>
+            </ul>
+            <p>During sign-up, you will be asked for an "Email Password". This is where you should enter your app-specific password.</p>
+
+            <h3 class="h6">3. Dashboard Overview</h3>
             <p>After logging in, you will be redirected to your dashboard. The dashboard provides a central hub for all your email-related activities, including sending emails, managing recipients, and viewing your profile.</p>
         </div>
     </div>
@@ -33,11 +43,28 @@
             <h2 class="h5 mb-0">How to Use the System</h2>
         </div>
         <div class="card-body">
-            <h3 class="h6">Sending Emails</h3>
-            <p>From the dashboard, you can easily send emails to a list of recipients. Simply compose your message, select your recipients, and click send. The system will handle the rest, ensuring your emails are delivered promptly.</p>
-
             <h3 class="h6">Managing Recipients</h3>
             <p>You can add, edit, and delete recipients from your contact list. This allows you to maintain a clean and up-to-date list of contacts for your email campaigns.</p>
+            <ul>
+                <li>To add a new recipient, click the "Add Recipient" button on your dashboard.</li>
+                <li>To edit or delete a recipient, find them in the recipient list on your dashboard and use the corresponding buttons.</li>
+            </ul>
+
+            <h3 class="h6">Managing Email Templates</h3>
+            <p>You can create, edit, and delete email templates to reuse for your campaigns.</p>
+            <ul>
+                <li>Navigate to the <a href="{% url 'templates' %}">Templates</a> page to view your existing templates.</li>
+                <li>From there, you can create a new template, edit an existing one, or delete a template.</li>
+                <li>You can also set a "Primary" template, which will be the default template used when sending emails.</li>
+            </ul>
+
+            <h3 class="h6">Sending Emails</h3>
+            <p>From the dashboard, you can easily send emails to a list of recipients.</p>
+            <ol>
+                <li>Select the recipients you want to email from the list on your dashboard.</li>
+                <li>Click the "Send Mail" button.</li>
+                <li>The system will use your primary email template to send the emails to the selected recipients.</li>
+            </ol>
         </div>
     </div>
 

@@ -4,15 +4,25 @@ from django.conf import settings
 from django.utils.timezone import now
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
+from EmailTemplates.models import Template
+# Utilities functions
 
-def getReceipentList(user_id):
-    recipients = Receipent.objects.filter(Sender__id=user_id)
-    r_list = [r.email for r in recipients]
-    # print(r_list)
-    return r_list
+def get_filtered_recipients(user_id, selected_ids):
+    recipients = Receipent.objects.filter(Sender__id=user_id, id__in=selected_ids)
+    return [r.email for r in recipients]
+
+def update_recipients_send_time(selected_ids):
+    receipients = Receipent.objects.filter(id__in=selected_ids)
+    for r in receipients:
+        r.send_time+=1
+        r.save()
+    
+
+    
 
 
-def send_bulk_email(user_id):
+
+def send_bulk_email(user_id,selected_ids):
     account = emailUsers.objects.get(id=user_id)
     try:
         connection = get_connection(
@@ -22,23 +32,25 @@ def send_bulk_email(user_id):
             password=account.email_password,
             use_tls=account.use_tls,
         )
-
-        # Email send
+        template = Template.objects.get(user=get_object_or_404(emailUsers, id=user_id),primary=True)
+        print(template)
         email = EmailMessage(
-            subject="Bulk Mail Test",
-            body="Hello Clients! This mail is from " + account.name,
+            subject=template.subject,
+            body=template.body,
             from_email=account.email_address,
-            to=getReceipentList(user_id),
+            to=get_filtered_recipients(user_id, selected_ids),
             connection=connection,
         )
         email.send()
+        template.no_of_time_used =int(template.no_of_time_used) + len(selected_ids)
+        print(template.no_of_time_used)
+        update_recipients_send_time(selected_ids)
     except Exception as e:
         print('\n\n--------------------')
         print("Error:",e)
         print("---------------------\n\n")
         return False
     return True
-
 
 
 def send_forget_password_link(user_email, token):
@@ -82,6 +94,7 @@ def send_forget_password_link(user_email, token):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+
 def check_token(token):
     Token = get_object_or_404(reset_link, token = token)
     if not Token:
@@ -97,3 +110,4 @@ def check_token(token):
     if timediff > timedelta(minutes=15):
         return False
     return True
+

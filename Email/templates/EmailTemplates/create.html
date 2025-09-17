@@ -1,0 +1,70 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}Create new  Email Template{% endblock %}
+
+{% block content %}
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <a class="navbar-brand fs-3" href=" {% url "templates" %} ">📧 Mail Templates</a>
+
+        <h2>Welcome, {{username}}</h2>
+        
+        <div>
+  
+            <a href="{% url "templates" %}" class="btn btn-warning me-2">
+                <i class="fa-solid fa-envelope-open-text"></i> Back to Email Templates
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+
+            <div class="profile me-5">
+                <a class="btn btn-light rounded-5 me-4" href=" {% url "profile" %} ">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                </a>
+            
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="card col-6 p-4 shadow mx-auto mt-3">
+    <div class="heading d-flex justify-content-between">
+        <h4 class="mb-3">Create Email Template</h4>
+        <a href=" {% url "templates" %} ">❌</a>
+    </div>
+    <form method="post" action=' {% url "createTemplate" %} '>
+        {% csrf_token %}
+        
+        <!-- Template Name -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Template Name</label>
+            <input type="text" class="form-control text-light" name='name'>
+        </div>
+
+        <!-- Subject -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Subject</label>
+            <input type="text" class="form-control text-light"  name='subject'>
+        </div>
+
+        <!-- Body -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Email Body</label>
+            <textarea class="form-control text-light" rows="8" name="body"></textarea>
+        </div>
+        <div class='mb-3'>
+            <input type="checkbox" name='primary' id='is_primary'>
+            <label for='is_primary' class='form-label fw-bold'>Make it primary template</label>
+        </div>
+        <!-- Actions -->
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href=" {% url "templates" %} " class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

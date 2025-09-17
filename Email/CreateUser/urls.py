@@ -1,10 +1,10 @@
 from django.urls import path, include
 from . import views
+
+
 urlpatterns = [
     path('login/',views.Login, name='Login'),
-    path("auth/", views.Authenticate, name="auth"),
     path('signUp/',views.signUp, name='signUp'),
-    path('signing-up/', views.signingUp, name="signing-up"),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/',views.logout, name='logout'),
     path('send-mail/', views.sendMail, name="send-mail"),
@@ -18,5 +18,5 @@ urlpatterns = [
     path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
     path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
     path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recipient"),
-
+    path('templates/', include('EmailTemplates.urls')),
 ]

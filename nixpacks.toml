@@ -1,5 +1,0 @@
-[phases.build]
-cmds = ["cd Email && python manage.py collectstatic --noinput"]
-
-[start]
-cmd = "gunicorn Email.wsgi:application --chdir Email --bind 0.0.0.0:${PORT}"

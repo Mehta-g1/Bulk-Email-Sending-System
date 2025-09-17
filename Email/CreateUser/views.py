@@ -6,15 +6,12 @@ from .utils import send_bulk_email, check_token, send_forget_password_link
 from django.utils.crypto import get_random_string
 from django.db.models import Q
 from django.utils.timezone import now
+from EmailTemplates.models import Template
 # Login view
 def Login(request):
     if 'user_id' in request.session:
         del request.session['user_id'] 
         messages.info(request, "Previous session has been cleared.")
-    return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
-
-# Verify Login
-def Authenticate(request) :
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get('password')
@@ -31,15 +28,12 @@ def Authenticate(request) :
                 messages.warning(request, "Incorrect password. Please try again.")
         except emailUsers.DoesNotExist:
             messages.warning(request, "This email is not registered. Please sign up first.")
-
+            return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
     return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
+
 
 # SignUp page
 def signUp(request):
-    return render(request, 'CreateUser/signUp.html', {'title': "SignUp Page"})
-
-# Verify and signing Up 
-def signingUp(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -53,7 +47,7 @@ def signingUp(request):
         fatherName = request.POST.get('fatherName')
         address = request.POST.get('address')
 
-        emailUsers.objects.create(
+        user = emailUsers.objects.create(
             name=name,
             email_address=email,
             email_password=email_password,
@@ -67,15 +61,25 @@ def signingUp(request):
             address=address
         )
         messages.success(request, "Sign up completed successfully!")
+        
+        Template.objects.create(
+            template_name = "Default template",
+            user = user,
+            subject = "This if default mail template",
+            body = "Welcome to Bulk Email sending system",
+            primary = True,
+        )
+
         return redirect("Login")
-    return render(request, 'CreateUser/signUp.html', {'title': 'SignUp Page'})
+    return render(request, 'CreateUser/signUp.html', {'title': "SignUp Page"})
+
 
 # View user dashboard
 def dashboard(request):
     user_id = request.session.get("user_id")
     if not user_id:
         messages.warning(request, "Login first")
-        return redirect('/')
+        return redirect('Login')
     
     user = emailUsers.objects.get(id=user_id)
 
@@ -104,7 +108,7 @@ def dashboard(request):
     ]
 
     title = f"Welcome, {user.name}"
-
+    
     return render(
         request,
         'CreateUser/dashboard.html',
@@ -112,7 +116,7 @@ def dashboard(request):
             'title': title,
             'receipients': receipient_list,
             'username': user.name,
-            'search_query': search_query 
+            'search_query': search_query,
         }
     )
 
@@ -257,9 +261,10 @@ def viewReceipent(request, receipient_id):
         return redirect('Login')
 
     receipient = get_object_or_404(Receipent, id=receipient_id, Sender__id=user_id)
-
+    title = f"{receipient.name} -{emailUsers.objects.get(id=user_id).name}"
     return render(request, "Receipent/view.html", {
-        "receipient": receipient
+        "receipient": receipient,
+        'title':title
     })
 
 
@@ -321,7 +326,7 @@ def addReceipent(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         category = request.POST.get('category')
-        comment = request.POST.get('comments')
+        comment = request.POST.get('comment')
 
         user = get_object_or_404(emailUsers, pk=user_id)
         Receipent.objects.create(
@@ -336,12 +341,26 @@ def addReceipent(request):
     return render(request, 'Receipent/add.html',{'title':'Add Recipient'})
 
 
-# send mail view (Only for testing )
+# send mail view 
 
 def sendMail(request):
-    user_id = request.session.get("user_id")
+    user_id = request.session.get('user_id')
     if not user_id:
-        return redirect('/')
-    send_bulk_email(user_id)
-    messages.success(request, "Mail successfully sent")
-    return redirect('dashboard')
+        messages.error(request, 'Login First')
+        return redirect('Login')
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("selected") 
+        if not selected_ids:
+            messages.error(request, "No recipients selected!")
+            return redirect("dashboard")
+
+        send_bulk_email(user_id, selected_ids)
+
+
+        for r in Receipent.objects.filter(id__in=selected_ids):
+            print("Sending mail to:", r.email) 
+
+        messages.success(request, f"Emails sent to {len(selected_ids)} recipient(s)!")
+        return redirect("dashboard")
+    else:
+        return redirect("dashboard")
