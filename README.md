@@ -112,7 +112,7 @@ The application will be available at `http://127.0.0.1:8000/`.
 2.  Fill in the required details, including your name, email address, and password.
 3.  Click the "Sign Up" button.
 
-![Screenshot of the Sign Up page](path/to/signup_screenshot.png)
+![Screenshot of the Sign Up page](screenshots/signUp_page.png)
 
 #### Login
 
@@ -120,7 +120,7 @@ The application will be available at `http://127.0.0.1:8000/`.
 2.  Enter your registered email address and password.
 3.  Click the "Login" button.
 
-![Screenshot of the Login page](path/to/login_screenshot.png)
+![Screenshot of the Login page](screenshots/Login_page.png)
 
 #### Logout
 
@@ -132,7 +132,7 @@ The application will be available at `http://127.0.0.1:8000/`.
 2.  Enter your registered email address.
 3.  Click the "Submit" button. A password reset link will be sent to your email.
 
-![Screenshot of the Forgot Password page](path/to/forgot_password_screenshot.png)
+![Screenshot of the Forgot Password page](screenshots/forget_pass.png)
 
 #### Reset Password
 
@@ -140,13 +140,13 @@ The application will be available at `http://127.0.0.1:8000/`.
 2.  Enter your new password and confirm it.
 3.  Click the "Reset Password" button.
 
-![Screenshot of the Reset Password page](path/to/reset_password_screenshot.png)
+![Screenshot of the Reset Password page](screenshots/reset_pass.png)
 
 ### Dashboard
 
 After logging in, you will be redirected to the dashboard. The dashboard displays a list of your recipients and a search bar to find specific recipients.
 
-![Screenshot of the Dashboard](path/to/dashboard_screenshot.png)
+![Screenshot of the Dashboard](screenshots/dashboard.png)
 
 ### Profile Management
 
@@ -155,7 +155,7 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 1.  Click on your username in the navigation bar.
 2.  Select "View Profile" from the dropdown menu.
 
-![Screenshot of the View Profile page](path/to/view_profile_screenshot.png)
+![Screenshot of the View Profile page](screenshots/profile.png)
 
 #### Edit Profile
 
@@ -163,7 +163,7 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 2.  Update your personal information.
 3.  Click the "Save" button.
 
-![Screenshot of the Edit Profile page](path/to/edit_profile_screenshot.png)
+![Screenshot of the Edit Profile page](screenshots/edit_profile.png)
 
 #### Change Password
 
@@ -171,7 +171,6 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 2.  Enter your current password and the new password.
 3.  Click the "Change Password" button.
 
-![Screenshot of the Change Password page](path/to/change_password_screenshot.png)
 
 ### Recipient Management
 
@@ -181,7 +180,7 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 2.  Fill in the recipient's details (name, email, category, comment).
 3.  Click the "Add" button.
 
-![Screenshot of the Add Recipient page](path/to/add_recipient_screenshot.png)
+![Screenshot of the Add Recipient page](screenshots/add_receipient.png)
 
 #### View, Edit, and Delete Recipient
 
@@ -189,7 +188,7 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 -   **Edit:** On the recipient details page, click the "Edit" button. Update the information and click "Save".
 -   **Delete:** On the recipient details page, click the "Delete" button.
 
-![Screenshot of the Recipient Details page](path/to/recipient_details_screenshot.png)
+![Screenshot of the Recipient Details page](screenshots/view_delete.png)
 
 ### Email Template Management
 
@@ -200,7 +199,7 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 3.  Fill in the template name, subject, and body.
 4.  Click the "Create" button.
 
-![Screenshot of the Create Template page](path/to/create_template_screenshot.png)
+![Screenshot of the Create Template page](screenshots/add_template.png)
 
 #### View, Edit, and Delete Template
 
@@ -208,28 +207,26 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 -   **Edit:** On the template details page, click the "Edit" button. Update the information and click "Save".
 -   **Delete:** On the template details page, click the "Delete" button.
 
-![Screenshot of the Template Details page](path/to/template_details_screenshot.png)
+![Screenshot of the Template Details page](screenshots/template_view.png)
 
 #### Set Primary Template
 
 1.  On the templates page, click the "Make Primary" button next to the desired template.
 
-![Screenshot of the Set Primary Template action](path/to/set_primary_template_screenshot.png)
+![Screenshot of the Set Primary Template action](screenshots/primary_template.png)
 
 ### Sending Bulk Emails
 
 1.  From the dashboard, select the recipients you want to send an email to by checking the boxes next to their names.
 2.  Click the "Send Email" button.
 
-![Screenshot of sending bulk emails](path/to/sending_emails_screenshot.png)
+
 
 ## Future Improvements
 
 *   **Email Scheduling:** Implement a feature to schedule emails to be sent at a specific date and time.
 *   **Analytics and Reporting:** Track email open rates, click-through rates, and other engagement metrics.
-*   **Celery Integration:** Use Celery for asynchronous task processing to handle sending large volumes of emails without blocking the main application.
 *   **Advanced User Roles:** Introduce different user roles and permissions (e.g., admin, user).
-*   **API Endpoints:** Develop a RESTful API to allow other applications to interact with the email sending service.
 *   **Enhanced Security:** Implement two-factor authentication (2FA) for user accounts.
 
 ## Contributing
