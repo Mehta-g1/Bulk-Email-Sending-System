@@ -1,18 +1,42 @@
-# Bulk Email Sender
+# Bulk Email Sending System
 
-This is a Django-based web application for sending bulk emails. Users can sign up, manage their recipient lists, and send emails to multiple recipients at once. This project is designed to be a simple and effective tool for small-scale email campaigns.
+This is a Django-based web application for sending bulk emails. Users can sign up, manage their recipient lists, create email templates, and send emails to multiple recipients at once. This project is designed to be a simple and effective tool for small-scale email campaigns.
+
+## Table of Contents
+
+- [Project Status](#project-status)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [User Guide](#user-guide)
+  - [User Authentication](#user-authentication)
+    - [Sign Up](#sign-up)
+    - [Login](#login)
+    - [Logout](#logout)
+    - [Forgot Password](#forgot-password)
+    - [Reset Password](#reset-password)
+  - [Dashboard](#dashboard)
+  - [Profile Management](#profile-management)
+    - [View Profile](#view-profile)
+    - [Edit Profile](#edit-profile)
+    - [Change Password](#change-password)
+  - [Recipient Management](#recipient-management)
+    - [Add Recipient](#add-recipient)
+    - [View, Edit, and Delete Recipient](#view-edit-and-delete-recipient)
+  - [Email Template Management](#email-template-management)
+    - [Create Template](#create-template)
+    - [View, Edit, and Delete Template](#view-edit-and-delete-template)
+    - [Set Primary Template](#set-primary-template)
+  - [Sending Bulk Emails](#sending-bulk-emails)
+- [Future Improvements](#future-improvements)
+- [Contributing](#contributing)
+- [Developer Credits](#developer-credits)
+- [License](#license)
 
 ## Project Status
 
 **Under Development:** This project is currently under active development. New features are being added, and existing ones are being improved. Contributions are welcome!
-
-## Project Structure
-
-The project is organized into the following Django apps:
-
-*   `CreateUser`: Handles user authentication, registration, profile management, and password reset functionality.
-*   `Home`: Manages the static pages of the website like the homepage, about, and contact pages.
-*   `Receipent`: This functionality is handled through the `CreateUser` app, with templates in the `Receipent` directory, allowing users to manage their email recipients.
 
 ## Features
 
@@ -21,6 +45,8 @@ The project is organized into the following Django apps:
 *   **Password Reset:** Secure password reset functionality using email verification.
 *   **Recipient Management:** Users can add, view, edit, and delete their email recipients.
 *   **Bulk Recipient Upload:** Add recipients in bulk using file uploads.
+*   **Email Template Management:** Create, edit, and manage multiple email templates.
+*   **Primary Template:** Set a default template for sending emails.
 *   **Bulk Emailing:** Send emails to all registered recipients with a single click.
 *   **SMTP Integration:** Uses SMTP to send emails, configured via environment variables.
 
@@ -76,10 +102,130 @@ These instructions will get you a copy of the project up and running on your loc
 
 The application will be available at `http://127.0.0.1:8000/`.
 
+## User Guide
+
+### User Authentication
+
+#### Sign Up
+
+1.  Navigate to the [Sign Up](http://127.0.0.1:8000/user/signUp/) page.
+2.  Fill in the required details, including your name, email address, and password.
+3.  Click the "Sign Up" button.
+
+![Screenshot of the Sign Up page](path/to/signup_screenshot.png)
+
+#### Login
+
+1.  Navigate to the [Login](http://127.0.0.1:8000/user/login/) page.
+2.  Enter your registered email address and password.
+3.  Click the "Login" button.
+
+![Screenshot of the Login page](path/to/login_screenshot.png)
+
+#### Logout
+
+1.  Click on the "Logout" button in the navigation bar.
+
+#### Forgot Password
+
+1.  Navigate to the [Forgot Password](http.127.0.0.1:8000/user/forgot-password/) page.
+2.  Enter your registered email address.
+3.  Click the "Submit" button. A password reset link will be sent to your email.
+
+![Screenshot of the Forgot Password page](path/to/forgot_password_screenshot.png)
+
+#### Reset Password
+
+1.  Click on the reset password link sent to your email.
+2.  Enter your new password and confirm it.
+3.  Click the "Reset Password" button.
+
+![Screenshot of the Reset Password page](path/to/reset_password_screenshot.png)
+
+### Dashboard
+
+After logging in, you will be redirected to the dashboard. The dashboard displays a list of your recipients and a search bar to find specific recipients.
+
+![Screenshot of the Dashboard](path/to/dashboard_screenshot.png)
+
+### Profile Management
+
+#### View Profile
+
+1.  Click on your username in the navigation bar.
+2.  Select "View Profile" from the dropdown menu.
+
+![Screenshot of the View Profile page](path/to/view_profile_screenshot.png)
+
+#### Edit Profile
+
+1.  On the View Profile page, click the "Edit Profile" button.
+2.  Update your personal information.
+3.  Click the "Save" button.
+
+![Screenshot of the Edit Profile page](path/to/edit_profile_screenshot.png)
+
+#### Change Password
+
+1.  On the View Profile page, click the "Change Password" button.
+2.  Enter your current password and the new password.
+3.  Click the "Change Password" button.
+
+![Screenshot of the Change Password page](path/to/change_password_screenshot.png)
+
+### Recipient Management
+
+#### Add Recipient
+
+1.  From the dashboard, click the "Add Recipient" button.
+2.  Fill in the recipient's details (name, email, category, comment).
+3.  Click the "Add" button.
+
+![Screenshot of the Add Recipient page](path/to/add_recipient_screenshot.png)
+
+#### View, Edit, and Delete Recipient
+
+-   **View:** Click on the recipient's name on the dashboard to see their details.
+-   **Edit:** On the recipient details page, click the "Edit" button. Update the information and click "Save".
+-   **Delete:** On the recipient details page, click the "Delete" button.
+
+![Screenshot of the Recipient Details page](path/to/recipient_details_screenshot.png)
+
+### Email Template Management
+
+#### Create Template
+
+1.  Navigate to the [Templates](http://127.0.0.1:8000/user/templates/) page.
+2.  Click the "Create New Template" button.
+3.  Fill in the template name, subject, and body.
+4.  Click the "Create" button.
+
+![Screenshot of the Create Template page](path/to/create_template_screenshot.png)
+
+#### View, Edit, and Delete Template
+
+-   **View:** Click on the template name on the templates page to see its details.
+-   **Edit:** On the template details page, click the "Edit" button. Update the information and click "Save".
+-   **Delete:** On the template details page, click the "Delete" button.
+
+![Screenshot of the Template Details page](path/to/template_details_screenshot.png)
+
+#### Set Primary Template
+
+1.  On the templates page, click the "Make Primary" button next to the desired template.
+
+![Screenshot of the Set Primary Template action](path/to/set_primary_template_screenshot.png)
+
+### Sending Bulk Emails
+
+1.  From the dashboard, select the recipients you want to send an email to by checking the boxes next to their names.
+2.  Click the "Send Email" button.
+
+![Screenshot of sending bulk emails](path/to/sending_emails_screenshot.png)
+
 ## Future Improvements
 
 *   **Email Scheduling:** Implement a feature to schedule emails to be sent at a specific date and time.
-*   **Email Templates:** Allow users to create and save email templates for reuse.
 *   **Analytics and Reporting:** Track email open rates, click-through rates, and other engagement metrics.
 *   **Celery Integration:** Use Celery for asynchronous task processing to handle sending large volumes of emails without blocking the main application.
 *   **Advanced User Roles:** Introduce different user roles and permissions (e.g., admin, user).
