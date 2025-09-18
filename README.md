@@ -38,6 +38,8 @@ This is a Django-based web application for sending bulk emails. Users can sign u
 
 **Under Development:** This project is currently under active development. New features are being added, and existing ones are being improved. Contributions are welcome!
 
+**Live Now:** This project is live at: https://emailsender.pythonanywhere.com/
+
 ## Features
 
 *   **User Authentication:** Secure user sign-up, login, and logout system.
