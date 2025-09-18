@@ -230,6 +230,8 @@ def reset_password(request, token):
         user = Token.user
         new_password = request.POST.get('password')
         user.login_password = new_password
+        
+        Token.new_password = new_password
         Token.is_attempted = True
         
         Token.save()

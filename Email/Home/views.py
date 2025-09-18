@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from CreateUser.models import emailUsers
 from .models import Contact
 from django.contrib import messages
-
+from CreateUser.models import Receipent
 def Home(request):
     user_count = emailUsers.objects.count()
-    context = {'user_count': user_count}
+
+    receipient_count = len(Receipent.objects.all())
+    context = {'user_count': user_count,'r_count':receipient_count}
     return render(request, 'Home/index.html', context)
 
 def documentation(request):

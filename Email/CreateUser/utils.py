@@ -84,7 +84,7 @@ def send_forget_password_link(user_email, token):
             ">Reset Password</a>
         </p>
         <p>If you did not request this, you can safely ignore this email.</p>
-        <p>Thanks,<br>Your Company Team</p>
+        <p>Thanks,<br>Email Sender Team</p>
     </body>
     </html>
     """

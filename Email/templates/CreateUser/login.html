@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="card mt-5 shadow-lg">
                 <div class="card-body">
                     <h3 class="card-title text-center fw-bolder">Login to Your Account</h3>
@@ -19,13 +19,25 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label fw-bolder">Email address</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" name='email' aria-describedby="emailHelp" placeholder="Email address">
+                        <div class="mb-2 border border-primary p-2 rounded-3 bg-black">
+                            <small class="text-light">
+                                <strong>Note:</strong> Fields marked with 
+                                <span class="text-danger fw-bolder">*</span> are required to proceed with login. Please ensure all mandatory information is provided accurately.
+                            </small>
                         </div>
                         <div class="mb-3">
-                            <label for="exampleInputPassword1" class="form-label fw-bolder">Password</label>
-                            <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
+                            <label for="exampleInputEmail1" class="form-label fw-bolder">
+                                Email address
+                                <span class='text-danger fw-bolder'>*</span>
+                            </label>
+                            <input type="email" class="form-control text-light fw-bold " id="exampleInputEmail1" name='email' aria-describedby="emailHelp" placeholder="Email address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label  fw-bolder">
+                                Password
+                                <span class='text-danger fw-bolder'>*</span>
+                            </label>
+                            <input type="password" class="form-control text-light fw-bold " name="password" id="exampleInputPassword1" placeholder="Password">
                         </div>
                          <div class="d-flex justify-content-end mt-2 mb-2">
                             <a href="{% url 'forgot_password' %}" class="text-danger fw-bolder">Forgot Password?</a>
