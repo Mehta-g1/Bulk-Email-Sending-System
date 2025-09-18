@@ -71,7 +71,6 @@ document.querySelector("form").addEventListener("submit", function (e) {
 });
 
 
-
 document.getElementById("selectAll").addEventListener("change", function (e) {
     let checkboxes = document.querySelectorAll(".recipient-checkbox");
     checkboxes.forEach(cb => cb.checked = e.target.checked);
