@@ -344,7 +344,6 @@ def addReceipent(request):
 
 
 # send mail view 
-
 def sendMail(request):
     user_id = request.session.get('user_id')
     if not user_id:
