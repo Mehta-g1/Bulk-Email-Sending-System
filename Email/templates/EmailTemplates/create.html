@@ -15,7 +15,6 @@
         <h2>Welcome, {{username}}</h2>
         
         <div>
-  
             <a href="{% url "templates" %}" class="btn btn-warning me-2">
                 <i class="fa-solid fa-envelope-open-text"></i> Back to Email Templates
             </a>
@@ -27,7 +26,6 @@
                 <a class="btn btn-light rounded-5 me-4" href=" {% url "profile" %} ">
                     <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
                 </a>
-            
             </div>
         </div>
     </div>
@@ -36,7 +34,7 @@
 <div class="card col-6 p-4 shadow mx-auto mt-3">
     <div class="heading d-flex justify-content-between">
         <h4 class="mb-3">Create Email Template</h4>
-        <a href=" {% url "templates" %} ">❌</a>
+        <a href="{% url "templates" %}"> <i class="fa-solid fa-xmark fa-2xl" style="color: #e60a0a;"></i> </a>
     </div>
     <form method="post" action=' {% url "createTemplate" %} '>
         {% csrf_token %}

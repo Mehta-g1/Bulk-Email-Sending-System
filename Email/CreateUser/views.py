@@ -7,6 +7,7 @@ from django.utils.crypto import get_random_string
 from django.db.models import Q
 from django.utils.timezone import now
 from EmailTemplates.models import Template
+
 # Login view
 def Login(request):
     if 'user_id' in request.session:
@@ -47,6 +48,10 @@ def signUp(request):
         fatherName = request.POST.get('fatherName')
         address = request.POST.get('address')
 
+        if emailUsers.objects.filter(email_address=email).exists():
+            messages.warning(request, "Email is already registered. Please use a different email.")
+            return render(request, 'CreateUser/signUp.html', {'title': "SignUp Page"})
+        
         user = emailUsers.objects.create(
             name=name,
             email_address=email,

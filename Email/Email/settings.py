@@ -84,7 +84,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")

@@ -9,7 +9,11 @@
     <div class="col-md-6">
       <div class="card shadow-lg">
         <div class="card-body">
-          <h3 class="card-title text-center fw-bolder">➕ Add New Recipient</h3>
+          {% comment %} <h3 class="card-title text-center fw-bolder">➕ Add New Recipient</h3> {% endcomment %}
+          <div class="heading d-flex justify-content-between">
+                <h2 class="mb-1 fw-bold"><i class="fa-solid fa-user-plus"></i> Add New Recipient</h2>
+                <a href="{% url "dashboard" %}"> <i class="fa-solid fa-xmark fa-2xl" style="color: #e60a0a;"></i> </a>
+            </div> 
           <hr>
           <form method="POST" action=' {% url "add_recepient" %} '>
             {% csrf_token %}

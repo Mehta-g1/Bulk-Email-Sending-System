@@ -6,5 +6,5 @@ urlpatterns = [
     path('view/<int:id>', views.viewTemplate, name='viewTemplate'),
     path('edit/<int:id>', views.editTemplate, name='editTemplate'),
     path('delete/<int:id>',views.deleteTemplate, name='deleteTemplate'),
-    path('create/',views.createTemplate, name='createTemplate')
+    path('create/',views.createTemplate, name='createTemplate'),
 ]

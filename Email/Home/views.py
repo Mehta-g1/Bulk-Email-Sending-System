@@ -3,6 +3,8 @@ from CreateUser.models import emailUsers
 from .models import Contact
 from django.contrib import messages
 from CreateUser.models import Receipent
+
+# Home page view
 def Home(request):
     user_count = emailUsers.objects.count()
 
@@ -10,9 +12,11 @@ def Home(request):
     context = {'user_count': user_count,'r_count':receipient_count}
     return render(request, 'Home/index.html', context)
 
+# Documentation page view
 def documentation(request):
     return render(request, 'Home/documentation.html')
 
+# Contact Us page view
 def contact_us(request):
     if request.method == 'POST':
         user_type = request.POST.get('user_type')
@@ -31,5 +35,6 @@ def contact_us(request):
         return redirect('contact_us')
     return render(request, 'Home/contact.html')
 
+# About Us page view
 def about_us(request):
     return render(request, 'Home/about.html')
