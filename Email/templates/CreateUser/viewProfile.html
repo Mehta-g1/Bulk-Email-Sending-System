@@ -1,61 +1,284 @@
 {% extends "CreateUser/base.html" %}
 {% load static %}
 
-{% block title %}{{ name }}'s Profile{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="profile-card-2 card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between">
-            <h4 class="mb-0 ms-2">User Profile</h4>
-            <span class='me-2'><a href=" {% url "dashboard" %} "><i class="fa-solid fa-xmark fa-xl" style="color: #a61c1c;"></i></a></span>
+<style>
+    body {
+        background-color: #e9ecef; /* Darker background for better contrast */
+        color: #212529;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        border: 5px solid #fff;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card {
+        background-color: #ffffff; /* Explicitly white card background */
+        border: none;
+        border-radius: .5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        transition: all .3s;
+    }
+    .card:hover{
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .nav-pills .nav-link {
+        color: #e9ecf0ff; /* Darker nav link color */
+        font-weight: 500;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: bold;
+    }
+
+    .table th {
+        font-weight: 600;
+    }
+    .progress-bar{
+        background-color: #0d6efd;
+    }
+    .btn-primary{
+        background-color: #0d6efd;
+        border: none;
+    }
+    hr{
+
+        color:white;
+    }
+</style>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark "> 
+    <div class="container-fluid text-light">
+
+        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
+
+        <h2>Welcome, {{username }}</h2>
+        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
+            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
+            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%<span>    
         </div>
-
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <img src=" {{image.url}} " alt="User" class="img-fluid rounded-circle mb-3" style="width: 150px;">
-                    <h5 class="card-title">{{ name }}</h5>
-                    <p class="card-text text-muted">{{ post|default:"N/A" }}</p>
+        <div class="d-flex align-items-center">
+            <a href="{% url "templates" %}" class="btn btn-warning me-2">
+            <i class="fa-solid fa-envelope-open-text"></i> Configure Mail Templates
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+            {% if image %}
+                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
+                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
                 </div>
-                <div class="col-md-8">
-                    <h5>About</h5>
-                    <p>{{ about|default:"No information provided." }}</p>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Official Details</h5>
-                            <p><strong>Email:</strong> {{ email }}</p>
-                            <p><strong>Department:</strong> {{ department|default:"N/A" }}</p>
+            {% endif %}
+        </div>
+    </div>
+</nav> <hr>
+
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="avatar" class="rounded-circle img-fluid profile-img">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" alt="avatar" class="rounded-circle img-fluid profile-img">
+                    {% endif %}
+                    <h5 class="my-3">{{ user.name }}</h5>
+                    <p class="mb-1">{{ user.post|default:"N/A" }}</p>
+                    <p class="mb-4">{{ user.address|default:"-" }}</p>
+                    <div class="d-flex justify-content-center mb-2">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary me-2">Edit Profile</a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary ms-1 me-2">Dashboard</a>
+                        <a href=" {% url "account_settings" %} " class='btn btn-outline-warning ms-1 me-2'>Settings</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="mb-4"><span class="font-italic me-1">Profile Completion</span></p>
+                    <p class="mb-1" style="font-size: .77rem;">{{ progress }}% Complete</p>
+                    <div class="progress rounded" style="height: 5px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 ">
+            <div class="card mb-4 rounded-5">
+                <div class="card-body">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#pills-about" type="button" role="tab" aria-controls="pills-about" aria-selected="true">About</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-templates-tab" data-bs-toggle="pill" data-bs-target="#pills-templates" type="button" role="tab" aria-controls="pills-templates" aria-selected="false">Recent Templates</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-recipients-tab" data-bs-toggle="pill" data-bs-target="#pills-recipients" type="button" role="tab" aria-controls="pills-recipients" aria-selected="false">Recent Recipients</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-attachments-tab" data-bs-toggle="pill" data-bs-target="#pills-attachments" type="button" role="tab" aria-controls="pills-attachments" aria-selected="false">Recent Attachments</button>
+                        </li>
+                        <li class="nav-item ms-auto" role="presentation">
+                            <a href="{% url 'dashboard' %}" class=" me-3 ms-1">
+                                <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-about" role="tabpanel" aria-labelledby="pills-about-tab">
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Full Name </b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.name }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Email</b></p></div> 
+                                <div class="col-sm-9"><p class="mb-0">{{ user.email_address }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Phone</b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.phone|default:"N/A" }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Date of Birth</b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.dob|date:"d M Y"|default:"N/A" }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Address</b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.address|default:"N/A" }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Department</b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.department|default:"N/A" }}</p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>About</b></p></div>
+                                <div class="col-sm-9"><p class="mb-0">{{ user.about_you|default:"No information provided." }}</p></div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h5><strong>Personal Details</strong></h5> 
-                            <p><strong>Personal Email:</strong> {{ personalEmail|default:"N/A" }}</p>
-                            <p><strong>Father's Name:</strong> {{ f_name|default:"N/A" }}</p>
-                            <p><strong>Date of Birth:</strong> {{ dob|date:"d M Y"|default:"N/A" }}</p>
-                            <p><strong>Address:</strong> {{ address|default:"N/A" }}</p>
+                        <div class="tab-pane fade" id="pills-templates" role="tabpanel" aria-labelledby="pills-templates-tab">
+                            <table class="table table-hover table-dark">
+                                <thead>
+                                    <tr>
+                                        <th><b>Template Name</b></th>
+                                        <th><b>Subject</b></th>
+                                        <th><b>Created At</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-dark ">
+                                    {% for t in recent_templates %}
+                                    <tr>
+                                        <td>{{ t.template_name }}</td>
+                                        <td>{{ t.subject }}</td>
+                                        <td>{{ t.created_at|date:"d M Y" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="3" class="text-center">No templates found.</td></tr>
+                                    {% endfor %}
+
+                                   
+                                </tbody>
+                                
+                            </table> <hr>
+                            <div class='text-end me-5'>
+                                 <a  class="btn btn-warning" href=" {% url "createTemplate" %} ">Add New templets</a>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-recipients" role="tabpanel" aria-labelledby="pills-recipients-tab">
+                            <table class="table table-hover table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Category</th>
+                                        <th>Added On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for r in recent_recipients %}
+                                    <tr>
+                                        <td>{{ r.name }}</td>
+                                        <td>{{ r.email }}</td>
+                                        <td>{{ r.receipent_category|default:"N/A" }}</td>
+                                        <td>{{ r.added_date|date:"d M Y" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="4" class="text-center">No recipients found.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table> <hr>
+                             <div class='text-end me-5'>
+                                 <a  class="btn btn-warning" href=" {% url "add_recepient" %} ">Add New templets</a>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-attachments" role="tabpanel" aria-labelledby="pills-attachments-tab">
+                           <ul class="list-group">
+                                {% for attachment in recent_attachments %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light">
+                                    <div>
+                                        <i class="fas fa-file-alt me-2"></i>
+                                        {{ attachment.name }}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">{{ attachment.size }}</span>
+                                    <small>{{ attachment.date }}</small>
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item">No attachments found.</li>
+                                {% endfor %}
+                            </ul>
+                            <hr>
+                             <div class='text-end me-5 mt-3'>
+                                 <a  class="btn btn-warning" href="# ">Add New Attachements</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-footer text-center">
-            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary mx-1">Edit Profile</a>
-            <a href=" {% url "change_password" %} " class="btn btn-outline-warning mx-1">Change Login Password</a>
-            <a href="#" class="btn btn-outline-info mx-1">Change Email Password</a>
-            <a href="{% url "dashboard" %}" class="btn btn-secondary mx-1">Back to Dashboard</a>
-            <a class=" btn btn-danger" href="{% url "logout" %}">Logout</a>
-
-        </div>
     </div>
 </div>
+
+<script>
+    // Simple script to activate tabs
+    const triggerTabList = [].slice.call(document.querySelectorAll('#pills-tab button'))
+    triggerTabList.forEach(function (triggerEl) {
+        const tabTrigger = new bootstrap.Tab(triggerEl)
+
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
+</script>
 {% endblock %}

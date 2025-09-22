@@ -1,15 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const selectAllCheckbox = document.getElementById('selectAll');
-    const recipientCheckboxes = document.querySelectorAll('.recipient-checkbox');
-
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function () {
-            recipientCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
-    }
-
     setTimeout(function () {
         let alerts = document.querySelectorAll('.alert1');
         alerts.forEach(function (alert) {
@@ -21,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', function (event) {
-            const inputs = registerForm.querySelectorAll('input, textarea');
+            const inputs = registerForm.querySelectorAll('input, textarea, ');
             let allFieldsFilled = true;
 
             for (let i = 0; i < inputs.length; i++) {
@@ -30,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     break;
                 }
             }
-
             if (!allFieldsFilled) {
                 event.preventDefault();
                 alert('Please fill out all fields.');
@@ -41,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+
+//  Form chaker
 document.querySelector("form").addEventListener("submit", function (e) {
     let current = document.getElementById("current_password").value.trim();
     let newPass = document.getElementById("new_password").value.trim();
@@ -55,9 +45,9 @@ document.querySelector("form").addEventListener("submit", function (e) {
 
     // 2️⃣ New password validation
     // At least 8 chars, 1 uppercase, 1 lowercase, 1 digit
-    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
     if (!passwordRegex.test(newPass)) {
-        alert("New password must be at least 8 characters long and include uppercase, lowercase, and a number.");
+        alert("New password must be at least 6 characters long and include uppercase, lowercase, and a number.");
         e.preventDefault();
         return;
     }
@@ -69,6 +59,7 @@ document.querySelector("form").addEventListener("submit", function (e) {
         return;
     }
 });
+
 
 
 document.getElementById("selectAll").addEventListener("change", function (e) {

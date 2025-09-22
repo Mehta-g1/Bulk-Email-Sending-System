@@ -1,57 +1,171 @@
 {% extends "CreateUser/base.html" %}
+{% load static %}
 
-{% block title %}Edit Profile{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<style>
+    body {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+    .card {
+        background-color: #ffffff;
+        border: none;
+        border-radius: .5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    hr{
+        color:white;
+        margin-top: 0;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark "> 
+    <div class="container-fluid text-light">
+
+        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
+
+        <h2>Welcome, {{username }}</h2>
+        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
+            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
+            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%<span>    
+        </div>
+        <div class="d-flex align-items-center">
+            <a href="{% url "dashboard" %}" class="btn btn-warning me-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a> 
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+            {% if image %}
+                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
+                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav> <hr>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+<div class="container mt-2 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between">
+                    <h4 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Edit Profile </h4>
+                    <a href="{% url 'dashboard' %}" class=" me-3 ms-1">
+                                <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                            </a>
+                </div>
                 <div class="card-body">
-                    <h3 class="card-title text-center fw-bolder">Edit Profile</h3>
-                    <hr>
-                    <form method="POST" action="{% url 'edit_profile_process' %}">
+                    <form method="POST" action="{% url 'edit_profile_process' %}" enctype="multipart/form-data">
                         {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Login Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email_address }}" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="personalEmail" class="form-label">Alternate Email</label>
+                                <input type="email" class="form-control" id="personalEmail" name="personalEmail" value="{{ user.personalEmail|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="image" class="form-label">Profile Picture</label>
+                                <input type="file" class="form-control" id="image" name="image">
+                                {% if user.image %}
+                                    <small class="form-text text-light">Currently: <a href="{{ user.image.url }}" target="_blank">{{ user.image.name }}</a></small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="org_name" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="org_name" name="org_name" value="{{ user.org_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="post" class="form-label">Designation / Post</label>
+                                <input type="text" class="form-control" id="post" name="post" value="{{ user.post|default:'' }}">
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            <label for="name" class="form-label fw-bolder">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" class="form-control" id="department" name="department" value="{{ user.department|default:'' }}">
                         </div>
+
                         <div class="mb-3">
-                            <label for="email" class="form-label fw-bolder">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email_address }}" readonly>
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3">{{ user.address|default:'' }}</textarea>
                         </div>
+
                         <div class="mb-3">
-                            <label for="personalEmail" class="form-label fw-bolder">Personal Email</label>
-                            <input type="email" class="form-control" id="personalEmail" name="personalEmail" value="{{ user.personalEmail }}">
+                            <label for="about_you" class="form-label">About You</label>
+                            <textarea class="form-control" id="about_you" name="about_you" rows="4">{{ user.about_you|default:'' }}</textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="post" class="form-label fw-bolder">Post</label>
-                            <input type="text" class="form-control" id="post" name="post" value="{{ user.post }}">
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{% url 'profile' %}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
-                        <div class="mb-3">
-                            <label for="department" class="form-label fw-bolder">Department</label>
-                            <input type="text" class="form-control" id="department" name="department" value="{{ user.department }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="about_you" class="form-label fw-bolder">About You</label>
-                            <textarea class="form-control" id="about_you" name="about_you" rows="3">{{ user.about_you }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="fatherName" class="form-label fw-bolder">Father's Name</label>
-                            <input type="text" class="form-control" id="fatherName" name="fatherName" value="{{ user.fatherName }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label fw-bolder">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3">{{ user.address }}</textarea>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-warning fw-bolder pt-3 pb-3 mt-3">Save Changes</button>
-                            <a href=" {% url "profile" %} " class='btn btn-primary pt-3 pb-3 mt-3'>Back to profile</a>
-                        </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    const input = document.querySelectorAll('input')
+    input.forEach((i)=>{
+        i.style.color = 'white'
+        i.style.fontWeight = 'bold'
+    })
+
+    const textarea = document.querySelectorAll('textarea')
+    textarea.forEach((i)=>{
+        i.style.color = 'white'
+        i.style.fontWeight = 'bold'
+    })
+</script>
+
 {% endblock %}

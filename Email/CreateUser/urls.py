@@ -10,10 +10,13 @@ urlpatterns = [
     path('send-mail/', views.sendMail, name="send-mail"),
     path('viewProfile/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('edit-profile/process/', views.edit_profile_process, name='edit_profile_process'),
     path('change-password/', views.change_password, name='change_password'),
+    path('account-settings/', views.account_settings, name='account_settings'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('reset-password/<str:token>/', views.reset_password, name='reset_password'),
-    path('edit-profile-process/',views.edit_profile_process, name='edit_profile_process'),
+
+    # Receipient Management 
     path('receipient/add/', views.addReceipent, name="add_recepient"),
     path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
     path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),

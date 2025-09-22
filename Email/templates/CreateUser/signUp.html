@@ -2,8 +2,11 @@
 {% load static %}
 {% block content %}
 
-<div class="container card col-12 mt-5 p-4 rounded-4 shadow-lg">
-    <form id="registerForm" action=" {% url "signUp" %} " method="POST">
+
+
+
+<div class="container card col-5 mt-3 p-2 rounded-4 shadow-lg">
+  <form id="registerForm" action=" {% url "signUp" %} " method="POST">
         <h2 class="text-center">Create New Account</h2>
         <hr>
         {% if messages %}
@@ -12,83 +15,139 @@
             {% endfor %}
         {% endif %}
         {% csrf_token %}
-        <div class="row">
-            <div class="col-md-4">
-                <h4>Personal Information</h4>
-                <div class="mb-3">
-                    <label for="name" class="form-label"><b>Enter full name</b></label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
-                </div>
-                <div class="mb-3">
-                    <label for="personalEmail" class="form-label"><b>Personal Email</b></label>
-                    <input type="email" class="form-control" id="personalEmail" name="personalEmail" placeholder="Personal Email">
-                </div>
-                <div class="mb-3">
-                    <label for="dob" class="form-label"><b>Date of Birth</b></label>
-                    <input type="date" class="form-control" id="dob" name="dob">
-                </div>
-                <div class="mb-3">
-                    <label for="fatherName" class="form-label"><b>Father's Name</b></label>
-                    <input type="text" class="form-control" id="fatherName" name="fatherName" placeholder="Father's Name">
-                </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label"><b>Address</b></label>
-                    <textarea class="form-control" id="address" name="address" rows="3" placeholder="Your Address"></textarea>
-                </div>
+        <div class="row  mx-auto">
+            <div class="mb-2">
+                <label for="name" class="form-label" ><b>Enter full name</b></label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
             </div>
-            <div class="col-md-4">
-                <h4>Professional Information</h4>
-                <div class="mb-3">
-                    <label for="post" class="form-label"><b>Post/Designation</b></label>
-                    <input type="text" class="form-control" id="post" name="post" placeholder="Your Post or Designation">
-                </div>
-                <div class="mb-3">
-                    <label for="department" class="form-label"><b>Department</b></label>
-                    <input type="text" class="form-control" id="department" name="department" placeholder="Your Department">
-                </div>
-                <div class="mb-3">
-                    <label for="about_you" class="form-label"><b>About You</b></label>
-                    <textarea class="form-control" id="about_you" name="about_you" rows="3" placeholder="Tell us something about yourself"></textarea>
-                </div>
+            <div class="mb-2">
+                <label for="phone" class="form-label"><b>Phone Number</b></label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone Number" required>
+                
             </div>
-            <div class="col-md-4">
-                <h4>Account Information</h4>
-                <div class="mb-3">
-                    <label for="email" class="form-label"><b>Email address</b> <span class="text-danger"><i>(This will be your login username)</i></span></label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email for sending mail">
-                </div>
-                <hr>
-                <div class="mb-3">
-                    <label for="loginPassword" class="form-label"><b>Login Password</b></label>
-                    <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Make a strong login password">
-                    <small id="loginStrength" class="text-danger ">Create a secure password (min 8 characters, including letters, numbers & symbols) to keep your account safe.</small>
-                </div>
-                <div class="mb-3">
-                    <label for="loginConfirmPassword" class="form-label"><b>Confirm Login Password</b></label>
-                    <input type="password" class="form-control" id="loginConfirmPassword" name="loginConfirmPassword" placeholder="Confirm login password">
-                    <small id="loginMatch" class="text-danger"></small>
-                </div>
-                <hr>
-                <div class="mb-3">
-                    <label for="emailPassword" class="form-label"><b>Email Password for Configuration</b></label>
-                    <input type="password" class="form-control" id="emailPassword" name="emailPassword" placeholder="Email Configuration Password">
-                    <div class="text-danger" role="alert">
-                        <strong>Note:</strong> Please use your App Password (not your normal email password) for security. An App Password is a 16-digit passcode that gives a less secure app or device permission to access your Google Account. 
-                        <a href="https://support.google.com/accounts/answer/185833?hl=en" target="_blank">Learn more about App Passwords</a>.
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="emailConfirmPassword" class="form-label"><b>Confirm Email Password for Configuration</b></label>
-                    <input type="password" class="form-control" id="emailConfirmPassword" name="emailConfirmPassword" placeholder="Confirm Email Configuration Password">
-                    <small id="emailMatch" class="text-danger"></small>
-                </div>
+
+            <div class="mb-2">
+                <label for="exampleInputEmail1" class="form-label "><b>Email address</b></label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name='email' placeholder="Enter email" required>
+            </div>
+
+            <div class="mb-2">
+                <label for="exampleInputPassword1" class="form-label" id='passlabel'><b>Password</b></label>
+                <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Password" required>
+                <p class="info-for-password text-danger"> </p>
+            </div>
+            <div class="mb-2">
+                <label for="exampleInputPassword2" class="form-label" id='cpasslabel'><b> Confirm Password</b></label>
+                <input type="password" class="form-control" id="exampleInputPassword2" name="c_password" placeholder="Confirm Password" required>
+                <p class="info-for-cpassword text-danger"></p>
+            </div>
+            <div class=" ms-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+                <label class="form-check-label" for="exampleCheck1">Agree <a href="#">Term & Conditions</a></label>
             </div>
         </div>
-        <div class="d-grid mt-3">
-            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+        <div class=" text-center mt-4 ">
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg mb-3"><b>Submit</b></button>
         </div>
-        <p class="mt-3 text-center">Already have an account? <a href=" {% url "Login" %}">Login</a></p>
-    </form>
+        <p class=" text-center">Already have an account? <a href=" {% url "Login" %}">Login</a></p>
+    </form> 
+
+
+
+
+
+
+
 </div>
-<script src="{% static "js/CreateUser/main.js" %}"></script>
+<script src="{% static 'js/CreateUser/password.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            let alerts = document.querySelectorAll('.alert'); // Changed from .alert1 to .alert
+            alerts.forEach(function (alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 2000);
+
+        const registerForm = document.getElementById('registerForm');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function (event) {
+                const inputs = registerForm.querySelectorAll('input, textarea'); // Removed trailing comma
+                let allFieldsFilled = true;
+
+                for (let i = 0; i < inputs.length; i++) {
+                    // Exclude the checkbox from the "all fields filled" check
+                    if (inputs[i].type !== 'hidden' && inputs[i].type !== 'checkbox' && inputs[i].value.trim() === '') {
+                        allFieldsFilled = false;
+                        break;
+                    }
+                }
+                if (!allFieldsFilled) {
+                    event.preventDefault();
+                    alert('Please fill out all fields.');
+                }
+                // Also prevent submission if passwords don't match or don't meet criteria
+                if (!passwordCheck()) {
+                    event.preventDefault();
+                }
+            });
+        }
+    });
+
+    const passwordinfo = document.querySelector('.info-for-password');
+    const cpasswordinfo = document.querySelector('.info-for-cpassword');
+    const passwordInput = document.getElementById('exampleInputPassword1');
+    const confirmPasswordInput = document.getElementById('exampleInputPassword2');
+
+    passwordinfo.style.display = 'none';
+    cpasswordinfo.style.display = 'none';
+
+    // Add event listeners to password fields for real-time validation
+    passwordInput.addEventListener('input', passwordCheck);
+    confirmPasswordInput.addEventListener('input', passwordCheck);
+
+    function passwordCheck() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+        let isValid = true;
+
+        // Reset styles and messages
+        passwordInput.style.border = '';
+        confirmPasswordInput.style.border = '';
+        passwordinfo.style.display = 'none';
+        cpasswordinfo.style.display = 'none';
+
+        if (password !== confirmPassword && confirmPassword !== '') { // Only show mismatch if confirm password is not empty
+            passwordInput.style.border = '1px solid red';
+            confirmPasswordInput.style.border = 'red 1px solid';
+            passwordinfo.innerHTML = "Passwords do not match.";
+            cpasswordinfo.innerHTML = "Passwords do not match.";
+            passwordinfo.style.display = 'block';
+            cpasswordinfo.style.display = 'block';
+            isValid = false;
+        }
+
+        if (!passwordRegex.test(password) && password !== '') { // Only show regex error if password is not empty
+            passwordInput.style.border = '1px solid red';
+            passwordinfo.innerHTML = "Password must be at least 6 characters long and include uppercase, lowercase, and a number.";
+            passwordinfo.style.display = 'block';
+            isValid = false;
+        }
+
+        if (!passwordRegex.test(confirmPassword) && confirmPassword !== '' && password === confirmPassword) { // Only show regex error if confirm password is not empty and matches
+            confirmPasswordInput.style.border = 'red 1px solid';
+            cpasswordinfo.innerHTML = "Password must be at least 6 characters long and include uppercase, lowercase, and a number.";
+            cpasswordinfo.style.display = 'block';
+            isValid = false;
+        }
+
+        if (isValid && password !== '' && confirmPassword !== '') { // If all checks pass and fields are not empty
+            passwordInput.style.border = '1px solid green';
+            confirmPasswordInput.style.border = '1px solid green';
+        }
+        return isValid;
+    }
+</script>
 {% endblock %}

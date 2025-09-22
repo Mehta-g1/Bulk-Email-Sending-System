@@ -10,7 +10,11 @@
         <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
 
         <h2>Welcome, {{username }}</h2>
-        
+        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
+            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
+            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%</span>
+            
+        </div>
         <div class="d-flex align-items-center">
             <a href="{% url "templates" %}" class="btn btn-warning me-2">
             <i class="fa-solid fa-envelope-open-text"></i> Configure Mail Templates
@@ -18,12 +22,20 @@
             <a href="{% url 'logout' %}" class="btn btn-danger me-2">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
             </a>
-            <a class="btn btn-light rounded-5 me-2" href="{% url "profile" %}">
-            <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
-            </a>
+            {% if image %}
+                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
+                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
-</nav>
+</nav> <hr>
         
 
 <div class="container mt-4">
@@ -78,6 +90,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Added date</th>
                         <th scope="col">Category</th>
                         <th scope="col">Comments</th>
                         <th scope="col">Actions</th>
@@ -92,6 +105,7 @@
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ r.name }}</td>
                         <td>{{ r.email }}</td>
+                        <td>{{ r.added_date }}</td>
                         <td>{{ r.category }}</td>
                         <td>{{ r.comment }}</td>
                         <td>

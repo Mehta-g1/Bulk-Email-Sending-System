@@ -5,6 +5,36 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from EmailTemplates.models import Template
+
+
+def profileCompletetion(user):
+    total_fields,filled_fields,=12,0
+    fields_to_check = [
+        user.name,
+        user.email_address,
+        user.post,
+        user.department,
+        user.about_you,
+        user.personalEmail,
+        user.org_name,
+        user.dob,
+        user.address,
+        user.phone,
+        user.email_password,
+        user.image if user.image and user.image.name != 'default.png' else None
+    ]
+
+    # Count filled fields
+    for field in fields_to_check:
+        if field not in [None, '', 'default.png']:
+            filled_fields += 1
+
+    # Calculate completion percentage
+    completion_percentage = (filled_fields / total_fields) * 100
+    # print(completion_percentage)
+    return int(completion_percentage)
+
+
 # Utilities functions
 
 def get_filtered_recipients(user_id, selected_ids):

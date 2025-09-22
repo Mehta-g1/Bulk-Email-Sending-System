@@ -7,24 +7,24 @@ from datetime import datetime
 class emailUsers(models.Model):
     name = models.CharField(max_length=100)
     email_address = models.EmailField(unique=True)
-    email_password = models.CharField(max_length=200)   
+    email_password = models.CharField(max_length=200,null=True)   
     email_host = models.CharField(max_length=100, default="smtp.gmail.com")
-    email_port = models.IntegerField(default=587)
+    email_port = models.IntegerField(default=587,null=True)
     use_tls = models.BooleanField(default=True)
     login_password = models.CharField(max_length=50, null=False, default="test1234")
 
     # Disignation info
-
+    org_name = models.CharField(max_length=150, null=True)
     post = models.CharField(max_length=100, null=True)
     department = models.CharField(max_length=150, null=True)
     about_you = models.CharField(max_length=500, null=True, default='')
 
     # Personal info
-    image = models.ImageField(upload_to='images/', default='default.png')
+    image = models.ImageField(upload_to='images/',null=True)
     personalEmail = models.EmailField(null=True)
-    dob = models.DateField(default=datetime.now, null=True)
-    fatherName = models.CharField(max_length=150, null=True)
+    dob = models.DateField( null=True)
     address = models.CharField(max_length=500, default='', null=True)
+    phone = models.CharField(max_length=15, null=True)
 
 
     def __str__(self):
