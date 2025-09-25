@@ -3,13 +3,20 @@ from CreateUser.models import emailUsers
 from .models import Contact
 from django.contrib import messages
 from CreateUser.models import Receipent
-
+from CreateUser.models import emailUsers
+from django.shortcuts import get_object_or_404
 # Home page view
 def Home(request):
+    user_id = request.session.get('user_id')
+    
+    username=''
+    if user_id:
+        user = get_object_or_404(emailUsers, id=user_id)
+        username = user.name
     user_count = emailUsers.objects.count()
 
     receipient_count = len(Receipent.objects.all())
-    context = {'user_count': user_count,'r_count':receipient_count}
+    context = {'user_count': user_count,'r_count':receipient_count,'username':username}
     return render(request, 'Home/index.html', context)
 
 # Documentation page view

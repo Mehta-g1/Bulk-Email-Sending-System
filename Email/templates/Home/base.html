@@ -38,8 +38,13 @@
                         <i class="fab fa-github"></i> GitHub
                     </a>
                 </li>
-                <li class="nav-item fw-bolder m-2">
+                <li class="nav-item fw-bolder m-2 d-flex gap-2">
+                    {% if username %}
+                    <a class="btn btn-primary" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a href=" {% url "logout" %} " class="btn btn-outline-danger">Logout</a>
+                    {% else %}
                     <a class="btn btn-primary" href="{% url 'Login' %}">Login</a>
+                    {% endif %}
                 </li>
             </ul>
         </div>

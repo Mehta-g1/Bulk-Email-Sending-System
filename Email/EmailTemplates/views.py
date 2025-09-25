@@ -5,6 +5,7 @@ from CreateUser.models import emailUsers
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 
+
 def Templates(request):
     user_id = request.session.get('user_id')
     if not user_id:
@@ -35,9 +36,10 @@ def Templates(request):
         'templates':template_list,
         'primary_template':primary_template,
         'title':f"{name} -Template list",
-        'username':name
+        'username':name.split(' ')[0],
+        'image':emailUsers.objects.get(id=user_id).image
     })
-
+       
 
 def MakePrimary(request, id):
     user_id = request.session.get('user_id')
@@ -78,7 +80,8 @@ def viewTemplate(request,id):
         'created_at':template.created_at,
         'updated_at':template.updated_at,
         'body':template.body,
-        'username':template.user.name
+        'username':template.user.name.split(' ')[0],
+        'image':template.user.image
     }
     return render(request, 'EmailTemplates/view.html', context)
 
@@ -101,7 +104,8 @@ def editTemplate(request,id):
         'created_at':template.created_at,
         'updated_at':template.updated_at,
         'body':template.body,
-        'username':template.user.name
+        'username':template.user.name.split(' ')[0],
+        'image':template.user.image
     }
 
     if request.method == "POST":
@@ -170,5 +174,6 @@ def createTemplate(request):
     
     return render(request, 'EmailTemplates/create.html',{
         'title':'Create new Template',
-        'username':get_object_or_404(emailUsers, pk=user_id).name
+        'username':get_object_or_404(emailUsers, pk=user_id).name.split(' ')[0],
+        'image':get_object_or_404(emailUsers, pk=user_id).image
     })

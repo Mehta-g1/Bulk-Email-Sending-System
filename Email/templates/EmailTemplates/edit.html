@@ -10,28 +10,31 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand fs-3" href=" {% url "templates" %} ">📧 Mail Templates</a>
+        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
 
-        <h2>Welcome, {{username}}</h2>
-        
-        <div>
-  
+        <h2>Welcome, {{username }}</h2>
+       
+        <div class="d-flex align-items-center">
             <a href="{% url "templates" %}" class="btn btn-warning me-2">
-                <i class="fa-solid fa-envelope-open-text"></i> Back to Email Templates
+            <i class="fa-solid fa-envelope-open-text"></i> Mail Templates
             </a>
             <a href="{% url 'logout' %}" class="btn btn-danger me-2">
-                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
             </a>
-
-            <div class="profile me-5">
-                <a class="btn btn-light rounded-5 me-4" href=" {% url "profile" %} ">
-                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+            {% if image %}
+                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
+                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                 </a>
-            
-            </div>
+                {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
-</nav>
+</nav> <hr>
 
 <div class="card col-6 p-4 shadow mx-auto mt-3">
     <div class="heading d-flex justify-content-between">
