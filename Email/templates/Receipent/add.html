@@ -4,7 +4,45 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
+
+        <h2>Welcome, {{username }}</h2>
+        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
+            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
+            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%</span>
+            
+        </div>
+        <div class="d-flex align-items-center">
+            <a href="{% url "dashboard" %}" class="btn btn-warning me-2">
+            <i class="fa-solid fa-envelope-open-text"></i> Dashboard
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+            {% if image %}
+                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
+                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
+                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav> <hr>
+
+
+
+
+
+<div class="container mt-2 mb-2">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <div class="card shadow-lg">
@@ -38,9 +76,10 @@
               <textarea name="comment" class="form-control" placeholder="Enter any notes or comment"></textarea>
             </div>
 
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-success fw-bolder">Save Recipient</button>
-              <a href="{% url 'dashboard' %}" class="btn btn-secondary fw-bolder">⬅ Back to Dashboard</a>
+            <div class="d-flex justify-content-between gap-2">
+              <button type="submit" class="btn btn-success fw-bolder"><i class="fa-solid fa-floppy-disk"></i> Save Recipient</button>
+              <a href="{% url 'add_in_bulk' %}" class='btn btn-warning fw-bolder '><i class="fa-solid fa-layer-group"></i> Add in Bulk</a>
+              <a href="{% url 'dashboard' %}" class="btn btn-secondary fw-bolder"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
             </div>
           </form>
         </div>

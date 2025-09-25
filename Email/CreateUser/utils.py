@@ -5,6 +5,9 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from EmailTemplates.models import Template
+from django.contrib import messages
+import pandas as pd
+
 
 
 def profileCompletetion(user):
@@ -47,9 +50,6 @@ def update_recipients_send_time(selected_ids):
         r.send_time+=1
         r.save()
     
-
-    
-
 
 
 def send_bulk_email(user_id,selected_ids):
@@ -140,4 +140,56 @@ def check_token(token):
     if timediff > timedelta(minutes=15):
         return False
     return True
+
+
+
+
+from io import BytesIO
+from django.contrib import messages
+
+def extract_receipients_from_file(user, file, request):
+    try:
+        if file.file_type.lower() == 'csv':
+            # CSV read
+            df = pd.read_csv(file.file)
+        else:
+            # Excel read (wrap in BytesIO)
+            file.file.open('rb')
+            df = pd.read_excel(BytesIO(file.file.read()), engine='openpyxl')
+            file.file.close()
+    except Exception as e:
+        print("Error reading file:", e)
+        messages.warning(request, "There was an error reading the file. Please ensure it is a valid CSV/XLS/XLSX file.")
+        return False
+    try:
+        # Rename columns
+        df.columns = ["name", "email", "category", "comments"]
+
+        added_count = 0
+        for _, row in df.iterrows():
+            name = row['name']
+            email = row['email']
+            category = row['category']
+            comments = row['comments']
+
+            if not Receipent.objects.filter(Sender=user, email=email).exists():
+                Receipent.objects.create(
+                    Sender=user,
+                    name=name,
+                    email=email,
+                    receipent_category=category,   # 🔹 Fix: field name `receipent_category`
+                    comment=comments,              # 🔹 Fix: field name `comment`
+                    source=f"File Upload - {file.file_name}"
+                )
+                added_count += 1
+            else:
+                messages.warning(request, f"Email {email} already exists and was skipped.")
+        messages.success(request, f"{added_count} recipients added successfully.")
+    except Exception as e:
+        print("Error processing file:", e)
+        messages.error(request, "There was an error processing the file. Please ensure it has the correct format.")
+        return False
+
+    return True
+
 

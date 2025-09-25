@@ -18,8 +18,12 @@ urlpatterns = [
 
     # Receipient Management 
     path('receipient/add/', views.addReceipent, name="add_recepient"),
+    path('receipient/bulk-add/', views.add_in_bulk, name="add_in_bulk"),
+    path('file/delete/<int:file_id>/', views.delete_file, name='delete_file'),
+    path('file/read/<int:file_id>/', views.read_file, name='read_file'),
     path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
     path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
     path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recipient"),
+    path('receipient/delete-selected/', views.delete_selected_recipients, name='delete_selected_recipients'),
     path('templates/', include('EmailTemplates.urls')),
 ]

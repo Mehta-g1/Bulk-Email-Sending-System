@@ -1,13 +1,15 @@
 from django.shortcuts import render,redirect
-from .models import emailUsers, Receipent, reset_link
+from .models import emailUsers, Receipent, reset_link, UserFiles
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
-from .utils import send_bulk_email, check_token, send_forget_password_link,profileCompletetion
+from .utils import send_bulk_email, check_token, send_forget_password_link,profileCompletetion, extract_receipients_from_file
 from django.utils.crypto import get_random_string
 from django.db.models import Q
 from django.utils.timezone import now
 from EmailTemplates.models import Template
 import os
+
+
 # Login view
 def Login(request):
     if 'user_id' in request.session:
@@ -31,7 +33,6 @@ def Login(request):
             messages.warning(request, "This email is not registered. Please sign up first.")
             return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
     return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
-
 
 # SignUp page
 def signUp(request):
@@ -76,17 +77,19 @@ def dashboard(request):
     #     messages.warning(request, "Please update your email settings in profile before proceeding.")
     #     return redirect('edit_profile')
 
-    recipients = Receipent.objects.filter(Sender__id=user_id)
+    recipients = Receipent.objects.filter(Sender__id=user_id).order_by('-added_date')
     search_query = ""
     if request.method == "POST":
         search_query = request.POST.get("search", "").strip()
+        
         if search_query:
             recipients = recipients.filter(
                 Q(name__icontains=search_query) |
                 Q(email__icontains=search_query) |
                 Q(receipent_category__icontains=search_query) |
-                Q(comment__icontains=search_query)
-            )
+                Q(comment__icontains=search_query) |
+                Q(source__icontains=search_query)
+            ).order_by('-added_date')
 
     receipient_list = [
         {
@@ -96,6 +99,7 @@ def dashboard(request):
             'category': r.receipent_category,
             'comment': r.comment,
             'added_date': r.added_date,
+            'source': r.source,
         }
         for r in recipients
     ]
@@ -128,18 +132,12 @@ def profile(request):
 
     progress = profileCompletetion(user)
 
-    # Recent templates
+
     recent_templates = Template.objects.filter(user=user).order_by('-created_at')[:5]
 
-    # Recent recipients
     recent_recipients = Receipent.objects.filter(Sender=user).order_by('-added_date')[:5]
+    recent_attachments = UserFiles.objects.filter(user=user).order_by('-uploaded_at')[:5]
 
-    # Static data for attachments
-    recent_attachments = [
-        {'name': 'report-final.pdf', 'size': '1.2 MB', 'date': '2023-10-26'},
-        {'name': 'project-plan.docx', 'size': '450 KB', 'date': '2023-10-25'},
-        {'name': 'invoice-q3.xlsx', 'size': '78 KB', 'date': '2023-10-24'},
-    ]
 
     data = {
         'user': user,
@@ -293,9 +291,14 @@ def viewReceipent(request, receipient_id):
 
     receipient = get_object_or_404(Receipent, id=receipient_id, Sender__id=user_id)
     title = f"{receipient.name} -{emailUsers.objects.get(id=user_id).name}"
+    progress = profileCompletetion(emailUsers.objects.get(id=user_id))
+    image = emailUsers.objects.get(id=user_id).image
     return render(request, "Receipent/view.html", {
         "receipient": receipient,
-        'title':title
+        'title':title,
+        'progress': progress,
+        'image': image,
+        'username': str(emailUsers.objects.get(id=user_id).name).split(" ")[0],
     })
 
 
@@ -318,12 +321,18 @@ def editReceipent(request, receipient_id):
         receipent.save()
         messages.success(request, "Receipient details update successfully !")
         return redirect('dashboard')
-        
+    
+    progress = profileCompletetion(user)
+    image = user.image
+    username = str(user.name).split(" ")[0]
 
     return render(request, "Receipent/edit.html", {
-        "receipient": receipent
+        "receipient": receipent,
+        'progress': progress,
+        'image': image,
+        'username': username,
+        'title': f'Edit Recipient - {receipent.name}',
     })
-
 
 
     # Delete Recipient
@@ -369,10 +378,149 @@ def addReceipent(request):
         )
         messages.success(request, "Receipient added successfuly !")
         return redirect('dashboard')
-    return render(request, 'Receipent/add.html',{'title':'Add Recipient'})
+    user = get_object_or_404(emailUsers, pk=user_id)
+    username = user.name
+    image = user.image
+    progress = profileCompletetion(user)
+    return render(
+            request, 
+            'Receipent/add.html',
+            {
+                'image': image,
+                'username': username,
+                'progress': progress,
+                'title':'Add Recipient'
+            }
+        )
 
 
-# send mail view 
+def add_in_bulk(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.warning(request,"Login first ")
+        return redirect('Login')
+    
+    user = get_object_or_404(emailUsers, pk=user_id)
+    image = user.image
+    username = str(user.name).split(" ")[0]
+    
+    if request.method == "POST":
+        file = request.FILES.get('bulk_file') 
+        filename = file.name.lower()       
+        if not file:
+            print("No file uploaded!")
+            messages.warning(request, "No file uploaded!")
+            return redirect('add_in_bulk')
+        if not (filename.endswith('.csv') or filename.endswith('.xls') or filename.endswith('.xlsx')):
+            print("Please upload a valid CSV/XLS/XLSX file only.")
+            messages.warning(request, "Please upload a valid CSV/XLS/XLSX file only.")
+            return redirect('add_in_bulk')
+        file_name = request.POST.get('file_name')
+        file_type = ''
+        if request.POST.get('file_type') == 'csv':
+            file_type = 'CSV'
+            print("File is CSV")
+        elif request.POST.get('file_type') == 'xls':
+            print("File is XLS")
+            file_type = 'XLS'
+
+        file_size = file.size
+        print(f"File name: {file_name}, Size: {file_size} bytes, Type: {file_type}")
+        user_file = UserFiles.objects.create(
+            user = user,
+            file_name = file_name,
+            file_size = f"{round(file_size/1024,2)} KB" if file_size < 1048576 else f"{round(file_size/(1024*1024),2)} MB",
+            file_type = file_type,
+            file = file,
+        )
+        if not extract_receipients_from_file(user, user_file, request):
+            messages.error(request, "There was an error processing the file. Please ensure it has the correct format.")
+            return redirect('add_in_bulk')
+       
+
+        messages.success(request, "File uploaded successfully!")
+        return redirect('dashboard')
+
+    return render(request, 'Receipent/add_in_bulk.html', 
+                {
+                    'title': 'Add Recipients in Bulk',
+                    'image': image,
+                    'username': username,
+                    'progress': profileCompletetion(user),
+                })
+
+def delete_file(request, file_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect('Login')
+
+    user = get_object_or_404(emailUsers, pk=user_id)
+    user_file = get_object_or_404(UserFiles, id=file_id, user=user)
+
+    # Delete the file from storage
+    if user_file.file and os.path.isfile(user_file.file.path):
+        os.remove(user_file.file.path)
+        print("File deleted from storage:", user_file.file.path)
+
+    # Delete the database record
+    user_file.delete()
+    messages.success(request, "File deleted successfully.")
+    return redirect('profile')
+
+def delete_selected_recipients(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")
+
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist("selected")
+        if not selected_ids:
+            messages.warning(request, "No recipients selected to delete.")
+            return redirect("dashboard")
+
+        user = get_object_or_404(emailUsers, id=user_id)
+        recipients_to_delete = Receipent.objects.filter(id__in=selected_ids, Sender=user)
+        
+        deleted_count = recipients_to_delete.count()
+        recipients_to_delete.delete()
+        
+        messages.success(request, f"{deleted_count} recipient(s) deleted successfully.")
+        return redirect("dashboard")
+    else:
+        return redirect("dashboard")
+
+def read_file(request, file_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.warning(request, "Login First")
+        return redirect('Login')
+    user = get_object_or_404(emailUsers, pk=user_id)
+    user_file = get_object_or_404(UserFiles, id=file_id, user=user)
+    if not user_file:
+        messages.error(request, "File not found.")
+        return redirect('profile')
+    if not user_file.file:
+        messages.error(request, "No file associated with this record.")
+        return redirect('profile')
+    try:
+        file_path = user_file.file.path
+        if not os.path.isfile(file_path):
+            messages.error(request, "File does not exist on the server.")
+            return redirect('profile')
+        
+        receipients = extract_receipients_from_file(user, user_file, request)
+        if receipients:
+            messages.success(request, f"Extracted {len(receipients)} recipients from the file.")
+        else:
+            messages.warning(request, "No recipients found in the file or there was an error processing it.")
+        return redirect('dashboard')
+    except Exception as e:
+        print("Error reading file:", e)
+        messages.error(request, "An error occurred while reading the file.")
+        return redirect('profile')
+    
 def sendMail(request):
     user_id = request.session.get('user_id')
     if not user_id:

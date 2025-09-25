@@ -1,0 +1,141 @@
+{% extends "CreateUser/base.html" %}
+{% load static %}
+
+{% block title %}Add Recipients in Bulk{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fs-3" href="{% url 'dashboard' %}">Dashboard</a>
+
+
+        <h2>Welcome, {{username }}</h2>
+            <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
+                <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
+                <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%<span>    
+            </div>
+
+
+        <div class="d-flex align-items-center">
+
+            
+
+            <a href="{% url 'dashboard' %}" class="btn btn-warning me-2">
+                <i class="fa-solid fa-envelope-open-text"></i> Dashboard
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+            {% if image %}
+                <a href="{% url 'profile' %}" class="progileImage rounded-5 bg-light ">
+                    <img src="{{ image.url }}" alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+            {% else %}
+                <div class="progileImage rounded-5 bg-light me-2">
+                    <a class="btn btn-light rounded-5" href="{% url 'profile' %}">
+                        <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<hr>
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+<div class="container mt-4 mb-4">
+    <h2>Add Recipients in Bulk</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mt-3 pb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-center border p-2 bg-secondary mb-2 rounded-3">Upload File</h5>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Choose file type:</label>
+                            <div class=" d-flex justify-content-around">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="csv" id="csvCheck" name="file_type" checked>
+                                    <label class="form-check-label" for="csvCheck">
+                                        CSV
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="xls" id="xlsCheck" name="file_type">
+                                    <label class="form-check-label" for="xlsCheck">
+                                        XLS/XLSX
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="filename" class="form-label">File Name</label>
+                            <input class="form-control" type="text" id="filename" name="file_name" placeholder="Enter file name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Select file</label>
+                            <input class="form-control" type="file" id="formFile" name="bulk_file" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="terms" required>
+                            <label class="form-check-label" for="exampleCheck1">I agree to the <a href="#">Terms and Conditions</a></label>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-upload"></i> Upload</button>
+                            <a href="{% url 'add_recepient' %}" class="btn btn-warning"><i class="fa-solid fa-user-plus"></i> Add Single Recipient</a>
+                            <a href=" {% url "dashboard" %} " class="btn btn-danger"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card mt-3 ">
+                <div class="card-body">
+                    <h5 class="card-title text-center border p-2 bg-secondary mb-2 rounded-3">File Format Reference</h5>
+                    <p>Please make sure your CSV/XLS file has the following columns in this order:</p>
+                    <table class="table table-bordered table-dark">
+                        <tbody>
+                            <tr>
+                                <td>John Doe</td>
+                                <td>john.doe@example.com</td>
+                                <td>Friend</td>
+                                <td>Met at a conference.</td>
+                            </tr>
+                            <tr>
+                                <td>Jane Smith</td>
+                                <td>jane.smith@example.com</td>
+                                <td>Colleague</td>
+                                <td>Works in the marketing department.</td>
+                            </tr>
+                            <tr>
+                                <td>Bob Johnson</td>
+                                <td>bob.johnson@example.com</td>
+                                <td>Family</td>
+                                <td>Has a birthday today.</td>
+                            </tr>
+                            <tr>
+                                <td>Alice Brown</td>
+                                <td>alice.brown@example.com</td>
+                                <td>Friend</td>
+                                <td>College roommate.</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <p class="fw-bolder p-2 border bg-black rounded-3 text-light"><strong>Note:</strong> Remove headers of files as given references</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

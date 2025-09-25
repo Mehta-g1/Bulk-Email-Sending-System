@@ -29,7 +29,19 @@ class emailUsers(models.Model):
 
     def __str__(self):
         return f"{self.name}   -{self.email_address}"
-    
+
+class UserFiles(models.Model):
+    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
+    file_name = models.CharField(max_length=200, null=False)
+    file_size = models.CharField(max_length=50, null=False)
+    file_type = models.CharField(max_length=50, null=False)
+    file = models.FileField(upload_to='Receipients_files/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.name}   -{self.file.name}"
+
+
 class Receipent(models.Model):
     Sender = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
     email = models.CharField(max_length=200, null=False, unique=False)
@@ -38,6 +50,7 @@ class Receipent(models.Model):
     comment = models.CharField(max_length=200, null=True)
     added_date = models.DateTimeField(auto_now=True)
     send_time = models.IntegerField(default=0)
+    source = models.CharField(max_length=100, null=True, default="N/A")
     def __str__(self):
         return f"{self.name}   -{self.email}"
 

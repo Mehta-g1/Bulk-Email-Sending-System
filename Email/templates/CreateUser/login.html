@@ -2,10 +2,46 @@
 
 {% load static %}
 {% block content %}
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand p-2 rounded-3 bg-secondry fw-bolder" href=" {% url "home" %} ">Email Sender</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link fw-bolder m-2" href="{% url 'documentation' %}">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bolder m-2" href="{% url 'contact_us' %}">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bolder m-2" href="{% url 'about_us' %}">About</a>
+                </li>
+                <li class="nav-item fw-bolder m-2">
+                    <a class="nav-link" href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </li>
+                <li class="nav-item fw-bolder m-2">
+                    <a class="btn btn-primary" href=" {% url "signUp" %} ">signUp</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav> <hr>
+
+
+
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card mt-5 shadow-lg">
+            <div class="card mt-2 mb-2 shadow-lg">
                 <div class="card-body">
                     <h3 class="card-title text-center fw-bolder">Login to Your Account</h3>
                     <hr>

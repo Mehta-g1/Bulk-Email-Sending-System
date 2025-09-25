@@ -25,46 +25,77 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
 
+    const addRecipientBtn = document.getElementById('addReceipient-btn');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    const checkboxes = document.querySelectorAll('.recipient-checkbox');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const deleteRecipientsForm = document.getElementById('deleteRecipientsForm');
 
+    if (addRecipientBtn) {
+        function toggleButtons() {
+            const anyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            if (anyCheckboxChecked) {
+                addRecipientBtn.classList.add('hidden');
+                deleteSelectedBtn.classList.remove('hidden');
+            } else {
+                addRecipientBtn.classList.remove('hidden');
+                deleteSelectedBtn.classList.add('hidden');
+            }
+        }
 
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                toggleButtons();
+            });
+        });
 
-//  Form chaker
-document.querySelector("form").addEventListener("submit", function (e) {
-    let current = document.getElementById("current_password").value.trim();
-    let newPass = document.getElementById("new_password").value.trim();
-    let confirmPass = document.getElementById("confirm_password").value.trim();
+        selectAllCheckbox.addEventListener('change', function () {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            toggleButtons();
+        });
 
-    // 1️⃣ Empty field check
-    if (!current || !newPass || !confirmPass) {
-        alert("All fields are required.");
-        e.preventDefault();
-        return;
+        toggleButtons();
     }
 
-    // 2️⃣ New password validation
-    // At least 8 chars, 1 uppercase, 1 lowercase, 1 digit
-    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
-    if (!passwordRegex.test(newPass)) {
-        alert("New password must be at least 6 characters long and include uppercase, lowercase, and a number.");
-        e.preventDefault();
-        return;
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener("submit", function (e) {
+            let current = document.getElementById("current_password").value.trim();
+            let newPass = document.getElementById("new_password").value.trim();
+            let confirmPass = document.getElementById("confirm_password").value.trim();
+
+            // 1️⃣ Empty field check
+            if (!current || !newPass || !confirmPass) {
+                alert("All fields are required.");
+                e.preventDefault();
+                return;
+            }
+
+            // 2️⃣ New password validation
+            // At least 8 chars, 1 uppercase, 1 lowercase, 1 digit
+            let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+            if (!passwordRegex.test(newPass)) {
+                alert("New password must be at least 6 characters long and include uppercase, lowercase, and a number.");
+                e.preventDefault();
+                return;
+            }
+
+            // 3️⃣ Confirm password check
+            if (newPass !== confirmPass) {
+                alert("New password and confirm password do not match.");
+                e.preventDefault();
+                return;
+            }
+        });
     }
 
-    // 3️⃣ Confirm password check
-    if (newPass !== confirmPass) {
-        alert("New password and confirm password do not match.");
-        e.preventDefault();
-        return;
+    if(selectAllCheckbox){
+        document.getElementById("selectAll").addEventListener("change", function (e) {
+            let checkboxes = document.querySelectorAll(".recipient-checkbox");
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
     }
 });
-
-
-
-document.getElementById("selectAll").addEventListener("change", function (e) {
-    let checkboxes = document.querySelectorAll(".recipient-checkbox");
-    checkboxes.forEach(cb => cb.checked = e.target.checked);
-});
-
-

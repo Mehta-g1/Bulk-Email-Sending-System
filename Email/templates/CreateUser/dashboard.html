@@ -4,6 +4,8 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
@@ -38,7 +40,7 @@
 </nav> <hr>
         
 
-<div class="container mt-4">
+<div class=" dashboard container mt-4 mb-5 pb-4 rounded-4 shadow-lg bg-dark text-light">
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
@@ -53,20 +55,31 @@
         <div class="search">
             <form action="#" method='post'>
                 {% csrf_token %}
-                <div class='p-2 '>
+                <div class='p-2'>
                     {% if search_query %}
                         <input class=" search-input rounded-pill bg-dark text-light border p-2 m-2 " type="text" name='search' placeholder="Search by name, Category, Comments, Emails" value='{{search_query}}'>
                     {% else %}
-                        <input class=" search-input rounded-pill bg-dark text-light border p-2 m-2 " type="text" name='search' placeholder="Search by name, Category, Comments, Emails">
+                        <input class="search-input rounded-pill bg-dark text-light border p-2 m-2 " type="text" name='search' placeholder="Search by name, Category, Comments, Emails">
                     {% endif %}
                     <button type='submit' class='rounded-3 p-2 m-2'>🔍</button>
                 </div>
             </form>
         </div>
         <div>
-            <a class="btn btn-primary me-2" href='{% url "add_recepient" %}'>
-                <i class="fa-solid fa-user-plus"></i>  Add Recipient
-            </a>
+            <div id = "addReceipient-btn" class="dropdown d-inline-block me-2">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Add Recipients
+                </button>
+                <ul class="dropdown-menu text-light rounded-3 p-1">
+                    <li><a class="dropdown-item text-light rounded-3 p-1"  href=" {% url "add_recepient" %} ">One by One</a></li>
+                    <li><a class="dropdown-item text-light rounded-3 p-1" href=" {% url "add_in_bulk" %} ">Bulk (CSV/XLS)</a></li>
+                </ul>
+            </div>
+            <div id="deleteSelectedBtn" class="d-inline-block me-2 hidden">
+                <button type="submit" class="btn btn-danger" form="deleteRecipientsForm"  onclick="return confirm('Are you sure you want to delete this recipient?');">
+                    <i class="fa-solid fa-trash"></i> Delete Selected
+                </button>
+            </div>
             <button type="submit" class="btn btn-success me-2" form="recipientsForm">
                 <i class="fa-solid fa-paper-plane"></i> Send to Selected
             </button>
@@ -81,22 +94,24 @@
             </div>
         
         {% endif %}
-        <form method="post" id="recipientsForm" action=" {% url "send-mail" %} ">
+        <form method="post" id="recipientsForm" action=" {% url "send-mail" %} "></form>
+        <form method="post" id="deleteRecipientsForm" action="{% url 'delete_selected_recipients' %}">
             {% csrf_token %}
-            <table class="table table-dark table-striped table-hover ">
+            <table class="table table-dark table-striped table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col"><input type="checkbox" id="selectAll"></th>
+                        <th scope="col"><input type="checkbox" id="selectAll"> </th>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Added date</th>
                         <th scope="col">Category</th>
                         <th scope="col">Comments</th>
+                        <th scope="col">Source</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody class='rounded-4'>
+                <tbody>
 
                     {% for r in receipients %}
                     <tr >
@@ -105,17 +120,18 @@
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ r.name }}</td>
                         <td>{{ r.email }}</td>
-                        <td>{{ r.added_date }}</td>
+                        <td>{{ r.added_date|date:"Y-m-d" }}</td>
                         <td>{{ r.category }}</td>
                         <td>{{ r.comment }}</td>
-                        <td>
-                            <a class="btn btn-sm btn-info" href="{% url 'view_recepient' r.id %}">
+                        <td>{{r.source}}</td>
+                        <td class="d-flex gap-1">
+                            <a class="btn btn-sm btn-info p-1" href="{% url 'view_recepient' r.id %}">
                                 <i class="fa-solid fa-eye"></i> View
                             </a>
-                            <a href="{% url 'edit_recepient' r.id %}" class="btn btn-sm btn-warning">
+                            <a href="{% url 'edit_recepient' r.id %}" class="btn btn-sm btn-warning p-1" >
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
-                            <a href="{% url 'delete_recipient' r.id %}" class="btn btn-danger"
+                            <a href="{% url 'delete_recipient' r.id %}" class="btn btn-danger p-1"
                                onclick="return confirm('Are you sure you want to delete this recipient?');">
                                 <i class="fa-solid fa-trash"></i> Delete
                             </a>
@@ -124,10 +140,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <p class="text-center fw-bolder text-danger">------------- end of table ---------------</p>
         </form>
 
     </div>
 </div>
+
 
 <script src="{% static "js/CreateUser/main.js" %}"></script>
 {% endblock %}
