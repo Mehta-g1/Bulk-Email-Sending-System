@@ -3,6 +3,79 @@ body {
     color: #f1f1f1;
 }
 
+
+.hidden {
+    display: none !important;
+}
+
+hr {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+footer div a {
+    color: white;
+    text-decoration: none;
+    transition: .2s all;
+}
+
+footer div a:hover {
+    color: #0d6efd !important;
+    text-decoration: underline;
+}
+
+
+footer {
+    background-color: #3d3d3d;
+    margin: 0;
+    display: flex;
+    margin: auto;
+}
+
+footer div {
+    /* display: flex; */
+
+    width: 100%;
+    flex: row;
+    justify-content: space-around;
+}
+
+footer div .row {
+    padding: 20px;
+}
+
+.dashboard{
+    background-color: #3e3b3b95 !important;
+}
+
+
+
+
+
+.dropdown button {
+    transition: .2s all;
+    border-radius: 10px;
+}
+
+.dropdown button:hover {
+    background-color: #1d89f6b6;
+}
+
+
+.dropdown-item {
+    transition: .2s all;
+}
+
+.dropdown-item:hover {
+    background-color: #0377eb;
+    color: white;
+}
+
+.dropdown-menu {
+    background-color: #353537;
+    padding: 0;
+}
+
 .card {
     background: linear-gradient(45deg, #2c2c2c, #3c3c3c);
     color: white;
@@ -87,7 +160,8 @@ body {
     color: #f1f1f1;
 }
 
-.profile-card-2 .card-body h5, .profile-card-2 .card-body h4 {
+.profile-card-2 .card-body h5,
+.profile-card-2 .card-body h4 {
     color: #fff;
 }
 
@@ -101,15 +175,19 @@ body {
 }
 
 .profile {
-  transition: transform 0.3s ease-in; /* Use 'transition' for the effect, and 'ease-in' is a single value */
+    transition: transform 0.3s ease-in;
+    /* Use 'transition' for the effect, and 'ease-in' is a single */
+    width: 100px;
+    display: contents;
 }
 
 .profile:hover {
-  transform: scale(1.2); /* Use 'transform: scale()' to enlarge the element */
+    transform: scale(1.2);
+    /* Use 'transform: scale()' to enlarge the element */
 }
 
 
-.form-control{
+.form-control {
     background-color: #515558;
     padding: 8px;
     font-size: 1rem;
@@ -117,11 +195,11 @@ body {
 }
 
 
-.form-control:focus{
+.form-control:focus {
     background-color: #6c757db5;
 }
 
 
-.search-input{
-    width: 400px;
+.search-input {
+    width: 350px;
 }

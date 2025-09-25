@@ -3,3 +3,6 @@
 __pycache__/
 .venv/
 *.sqlite3
+*.csv
+*.xlsx
+*.xls
