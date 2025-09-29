@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from EmailTemplates.models import Template
 from django.contrib import messages
 import pandas as pd
+from io import BytesIO
 
 
 
@@ -63,7 +64,7 @@ def send_bulk_email(user_id,selected_ids):
             use_tls=account.use_tls,
         )
         template = Template.objects.get(user=get_object_or_404(emailUsers, id=user_id),primary=True)
-        print(template)
+
         email = EmailMessage(
             subject=template.subject,
             body=template.body,
@@ -73,7 +74,9 @@ def send_bulk_email(user_id,selected_ids):
         )
         email.send()
         template.no_of_time_used =int(template.no_of_time_used) + len(selected_ids)
-        print(template.no_of_time_used)
+        template.save()
+
+
         update_recipients_send_time(selected_ids)
     except Exception as e:
         print('\n\n--------------------')
@@ -144,10 +147,12 @@ def check_token(token):
 
 
 
-from io import BytesIO
-from django.contrib import messages
+
 
 def extract_receipients_from_file(user, file, request):
+    if not file.file:
+        messages.warning(request, "No file found or Crupted file. Please upload again CSV/XLS/XLSX file.")
+        return False
     try:
         if file.file_type.lower() == 'csv':
             # CSV read

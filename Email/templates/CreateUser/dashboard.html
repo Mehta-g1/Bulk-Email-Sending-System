@@ -77,12 +77,12 @@
                     <li><a class="dropdown-item text-light rounded-3 p-1" href=" {% url "add_in_bulk" %} ">Bulk (CSV/XLS)</a></li>
                 </ul>
             </div>
-            <div id="deleteSelectedBtn" class="d-inline-block me-2 hidden">
-                <button type="submit" class="btn btn-danger" form="deleteRecipientsForm"  onclick="return confirm('Are you sure you want to delete this recipient?');">
+            <div id="deleteSelectedBtn" class="d-inline-block me-2 hidden" >
+                <button type="submit" class="btn btn-danger" form="recipientsForm"  onclick="return confirm('Are you sure you want to delete this recipient?');" name='action' value='delete'>
                     <i class="fa-solid fa-trash"></i> Delete Selected
                 </button>
             </div>
-            <button type="submit" class="btn btn-success me-2" form="recipientsForm">
+            <button type="submit" class="btn btn-success me-2" form="recipientsForm" name='action' value='send'>
                 <i class="fa-solid fa-paper-plane"></i> Send to Selected
             </button>
             
@@ -96,9 +96,9 @@
             </div>
         
         {% endif %}
-        <form method="post" id="recipientsForm" action=" {% url "send-mail" %} "></form>
-        <form method="post" id="deleteRecipientsForm" action="{% url 'delete_selected_recipients' %}">
-            {% csrf_token %}
+        <form method="post" id="recipientsForm" action=" {% url "submit_form" %} ">
+        {% csrf_token %}
+        
             <table class="table table-dark table-striped table-hover table-bordered">
                 <thead>
                     <tr>
@@ -142,9 +142,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% if not receipients %}
+                <p class="text-center fs-4 fw-bolder text-warning">No recipients found. Please add some recipients.</p>
+            {% else %}
             <p class="text-center fw-bolder text-danger">------------- end of table ---------------</p>
-        </form>
-
+            {% endif %}
+    </form>
     </div>
 </div>
 

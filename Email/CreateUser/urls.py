@@ -7,7 +7,6 @@ urlpatterns = [
     path('signUp/',views.signUp, name='signUp'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/',views.logout, name='logout'),
-    path('send-mail/', views.sendMail, name="send-mail"),
     path('viewProfile/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('edit-profile/process/', views.edit_profile_process, name='edit_profile_process'),
@@ -16,6 +15,8 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('reset-password/<str:token>/', views.reset_password, name='reset_password'),
 
+    # Dashboard actions
+    path('submit-form/', views.submit_form, name='submit_form'),
     # Receipient Management 
     path('receipient/add/', views.addReceipent, name="add_recepient"),
     path('receipient/bulk-add/', views.add_in_bulk, name="add_in_bulk"),
@@ -24,6 +25,5 @@ urlpatterns = [
     path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
     path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
     path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recipient"),
-    path('receipient/delete-selected/', views.delete_selected_recipients, name='delete_selected_recipients'),
     path('templates/', include('EmailTemplates.urls')),
 ]

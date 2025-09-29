@@ -121,6 +121,7 @@
                     <h5 class="my-3">{{ user.name }}</h5>
                     <p class="mb-1">{{ user.post|default:"N/A" }}</p>
                     <p class="mb-4">{{ user.address|default:"-" }}</p>
+                    <p class='mb-4'><strong>No. of Email Sent: </strong> {{total_sent_mail}}</p>
                     <div class="d-flex justify-content-center mb-2">
                         <a href="{% url 'edit_profile' %}" class="btn btn-primary me-2">Edit Profile</a>
                         <a href="{% url 'dashboard' %}" class="btn btn-outline-primary ms-1 me-2"><i class="fa-solid fa-chart-line"></i> Dashboard</a>

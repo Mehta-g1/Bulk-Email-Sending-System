@@ -132,12 +132,11 @@ def profile(request):
 
     progress = profileCompletetion(user)
 
-
     recent_templates = Template.objects.filter(user=user).order_by('-created_at')[:5]
 
     recent_recipients = Receipent.objects.filter(Sender=user).order_by('-added_date')[:5]
     recent_attachments = UserFiles.objects.filter(user=user).order_by('-uploaded_at')[:5]
-
+    total_sent_mail = sum(r.send_time for r in Receipent.objects.filter(Sender=user))
 
     data = {
         'user': user,
@@ -148,6 +147,7 @@ def profile(request):
         'recent_attachments': recent_attachments,
         'username': str(user.name).split(" ")[0],
         'title': f"{user.name}'s Profile",
+        'total_sent_mail': total_sent_mail,
     }
     
     return render(request, "CreateUser/viewProfile.html", context=data)
@@ -393,6 +393,23 @@ def addReceipent(request):
             }
         )
 
+def submit_form(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.warning(request, 'Login First')
+        return redirect('Login')    
+    if request.method == "POST":
+        action = request.POST.get('action')
+
+        if action == 'send':
+            sendMail(request)
+        elif action == 'delete':
+            delete_selected_recipients(request)
+        else:
+            messages.warning(request, "Something went wrong !")
+            return redirect("dashboard")
+    return redirect("dashboard")
+
 
 def add_in_bulk(request):
     user_id = request.session.get('user_id')
@@ -499,16 +516,16 @@ def read_file(request, file_id):
     user = get_object_or_404(emailUsers, pk=user_id)
     user_file = get_object_or_404(UserFiles, id=file_id, user=user)
     if not user_file:
-        messages.error(request, "File not found.")
+        messages.warning(request, "File not found.")
         return redirect('profile')
     if not user_file.file:
-        messages.error(request, "No file associated with this record.")
+        messages.warning(request, "No file associated with this record.")
         return redirect('profile')
     try:
         file_path = user_file.file.path
         if not os.path.isfile(file_path):
-            messages.error(request, "File does not exist on the server.")
-            return redirect('profile')
+            messages.warning(request, "File does not exist on the server. Upload again.")
+            return redirect('dashboard')
         
         receipients = extract_receipients_from_file(user, user_file, request)
         if receipients:
