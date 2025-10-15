@@ -3,6 +3,9 @@ body {
     color: #f1f1f1;
 }
 
+*{
+    margin:0px;
+}
 
 .hidden {
     display: none !important;
@@ -46,9 +49,15 @@ footer div .row {
 
 .dashboard{
     background-color: #3e3b3b95 !important;
+    width: 100%;
+    margin: 5%;
 }
 
-
+.add_recepient{
+    background-color: #3a3d39af;
+    padding:2%;
+    border-radius: 3%;
+}
 
 
 
@@ -191,12 +200,15 @@ footer div .row {
     background-color: #515558;
     padding: 8px;
     font-size: 1rem;
-    transition: 0.4s;
+    transition: 0.2s;
+    color:white;
 }
 
 
 .form-control:focus {
-    background-color: #6c757db5;
+    background-color: #484c5089;
+    font-weight: bold;
+    color:white;
 }
 
 

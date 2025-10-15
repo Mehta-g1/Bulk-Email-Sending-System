@@ -1,2312 +1,300 @@
 {% extends 'Home/base.html' %}
 {% load static %}
+
 {% block title %}Documentation - Email Sender{% endblock %}
 
 {% block content %}
-
-<div class="container py-5">
-    <style>
-
-
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            border-bottom: 1px solid #30363d;
-            padding-bottom: .3em;
-            margin-top: 24px;
-            margin-bottom: 16px;
-        }
-
-        h1 { 
-            margin-top: 10px;
-            font-size: 3.5em; 
-        }
-        h2 { font-size: 2.5em; }
-        h3 { font-size: 2em; }
-        h4 { font-size: 1.5em; border-bottom: none; }
-
-        a {
-            color: #58a6ff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        p {
-            margin-bottom: 16px;
-        }
-
-        ul, ol {
-            padding-left: 2em;
-            margin-bottom: 16px;
-        }
-
-        li {
-            margin-bottom: .25em;
-        }
-
-        code {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            /* font-size: 85%; */
-            padding: .2em .4em;
-            margin: 0;
-            background-color: rgba(110,118,129,0.4);
-            border-radius: 6px;
-        }
-
-        pre {
-            padding: 16px;
-            overflow: auto;
-            font-size: 85%;
-            line-height: 1.45;
-            background-color: #0d1117;
-            border-radius: 6px;
-            border: 1px solid #30363d;
-            margin-bottom: 16px;
-        }
-
-        pre code {
-            display: inline;
-            padding: 0;
-            margin: 0;
-            overflow: visible;
-            line-height: inherit;
-            word-wrap: normal;
-            background-color: transparent;
-            border: 0;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            box-sizing: content-box;
-            background-color: #0d1117;
-        }
-
-        hr {
-            height: .5em;
-            padding: 0;
-            margin: 24px 0;
-            background-color: #30363d;
-            border: 0;
-        }
-
-        blockquote {
-            padding: 0 1em;
-            color: #8b949e;
-            border-left: .25em solid #30363d;
-            margin-left: 0;
-            margin-right: 0;
-            margin-bottom: 16px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 16px;
-            display: block;
-            overflow: auto;
-        }
-
-        th, td {
-            padding: 8px 12px;
-            border: 1px solid #30363d;
-            text-align: left;
-        }
-
-        thead {
-            background-color: #161b22;
-        }
-
-        tr {
-            background-color: #0d1117;
-            border-top: 1px solid #21262d;
-        }
-
-        tr:nth-child(2n) {
-            background-color: #161b22;
-        }
-
-        /* Custom class for TOC */
-        .table-of-contents ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .table-of-contents > ul > li > ul {
-            padding-left: 20px;
-            margin-top: 8px;
-        }
-        .table-of-contents a {
-            font-weight: normal;
-        }
-        .table-of-contents > ul > li > strong > a {
-            font-weight: bold;
-        }
-    </style>
-</head>
-
-<body>
-<div class="container-fluid">
-    <h1>Tutorial: Bulk-Email-Sending-System</h1>
-    <p>This project is a <strong>bulk email sending system</strong> designed to help users <em>manage their email marketing efforts</em>. It allows users to store their own email sending account details, organize lists of recipients, and create reusable email templates. The system then efficiently sends personalized emails to selected recipients using the user's configured settings, simplifying mass communication.</p>
-    <h2>Visual Overview</h2>
-    <p><img alt="Screenshot of the Sign Up page" src=" ../media/images/visual_overview.png " /></p>
-    <h2>Table of Contents</h2>
-    <div class="table-of-contents">
-        <ul>
-            <li>
-                <strong><a href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</a></strong>
-                <ul>
-                    <li><a href="#1-user-registration-sign-up">1.1 User Registration (Sign Up)</a></li>
-                    <li><a href="#2-user-login">1.2 User Login</a></li>
-                    <li><a href="#3-session-management">1.3 Session Management</a></li>
-                    <li><a href="#4-logout">1.4 Logout</a></li>
-                    <li><a href="#5-password-reset">1.5 Password Reset</a></li>
-                    <li><a href="#6-password-hashing-a-security-note">1.6 Password Hashing (A Security Note)</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-2-emailusers-model">Chapter 2: emailUsers Model</a></strong>
-                <ul>
-                    <li><a href="#1-login--basic-identification">2.1 Login &amp; Basic Identification</a></li>
-                    <li><a href="#2-email-sending-configuration-smtp-details">2.2 Email Sending Configuration (SMTP Details)</a></li>
-                    <li><a href="#3-professional--designation-information">2.3 Professional / Designation Information</a></li>
-                    <li><a href="#4-personal-information">2.4 Personal Information</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-3-receipent-model">Chapter 3: Receipent Model</a></strong>
-                <ul>
-                    <li><a href="#1-the-owner-sender">3.1 The Owner (Sender)</a></li>
-                    <li><a href="#2-core-contact-information">3.2 Core Contact Information</a></li>
-                    <li><a href="#3-organization--notes">3.3 Organization &amp; Notes</a></li>
-                    <li><a href="#4-tracking-information">3.4 Tracking Information</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-4-template-model">Chapter 4: Template Model</a></strong>
-                <ul>
-                    <li><a href="#1-the-owner-user">4.1 The Owner (user)</a></li>
-                    <li><a href="#2-the-email-content">4.2 The Email Content</a></li>
-                    <li><a href="#3-status-and-tracking">4.3 Status and Tracking</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-5-django-views">Chapter 5: Django Views</a></strong>
-                <ul>
-                    <li><a href="#1-its-a-python-function">5.1 It's a Python Function</a></li>
-                    <li><a href="#2-the-request-object">5.2 The <code>request</code> Object</a></li>
-                    <li><a href="#3-the-render-function-showing-html-pages">5.3 The <code>render()</code> Function (Showing HTML Pages)</a></li>
-                    <li><a href="#4-the-redirect-function-sending-users-to-another-page">5.4 The <code>redirect()</code> Function (Sending Users to Another Page)</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-6-email-sending-utilities">Chapter 6: Email Sending Utilities</a></strong>
-                <ul>
-                    <li><a href="#1-getting-your-email-accounts-postal-details">6.1 Getting Your Email Account's "Postal Details"</a></li>
-                    <li><a href="#2-preparing-the-email-letter">6.2 Preparing the Email "Letter"</a></li>
-                    <li><a href="#3-gathering-the-addresses">6.3 Gathering the "Addresses"</a></li>
-                    <li><a href="#4-the-post-office-connection">6.4 The "Post Office Connection"</a></li>
-                    <li><a href="#5-sending-the-letter">6.5 Sending the "Letter"</a></li>
-                    <li><a href="#6-updating-our-records">6.6 Updating Our Records</a></li>
-                </ul>
-            </li>
-            <li>
-                <strong><a href="#chapter-7-django-url-routing">Chapter 7: Django URL Routing</a></strong>
-                <ul>
-                    <li><a href="#1-urls-and-paths">7.1 URLs and Paths</a></li>
-                    <li><a href="#2-the-urlpatterns-list">7.2 The <code>urlpatterns</code> List</a></li>
-                    <li><a href="#3-the-path-function-connecting-roads-to-buildings-views">7.3 The <code>path()</code> Function: Connecting Roads to Buildings (Views)</a></li>
-                    <li><a href="#4-include-organizing-your-road-map-by-neighborhood">7.4 <code>include()</code>: Organizing Your Road Map by Neighborhood</a></li>
-                    <li><a href="#5-url-parameters-dynamic-addresses">7.5 URL Parameters: Dynamic Addresses</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <hr />
-    <h2 id="chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</h2>
-    <p>Welcome to the <strong>Bulk-Email-Sending-System</strong> tutorial! In this first chapter, we're going to explore a fundamental concept for almost any application: <strong>User Authentication &amp; Session Management</strong>.</p>
-    <p>Think of our email system like an exclusive club. Before you can send any emails (which is like throwing a party
-        inside the club!), you need to get past the doorman and get a special wristband.</p>
-    <ul>
-        <li><strong>Authentication</strong> is like the doorman checking your ID: Are you who you say you are? Do you
-            have permission to enter?</li>
-        <li><strong>Session Management</strong> is like getting a wristband or a coat check ticket: Once you're inside,
-            the club remembers you so you don't have to show your ID every time you go to the bar or the dance floor. It
-            lets you move around freely until you decide to leave.</li>
-    </ul>
-    <p>This system ensures that only registered users can access the email sending features, manage their settings, and that their activity is private and secure.</p>
-    <h3>Why is this important?</h3>
-    <p>Imagine you've set up an account to send emails. You definitely don't want someone else to log in as you and send emails from your account! This is why we need authentication. And once you've logged in, you don't want to type
-        your password every single time you click a button; that's where session management comes in handy.</p>
-    <h3>Our Central Use Case: A User Logs In</h3>
-    <p>Let's imagine our main goal for this chapter: <strong>A new user wants to sign up, then log in to their account
-            to start using the system.</strong> We'll break down how our system handles this process, from creating an
-        account to proving your identity and staying logged in.</p>
-    <hr />
-    <h3>Key Concepts</h3>
-    <p>Let's look at the main parts of User Authentication and Session Management in our system:</p>
-    <ol>
-        <li><strong>User Registration (Sign Up):</strong> How new users create an account.</li>
-        <li><strong>User Login:</strong> How existing users prove who they are.</li>
-        <li><strong>Session Management:</strong> How the system remembers a logged-in user.</li>
-        <li><strong>Logout:</strong> How a user ends their session.</li>
-        <li><strong>Password Reset:</strong> What happens if a user forgets their password.</li>
-        <li><strong>Password Hashing (A Security Note):</strong> An important aspect of password security.</li>
-    </ol>
-    <p>Let's dive into each one!</p>
-    <h4 id="1-user-registration-sign-up">1. User Registration (Sign Up)</h4>
-    <p>This is the first step for anyone who wants to use our email sending system. They need to create an account,
-        providing basic information like their name, email address, and a password.</p>
-    <p>Our system uses a <code>signUp</code> page where users fill out a form. Once they submit it, their information is
-        stored in the database.</p>
-    <p>Here's a simplified look at the user model and how a new user is created in our
-        <code>Email/CreateUser/models.py</code> file:
-    </p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from django.db import models
-
-class emailUsers(models.Model):
-    name = models.CharField(max_length=100)
-    email_address = models.EmailField(unique=True)
-    # This stores the password the user uses to log in.
-    login_password = models.CharField(max_length=50, null=False, default="test1234")
-    # ... other user details like personalEmail, dob, etc. ...
-</code></pre>
-    <p>This <code>emailUsers</code> model acts like a blueprint for each user's account information. When a new user
-        signs up, a new <code>emailUsers</code> entry is created in our database.</p>
-    <p>Here's a glimpse of how the <code>signUp</code> process adds a new user to the database in
-        <code>Email/CreateUser/views.py</code>:
-    </p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py
-from .models import emailUsers
-from django.shortcuts import redirect
-
-def signUp(request):
-    if request.method == 'POST':
-        # ... (get name, email, passwords, etc. from the form) ...
-        
-        # Check if email is already registered
-        if emailUsers.objects.filter(email_address=email).exists():
-            # ... (show error message) ...
-            return render(request, 'CreateUser/signUp.html')
-        
-        # Create a new user entry in the database
-        user = emailUsers.objects.create(
-            name=name,
-            email_address=email,
-            login_password=login_password, # &lt;--- Storing the login password
-            # ... (other fields) ...
-        )
-        # ... (show success message and redirect to login) ...
-        return redirect("Login")
-    return render(request, 'CreateUser/signUp.html')
-</code></pre>
-    <p>After successfully signing up, the user can then proceed to log in.</p>
-    <h4 id="2-user-login">2. User Login</h4>
-    <p>Once a user has an account, they need to log in to access their features. This involves providing their
-        registered email address and password. Our system then checks if these credentials match an existing user in the
-        database.</p>
-    <p>The <code>Login</code> view in <code>Email/CreateUser/views.py</code> handles this:</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py
-def Login(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get('password')
-
-        try:
-            # Try to find a user with the provided email
-            user = emailUsers.objects.get(email_address=email)
-
-            # Check if the entered password matches the stored password
-            if user.login_password == password:
-                # Password matches! Login successful.
-                # Now, establish a session for the user.
-                request.session["user_id"] = user.id
-                request.session.set_expiry(0) # Session expires when browser closes
-                return redirect("dashboard")
-            else:
-                # Incorrect password
-                # ... (show warning) ...
-        except emailUsers.DoesNotExist:
-            # Email not found
-            # ... (show warning) ...
-    return render(request, 'CreateUser/login.html')
-</code></pre>
-    <p>The <code>Login</code> page (<code>Email/templates/CreateUser/login.html</code>) provides the form for users to
-        enter their email and password.</p>
-    <h4 id="3-session-management">3. Session Management</h4>
-    <p>After a user successfully logs in, the system needs a way to remember them as they navigate through different
-        pages. This is what <strong>session management</strong> does. Instead of asking for their username and password
-        on every page, the system gives them a temporary "ticket" (a session ID) that's stored in their web browser (a
-        cookie) and on the server.</p>
-    <p>When the user requests another page, their browser sends this "ticket" back to the server. The server then knows
-        who the user is without them having to log in again.</p>
-    <p>In our system, after a successful login, a <code>user_id</code> is stored in <code>request.session</code>:</p>
-<pre><code class="language-python"># Inside the Login view after successful password check
-request.session["user_id"] = user.id
-</code></pre>
-    <p>This <code>user_id</code> is how the application keeps track of who is logged in. When a user visits a protected
-        page, like the <code>dashboard</code>, the system checks if <code>user_id</code> exists in their session:</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py
-def dashboard(request):
-    user_id = request.session.get("user_id") # Get the user ID from the session
-
-    if not user_id: # If user_id is not in session, they are not logged in
-        # ... (show warning and redirect to login) ...
-        return redirect('Login')
-    
-    # If user_id exists, retrieve the user's information
-    user = emailUsers.objects.get(id=user_id)
-    # Now you know who the user is and can display personalized content
-    # ... (rest of the dashboard logic) ...
-    return render(request, 'CreateUser/dashboard.html', {'username': user.name})
-</code></pre>
-    <h4 id="4-logout">4. Logout</h4>
-    <p>When a user is done using the system, they can choose to <strong>logout</strong>. This action simply tells the
-        system to forget their session. It's like returning your wristband at the club exit. Once logged out, the user
-        will have to log in again to access any protected features.</p>
-    <p>Our <code>logout</code> view in <code>Email/CreateUser/views.py</code> handles this:</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py
-def logout(request):
-    if 'user_id' in request.session:
-        del request.session['user_id'] # Remove the user_id from the session
-    # ... (show success message) ...
-    return redirect("Login")
-</code></pre>
-    <h4 id="5-password-reset">5. Password Reset</h4>
-    <p>What if a user forgets their password? Our system provides a way to reset it securely. This usually involves:</p>
-    <ol>
-        <li>The user requests a password reset by providing their email address.</li>
-        <li>The system generates a unique, temporary <strong>token</strong>.</li>
-        <li>This token is sent to the user's registered email address in a special link.</li>
-        <li>The user clicks the link, which directs them to a page where they can set a new password.</li>
-        <li>The system verifies the token, allows the user to set a new password, and then invalidates the token so it cannot be used again.</li>
-    </ol>
-    <p>Our system uses a model called <code>reset_link</code> in <code>Email/CreateUser/models.py</code> to keep track
-        of these tokens:</p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from datetime import datetime
-
-class reset_link(models.Model):
-    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
-    token = models.CharField(max_length=50, null=True)
-    datetime = models.DateTimeField(default=datetime.now) # When the link was created
-    new_password = models.CharField(max_length=20, null=True) # Stores the new password temporarily
-    is_attempted = models.BooleanField(default=False) # True if the link has been used
-</code></pre>
-    <p>And here's a peek at how the <code>forgot_password</code> view (<code>Email/CreateUser/views.py</code>) creates
-        and sends this link:</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py
-from django.utils.crypto import get_random_string
-from .utils import send_forget_password_link
-
-def forgot_password(request):
-    if request.method == "POST":
-        email = request.POST.get('email')
-        
-        user = get_object_or_404(emailUsers, email_address=email)
-        if user:
-            token = get_random_string(32) # Generate a unique token
-            
-            # Save the token associated with the user in the database
-            reset_link.objects.create(
-                user=user,
-                token=token
-            )
-            
-            # Send the reset link to the user's email
-            send_forget_password_link(email, token)
-            # ... (show success message) ...
-            return redirect('Login')
-    return render(request, 'CreateUser/forgot_password.html')
-</code></pre>
-    <p>The <code>reset_password</code> view handles the actual password change, after checking the token's validity
-        using <code>check_token</code> from <code>Email/CreateUser/utils.py</code>.</p>
-    <h4 id="6-password-hashing-a-security-note">6. Password Hashing (A Security Note)</h4>
-    <p>You might have noticed that in the <code>emailUsers</code> model and the <code>Login</code> view, the
-        <code>login_password</code> is directly compared to the entered password. This means the passwords are currently
-        stored in <strong>plaintext</strong> (as plain, readable text) in the database.
-    </p>
-    <p><strong>This is a significant security risk!</strong> If someone were to gain access to the database, all user
-        passwords would be immediately exposed.</p>
-    <p>A much better approach is <strong>password hashing</strong>. Instead of storing the password itself, we store a
-        scrambled, irreversible version of it (a hash). When a user tries to log in, we hash their entered password and
-        compare <em>that hash</em> to the stored hash. If they match, the password is correct. This way, even if the
-        database is compromised, the actual passwords remain secret.</p>
-    <p>The project description clearly states: "<code>login_password</code> is currently stored in plaintext, which
-        should be improved". This is a crucial improvement for the system's security, and a future enhancement!</p>
-    <hr />
-    <h3>How Our System Solves the Login Use Case</h3>
-    <p>Let's walk through the full journey of our central use case: a user signs up, then logs in.</p>
-    <h4>Step 1: User Signs Up</h4>
-    <ol>
-        <li><strong>User visits <code>/signUp/</code>:</strong> They see the sign-up form
-            (<code>Email/templates/CreateUser/signUp.html</code>).</li>
-        <li><strong>User fills and submits the form:</strong> They enter their personal, professional, and account
-            details, including their chosen <code>email_address</code> and <code>login_password</code>.</li>
-        <li><strong>Django receives the POST request:</strong> The <code>signUp</code> view in
-            <code>Email/CreateUser/views.py</code> processes the data.
-        </li>
-        <li><strong>Creates <code>emailUsers</code> object:</strong> A new user record is created in the database using
-            the provided information.</li>
-<pre><code># Simplified from Email/CreateUser/views.py
-user = emailUsers.objects.create(
-    name=name, email_address=email, login_password=login_password, # ...
-)
-</code></pre>
-        <li><strong>Redirects to Login:</strong> After successful registration, the user is redirected to the
-            <code>Login</code> page.
-        </li>
-    </ol>
-    <h4>Step 2: User Logs In</h4>
-    <ol>
-        <li><strong>User visits <code>/login/</code>:</strong> They see the login form
-            (<code>Email/templates/CreateUser/login.html</code>).</li>
-        <li><strong>User enters email and password, submits the form:</strong></li>
-        <li><strong>Django receives the POST request:</strong> The <code>Login</code> view in
-            <code>Email/CreateUser/views.py</code> takes over.
-        </li>
-        <li><strong>Looks up user:</strong> It tries to find an <code>emailUsers</code> record matching the provided
-            <code>email_address</code>.</li>
-<pre><code># Simplified from Email/CreateUser/views.py
-user = emailUsers.objects.get(email_address=email)
-</code></pre>
-        <li><strong>Compares passwords:</strong> It checks if <code>user.login_password == password</code>.</li>
-        <li><strong>Sets session:</strong> If passwords match, the user's <code>id</code> is stored in the
-            <code>request.session</code>.</li>
-<pre><code># Simplified from Email/CreateUser/views.py
-request.session["user_id"] = user.id
-</code></pre>
-        <li><strong>Redirects to Dashboard:</strong> The user is now logged in and taken to their personalized
-            <code>dashboard</code>.
-        </li>
-    </ol>
-    <h4>Step 3: Accessing Protected Pages (e.g., Dashboard)</h4>
-    <ol>
-        <li><strong>User requests <code>/dashboard/</code>:</strong> Their browser sends the request, including their
-            session cookie.</li>
-        <li><strong>Django receives the request:</strong> The <code>dashboard</code> view in
-            <code>Email/CreateUser/views.py</code> runs.
-        </li>
-        <li><strong>Checks session:</strong> It looks for <code>user_id</code> in <code>request.session</code>.</li>
-<pre><code># Simplified from Email/CreateUser/views.py
-user_id = request.session.get("user_id")
-if not user_id:
-    # User not logged in, redirect to Login
-    return redirect('Login')
-</code></pre>
-        <li><strong>Displays content:</strong> Since <code>user_id</code> is found, the system knows who the user is and
-            can fetch their data (e.g., name) from the database to display a personalized dashboard.</li>
-    </ol>
-    <hr />
-    <h3>Internal Implementation: Under the Hood</h3>
-    <p>Let's quickly visualize the login process using a simple diagram.</p>
-    <p><img alt="Internal Implementation" src="screenshots/internal_implimentation.png" /></p>
-    <h4>The <code>emailUsers</code> Model (<code>Email/CreateUser/models.py</code>)</h4>
-    <p>This model is the heart of our user system. It defines what information we store about each registered user.</p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from django.db import models
-from datetime import datetime
-
-class emailUsers(models.Model):
-    name = models.CharField(max_length=100)
-    email_address = models.EmailField(unique=True) # Unique for each user
-    email_password = models.CharField(max_length=200) # Password for sending emails (SMTP)
-    login_password = models.CharField(max_length=50, null=False, default="test1234") # User's login password
-    # ... other fields for designation, personal info, etc. ...
-
-    def __str__(self):
-        return f"{self.name}   -{self.email_address}"
-</code></pre>
-    <ul>
-        <li><code>name</code>: The user's full name.</li>
-        <li><code>email_address</code>: This is the user's unique identifier for logging in.</li>
-        <li><code>email_password</code>: This is the password specific to their email account (e.g., for Gmail SMTP), which is different from their <code>login_password</code>.</li>
-        <li><code>login_password</code>: This is the password the user uses to log into <em>our</em> application. <strong>Remember the security note about plaintext storage here!</strong></li>
-    </ul>
-    <h4>The <code>reset_link</code> Model (<code>Email/CreateUser/models.py</code>)</h4>
-    <p>This model is crucial for handling password reset requests securely.</p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from datetime import datetime
-from django.db import models
-
-class reset_link(models.Model):
-    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE) # Links to the user
-    token = models.CharField(max_length=50, null=True) # The unique secret code
-    datetime = models.DateTimeField(default=datetime.now) # When was this link created?
-    new_password = models.CharField(max_length=20, null=True) # Stores password temporarily
-    is_attempted = models.BooleanField(default=False) # Has this link been used already?
-
-    def __str__(self):
-        return f"{self.user.name}  -Token: {self.token}"
-</code></pre>
-    <ul>
-        <li><code>user</code>: A link to the <code>emailUsers</code> account that this reset token belongs to. If the user account is deleted, this reset link is also deleted automatically (<code>on_delete=models.CASCADE</code>).</li>
-        <li><code>token</code>: A randomly generated string that makes the reset link unique and hard to guess.</li>
-        <li><code>datetime</code>: Records when the reset link was created. This is used to make sure the link expires after a certain time (e.g., 15 minutes), as seen in the <code>check_token</code> utility function in <code>Email/CreateUser/utils.py</code>.</li>
-        <li><code>is_attempted</code>: A flag to prevent the same reset link from being used multiple times.</li>
-    </ul>
-    <h4>URL Routing (<code>Email/CreateUser/urls.py</code>)</h4>
-    <p>These are the "addresses" or "routes" that define where different functionalities (like login, signup, logout,
-        password reset) can be found in our application. When you type <code>/user/login/</code> in your browser, Django
-        knows which function (<code>views.Login</code>) should handle that request.</p>
-<pre><code class="language-python"># File: Email/CreateUser/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('login/', views.Login, name='Login'),
-    path('signUp/', views.signUp, name='signUp'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('logout/', views.logout, name='logout'),
-    path('forgot-password/', views.forgot_password, name='forgot_password'),
-    path('reset-password/&lt;str:token&gt;/', views.reset_password, name='reset_password'),
-    # ... other paths ...
-]
-</code></pre>
-    <ul>
-        <li>Each <code>path()</code> maps a URL pattern (like <code>login/</code>) to a specific <code>view</code> function (like <code>views.Login</code>).</li>
-        <li><code>name='Login'</code> gives a convenient name to refer to this URL in our code, so we don't have to hardcode <code>/user/login/</code>.</li>
-        <li><code>reset-password/&lt;str:token&gt;/</code> shows that the <code>token</code> (the unique password reset code) is part of the URL itself.</li>
-    </ul>
-    <h4>Utility Functions (<code>Email/CreateUser/utils.py</code>)</h4>
-    <p>Sometimes, certain actions are common across different parts of the application but aren't directly related to
-        displaying a page (like a view). These are stored in utility files. For authentication, sending password reset
-        emails is one such utility.</p>
-<pre><code class="language-python"># File: Email/CreateUser/utils.py
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from .models import reset_link
-from django.utils.timezone import now
-from datetime import timedelta
-
-def send_forget_password_link(user_email, token):
-    """
-    Sends a password reset link to the given user email.
-    """
-    reset_link_url = f"http://127.0.0.1:8000/user/reset-password/{token}/"
-    subject = "Reset Your Password"
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [user_email]
-
-    # Email content (plain text and HTML)
-    text_content = f"Please reset your password using: {reset_link_url}"
-    html_content = f"""&lt;p&gt;&lt;a href="{reset_link_url}"&gt;Reset Password&lt;/a&gt;&lt;/p&gt;"""
-
-    msg = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-def check_token(token):
-    """
-    Checks if a given reset token is valid and not expired.
-    """
-    Token = get_object_or_404(reset_link, token=token)
-    if Token.is_attempted:
-        return False # Token already used
-    
-    # Check if the token has expired (e.g., after 15 minutes)
-    timediff = now() - Token.datetime
-    if timediff &gt; timedelta(minutes=15):
-        return False # Token expired
-    return True # Token is valid
-</code></pre>
-    <ul>
-        <li><code>send_forget_password_link</code>: This function crafts and sends an email to the user containing the unique password reset URL. It uses Django's built-in email features.</li>
-        <li><code>check_token</code>: This function is called when a user clicks a reset link. It ensures that the token is real, hasn't been used before, and hasn't expired (e.g., after 15 minutes from its creation time). This is a crucial security step.</li>
-    </ul>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>In this chapter, we've learned the fundamental concepts of <strong>User Authentication &amp; Session
-            Management</strong>. We explored how users sign up, log in, stay logged in with sessions, and log out. We
-        also touched upon the important process of password reset and highlighted a crucial security consideration
-        regarding password storage (plaintext vs. hashing).</p>
-    <p>This abstraction is like the gatekeeper of our bulk email sending system, making sure only authorized users can
-        access its features and that their experience is smooth and personalized.</p>
-    <p>Next, we'll dive deeper into the core data structure that holds all our user's information: the
-        <code>emailUsers</code> model itself. We'll explore all the different fields it contains and why they are important for our application.</p>
-    <h2 id="chapter-2-emailusers-model">Chapter 2: emailUsers Model</h2>
-    <p>Welcome back! In our <a href="#chapter-1-user-authentication--session-management">previous chapter</a>, we learned
-        about <strong>User Authentication &amp; Session Management</strong>. We discovered how users sign up and log in,
-        proving who they are to our Bulk Email Sending System.</p>
-    <p>Now that we know <em>how</em> users get into the system, let's explore <em>who</em> they are. This brings us to
-        the <strong><code>emailUsers</code> Model</strong>, which is the central "identity card" and "control panel" for
-        every user in our application.</p>
-    <h3>What problem does the <code>emailUsers</code> Model solve?</h3>
-    <p>Imagine you're trying to send emails. You need to know:
-        1. <strong>Who are you?</strong> (Your name, your login details).
-        2. <strong>How does your email account send emails?</strong> (Your email address, its password, server settings
-        like host and port).
-        3. <strong>What other details about you are relevant?</strong> (Your job title, department, personal contact
-        info).</p>
-    <p>The <code>emailUsers</code> Model combines all this information into one place. Think of it as a super-detailed
-        profile for each person using our system. It's not just for logging in; it's also where the system finds all the
-        settings it needs to send emails <em>as you</em>!</p>
-    <h3>Our Central Use Case: Viewing and Updating Your Profile</h3>
-    <p>Let's imagine you've successfully logged in and now you want to:
-        1. <strong>See your personal and email settings.</strong>
-        2. <strong>Update some of your details</strong>, like your job title or address.</p>
-    <p>The <code>emailUsers</code> model is what makes this possible!</p>
-    <hr />
-    <h3>Key Concepts: What's Inside <code>emailUsers</code>?</h3>
-    <p>The <code>emailUsers</code> model is like a blueprint for a user's record in our database. Each user gets their
-        own <code>emailUsers</code> entry. Let's break down the different kinds of information it stores:</p>
-    <h4 id="1-login--basic-identification">1. Login &amp; Basic Identification</h4>
-    <p>These fields are essential for identifying the user and allowing them to log into <em>our</em> system.</p>
-    <ul>
-        <li><strong><code>name</code></strong>: Your full name. Simple and straightforward.</li>
-        <li><strong><code>email_address</code></strong>: Your primary email. This is your unique username for logging
-            into our system. No two users can have the same <code>email_address</code>.</li>
-        <li>
-            <p><strong><code>login_password</code></strong>: The password you use to log into <em>this</em> Bulk Email
-                Sending System.</p>
-            <blockquote><strong>Important Security Note (Revisited from Chapter 1!):</strong> As mentioned in <a
-                    href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp;
-                    Session Management</a>, this password is currently stored as plain text. In a real-world
-                application, it should always be <strong>hashed</strong> for security!
-            </blockquote>
-        </li>
-    </ul>
-    <h4 id="2-email-sending-configuration-smtp-details">2. Email Sending Configuration (SMTP Details)</h4>
-    <p>These are the most unique fields of our <code>emailUsers</code> model, as they tell our system <em>how to send
-            emails using your personal email account</em>. SMTP stands for Simple Mail Transfer Protocol, which is the
-        standard way emails are sent across the internet.</p>
-    <ul>
-        <li><strong><code>email_password</code></strong>: This is the password for your actual email account (e.g., your
-            Gmail password or an app-specific password). Our system uses this to log into your email provider's server
-            to send emails <em>as you</em>.</li>
-        <li><strong><code>email_host</code></strong>: This is the address of your email provider's outgoing mail server
-            (SMTP server). For example, for Gmail, it's typically <code>smtp.gmail.com</code>.</li>
-        <li><strong><code>email_port</code></strong>: This is the specific "door" number on the email host server that
-            our system needs to connect to. Common ports are 587 (for TLS encryption) or 465 (for SSL encryption).</li>
-        <li><strong><code>use_tls</code></strong>: A security setting. TLS (Transport Layer Security) encrypts your
-            communication with the email server, keeping your emails private as they travel. <code>True</code> means use
-            it, <code>False</code> means don't.</li>
-    </ul>
-    <h4 id="3-professional--designation-information">3. Professional / Designation Information</h4>
-    <p>These fields help describe a user's role or professional identity.</p>
-    <ul>
-        <li><strong><code>post</code></strong>: Your job title or designation (e.g., "Marketing Manager").</li>
-        <li><strong><code>department</code></strong>: The department you work in (e.g., "Sales").</li>
-        <li><strong><code>about_you</code></strong>: A short description or bio about yourself.</li>
-    </ul>
-    <h4 id="4-personal-information">4. Personal Information</h4>
-    <p>Standard personal details often found in a profile.</p>
-    <ul>
-        <li><strong><code>image</code></strong>: A profile picture.</li>
-        <li><strong><code>personalEmail</code></strong>: Another personal email address, different from the
-            <code>email_address</code> used for login.
-        </li>
-        <li><strong><code>dob</code></strong>: Your Date of Birth.</li>
-        <li><strong><code>fatherName</code></strong>: Your father's name.</li>
-        <li><strong><code>address</code></strong>: Your physical address.</li>
-    </ul>
-    <hr />
-    <h3>How Our System Uses the <code>emailUsers</code> Model (Solving the Use Case)</h3>
-    <p>Let's see how our system uses this model to show and update your profile.</p>
-    <h4>1. Viewing Your Profile</h4>
-    <p>When you click on "My Profile," the system needs to fetch all your details from the <code>emailUsers</code>
-        model.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-from django.shortcuts import render, get_object_or_404
-from .models import emailUsers # Import our model
-
-def profile(request):
-    user_id = request.session.get("user_id") # Get who is logged in
-
-    if not user_id: # If not logged in, redirect
-        return redirect('Login') 
-    
-    # Find the user's data using their ID
-    user = get_object_or_404(emailUsers, pk=user_id)
-
-    # Prepare the data to be shown on the profile page
-    context = {
-        'title': user.name,
-        'name': user.name,
-        'email': user.email_address,
-        'post': user.post,
-        'about': user.about_you,
-        'image': user.image, # Display profile image
-        # ... and other user details ...
+<style>
+    /* --- General & Typography --- */
+    .documentation-body {
+        background-color: #1a1a1b; /* Slightly off-black for depth */
+        color: #e8e6e3;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
-    return render(request, "CreateUser/viewProfile.html", context)
-</code></pre>
-    <p><strong>Explanation:</strong>
-This <code>profile</code> function first checks if a user is logged in using <code>user_id</code> from their session (as learned in <a href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</a>). If so, it uses <code>get_object_or_404(emailUsers, pk=user_id)</code> to find that user's entire record in the <code>emailUsers</code> model. Finally, it passes all the user's details to the <code>viewProfile.html</code> page to be displayed.</p>
-    <h4>2. Updating Your Profile</h4>
-    <p>When you edit your profile and save the changes, the system needs to update your <code>emailUsers</code> record
-        in the database.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-from django.shortcuts import redirect, get_object_or_404
-from .models import emailUsers
-
-def edit_profile_process(request):
-    user_id = request.session.get("user_id")
-    if not user_id:
-        return redirect('Login')
-        
-    user = get_object_or_404(emailUsers, pk=user_id)
-
-    if request.method == 'POST':
-        # Get updated data from the form
-        user.name = request.POST.get('name')
-        user.personalEmail = request.POST.get('personalEmail')
-        user.post = request.POST.get('post')
-        user.department = request.POST.get('department')
-        # ... update other fields ...
-        
-        user.save() # Save the changes to the database
-        return redirect('profile') # Go back to the profile page
-    
-    # If not a POST request, maybe render the edit form again with an error
-    return redirect('profile')
-</code></pre>
-    <p><strong>Explanation:</strong>
-This <code>edit_profile_process</code> function is called when you submit changes to your profile. It first retrieves your <code>emailUsers</code> record. Then, it takes the new values you entered in the form (like a new name or post) and updates the corresponding fields in the <code>user</code> object. The magic happens with <code>user.save()</code>, which tells Django to update this user's record in the database with the new information.</p>
-    <hr />
-    <h4>The <code>emailUsers</code> Model (<code>Email/CreateUser/models.py</code>)</h4>
-    <p>This is the actual blueprint, written in Python, that tells Django how to create the <code>emailUsers</code>
-        table in the database and what kind of information each column (field) should hold.</p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from django.db import models
-from datetime import datetime
-
-class emailUsers(models.Model):
-    # Login &amp; Basic Identification
-    name = models.CharField(max_length=100)
-    email_address = models.EmailField(unique=True) # Must be unique for each user
-    login_password = models.CharField(max_length=50, null=False, default="test1234")
-
-    # Email Sending Configuration (SMTP Details)
-    email_password = models.CharField(max_length=200)   
-    email_host = models.CharField(max_length=100, default="smtp.gmail.com")
-    email_port = models.IntegerField(default=587)
-    use_tls = models.BooleanField(default=True)
-
-    # Professional/Designation info
-    post = models.CharField(max_length=100, null=True)
-    department = models.CharField(max_length=150, null=True)
-    about_you = models.CharField(max_length=500, null=True, default='')
-
-    # Personal info
-    image = models.ImageField(upload_to='images/', default='default.png')
-    personalEmail = models.EmailField(null=True)
-    dob = models.DateField(default=datetime.now, null=True)
-    fatherName = models.CharField(max_length=150, null=True)
-    address = models.CharField(max_length=500, default='', null=True)
-
-    def __str__(self):
-        # This is how the object will be displayed in the Django admin
-        return f"{self.name}   -{self.email_address}"
-</code></pre>
-    <p>Let's break down some of the technical details in this model definition:</p>
-    <table>
-<thead>
-<tr>
-<th>Field Name</th>
-<th>Type (<code>models.</code>)</th>
-<th>Explanation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>id</code></td>
-<td><code>BigAutoField</code></td>
-<td>(Automatically added by Django) A unique number for each user, like an ID card number. <code>primary_key=True</code> means it's the main way to identify a user.</td>
-</tr>
-<tr>
-<td><code>name</code></td>
-<td><code>CharField</code></td>
-<td>Stores short text, like a name. <code>max_length</code> sets the maximum number of characters.</td>
-</tr>
-<tr>
-<td><code>email_address</code></td>
-<td><code>EmailField</code></td>
-<td>Specifically for email addresses. <code>unique=True</code> means no two users can have the same email address, ensuring it's a unique identifier for login.</td>
-</tr>
-<tr>
-<td><code>login_password</code></td>
-<td><code>CharField</code></td>
-<td>Stores the password for <em>our</em> system. <code>null=False</code> means it cannot be empty. <code>default="test1234"</code> provides a default value for new users if not specified, though this should be changed.</td>
-</tr>
-<tr>
-<td><code>email_password</code></td>
-<td><code>CharField</code></td>
-<td>Stores the password for the user's <em>actual email account</em> (for sending emails).</td>
-</tr>
-<tr>
-<td><code>email_host</code></td>
-<td><code>CharField</code></td>
-<td>Stores the SMTP server address. <code>default="smtp.gmail.com"</code> is a common default.</td>
-</tr>
-<tr>
-<td><code>email_port</code></td>
-<td><code>IntegerField</code></td>
-<td>Stores the SMTP server port number (a whole number). <code>default=587</code> is common for TLS.</td>
-</tr>
-<tr>
-<td><code>use_tls</code></td>
-<td><code>BooleanField</code></td>
-<td>Stores <code>True</code> or <code>False</code> to indicate whether TLS encryption should be used.</td>
-</tr>
-<tr>
-<td><code>post</code></td>
-<td><code>CharField</code></td>
-<td>Stores the job title. <code>null=True</code> means this field can be empty in the database.</td>
-</tr>
-<tr>
-<td><code>image</code></td>
-<td><code>ImageField</code></td>
-<td>For uploading images. <code>upload_to='images/'</code> specifies where images will be stored. <code>default='default.png'</code> is a placeholder image.</td>
-</tr>
-<tr>
-<td><code>dob</code></td>
-<td><code>DateField</code></td>
-<td>Stores a date. <code>default=datetime.now</code> means it automatically sets the current date when created, but this might need adjustment if users input their actual birth date.</td>
-</tr>
-<tr>
-<td><code>__str__(self)</code></td>
-<td>(Method)</td>
-<td>A special method that defines how an <code>emailUsers</code> object is represented as a string. This is very helpful when viewing objects in the Django admin panel.</td>
-</tr>
-</tbody>
-</table>
-    <h4><code>admin.py</code> Integration (<code>Email/CreateUser/admin.py</code>)</h4>
-    <p>To easily see and manage our <code>emailUsers</code> in Django's built-in administration panel, we "register" the
-        model:</p>
-<pre><code class="language-python"># File: Email/CreateUser/admin.py
-from django.contrib import admin
-from . import models
-
-# Register your models here.
-admin.site.register(models.emailUsers)
-# ... other models ...
-</code></pre>
-    <p><strong>Explanation:</strong>
-This simple line <code>admin.site.register(models.emailUsers)</code> tells Django to include our <code>emailUsers</code> model in the administration interface. This means you can log into <code>/admin</code> and directly view, add, edit, or delete user accounts without writing more code.</p>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>The <code>emailUsers</code> model is truly the heart of our system when it comes to user data. It's not just a
-        collection of information; it's the bridge between a person signing up, logging in, managing their profile, and
-        most importantly, actually sending emails through their personal email account. By combining login details,
-        email configuration, and personal information, it provides a comprehensive identity for each user.</p>
-    <h2 id="chapter-3-receipent-model">Chapter 3: Receipent Model</h2>
-    <p>Welcome back! In our <a href="#chapter-2-emailusers-model">previous chapter</a>, we got to know the
-        <code>emailUsers</code> Model, which holds all the important details about <em>you</em> – the sender – including
-        your login info and how your email account sends messages.
-    </p>
-    <p>Now that we know who is sending the emails, it's time to figure out <em>who will receive them</em>! This brings
-        us to the <strong><code>Receipent</code> Model</strong>.</p>
-    <h3>What problem does the <code>Receipent</code> Model solve?</h3>
-    <p>Imagine you have a list of people you want to send emails to. This list might include your customers,
-        subscribers, or friends. You need a way to:</p>
-    <ol>
-        <li><strong>Store their email addresses and names</strong> in an organized way.</li>
-        <li><strong>Group them</strong> (e.g., "Clients," "Leads," "Newsletter Subscribers").</li>
-        <li><strong>Add notes</strong> about them.</li>
-        <li><strong>Keep track of when you added them</strong> and how many times you've sent them an email.</li>
-        <li><strong>Ensure each list belongs to a specific <code>emailUsers</code> account</strong> (you!).</li>
-    </ol>
-    <p>The <code>Receipent</code> Model is like your personalized digital address book within our system. Each entry in
-        this address book is a "receipent" (or recipient), and it's securely tied to <em>your</em>
-        <code>emailUsers</code> account.
-    </p>
-    <h3>Our Central Use Case: Managing Your Email List</h3>
-    <p>Let's say you've just logged in. Your main goal for this chapter is:
-        1. <strong>Add a new contact</strong> (an email recipient) to your personal list.
-        2. <strong>View all the contacts</strong> you've added.
-        3. <strong>Update a contact's details</strong> (like their name or category).
-        4. <strong>Remove a contact</strong> from your list.</p>
-    <p>The <code>Receipent</code> model is what makes all this contact management possible!</p>
-    <hr />
-    <h3>Key Concepts: What's in a Recipient?</h3>
-    <p>Just like a physical address book has entries for each person, the <code>Receipent</code> model defines what
-        information we store for each person you want to email.</p>
-    <h4 id="1-the-owner-sender">1. The Owner (<code>Sender</code>)</h4>
-    <p>Every recipient you add must belong to someone – <em>you</em>! This is a very important connection.</p>
-    <ul>
-        <li><strong><code>Sender</code></strong>: This field links each <code>Receipent</code> entry directly to
-            <em>your</em> <code>emailUsers</code> account. It's how the system knows that "john@example.com" belongs to
-            "Alice" and "susan@example.com" belongs to "Bob." If your <code>emailUsers</code> account is deleted, all
-            your associated <code>Receipent</code> entries are also automatically deleted, keeping things tidy.
-        </li>
-    </ul>
-    <h4 id="2-core-contact-information">2. Core Contact Information</h4>
-    <p>These are the basics you'd expect in any address book.</p>
-    <ul>
-        <li><strong><code>email</code></strong>: The actual email address of the person. This is the primary way we'll
-            send them emails.</li>
-        <li><strong><code>name</code></strong>: The recipient's name (e.g., "John Doe"). This allows for personalization
-            in emails and makes your list easier to read.</li>
-    </ul>
-    <h4 id="3-organization--notes">3. Organization &amp; Notes</h4>
-    <p>These fields help you categorize and add context to your recipients.</p>
-    <ul>
-        <li><strong><code>receipent_category</code></strong>: A way to group your recipients (e.g., "Client," "Lead,"
-            "Friend," "Supplier"). This is useful for sending targeted emails.</li>
-        <li><strong><code>comment</code></strong>: A short note or reminder about this specific recipient (e.g., "Met at
-            conference," "Interested in product X").</li>
-    </ul>
-    <h4 id="4-tracking-information">4. Tracking Information</h4>
-    <p>These fields help you keep an eye on your engagement with each recipient.</p>
-    <ul>
-        <li><strong><code>added_date</code></strong>: The date and time when this recipient was added to your list. The
-            system automatically records this.</li>
-        <li><strong><code>send_time</code></strong>: A counter that keeps track of how many times you've sent an email
-            to this specific recipient using our system. This helps you monitor your outreach.</li>
-    </ul>
-    <hr />
-    <h3>How Our System Uses the <code>Receipent</code> Model (Solving the Use Case)</h3>
-    <p>Let's walk through how our application handles adding, viewing, editing, and deleting recipients.</p>
-    <h4>1. Adding a New Recipient</h4>
-    <p>When you want to add a new person to your email list, you'll fill out a form, and our system will create a new
-        <code>Receipent</code> entry for you.
-    </p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified addReceipent view)
-from .models import emailUsers, Receipent
-from django.shortcuts import get_object_or_404, redirect
-
-def addReceipent(request):
-    user_id = request.session.get('user_id') # Get who's logged in
-
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        category = request.POST.get('category')
-        comment = request.POST.get('comment')
-
-        user = get_object_or_404(emailUsers, pk=user_id) # Find the logged-in user
-
-        # Create a new recipient entry in the database
-        Receipent.objects.create(
-            Sender = user, # Link this recipient to the logged-in user
-            email = email,
-            name = name,
-            receipent_category = category,
-            comment = comment,
-        )
-        # ... (show success message and redirect) ...
-        return redirect('dashboard')
-    # ... (render add recipient form) ...
-    return render(request, 'Receipent/add.html')
-</code></pre>
-    <p><strong>Explanation:</strong>
-This <code>addReceipent</code> function is triggered when you submit the "Add Recipient" form. It first identifies the logged-in <code>emailUsers</code> (the <code>Sender</code>). Then, it takes the name, email, category, and comment you entered and creates a brand new <code>Receipent</code> object in the database, making sure to link it to your <code>emailUsers</code> account using <code>Sender = user</code>.</p>
-    <h4>2. Viewing Your Recipients (On the Dashboard)</h4>
-    <p>After you've added recipients, you'll want to see them all listed out. Our dashboard shows a list of all
-        recipients associated with your account.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified dashboard view)
-from .models import emailUsers, Receipent
-# ... other imports ...
-
-def dashboard(request):
-    user_id = request.session.get("user_id") # Get logged-in user ID
-
-    # Fetch all recipients that belong to the logged-in user
-    recipients = Receipent.objects.filter(Sender__id=user_id)
-
-    receipient_list = [
-        {
-            'id':r.id,
-            'name': r.name,
-            'email': r.email,
-            'category': r.receipent_category,
-            'comment': r.comment
-        }
-        for r in recipients
-    ]
-    
-    # ... (prepare other data for dashboard) ...
-    return render(request, 'CreateUser/dashboard.html', {'receipients': receipient_list})
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>dashboard</code> function retrieves your <code>user_id</code> from the session (as we learned in <a href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</a>). Then, <code>Receipent.objects.filter(Sender__id=user_id)</code> is used to find <em>only</em> the recipients linked to your user ID. This ensures you only see your own contacts. The fetched data is then formatted and sent to the dashboard page to be displayed.</p>
-    <h4>3. Editing a Recipient</h4>
-    <p>If a recipient's details change, you can update their information.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified editReceipent view)
-from .models import emailUsers, Receipent
-from django.shortcuts import get_object_or_404, redirect
-from django.utils.timezone import now # For updating added_date
-
-def editReceipent(request, receipient_id):
-    user_id = request.session.get("user_id")
-    user = get_object_or_404(emailUsers, pk=user_id) # Find logged-in user
-
-    # Get the specific recipient, ensuring it belongs to the logged-in user
-    receipent = get_object_or_404(Receipent, Sender=user, pk=receipient_id)
-
-    if request.method == "POST":
-        receipent.name = request.POST.get('name')
-        receipent.email = request.POST.get('email')
-        receipent.receipent_category = request.POST.get('category')
-        receipent.comment = request.POST.get('comment')
-        receipent.added_date = now() # Update the 'last modified' date
-
-        receipent.save() # Save the changes to the database
-        # ... (show success message and redirect) ...
-        return redirect('dashboard')
-    # ... (render edit recipient form, pre-filling current data) ...
-    return render(request, "Receipent/edit.html", {"receipient": receipent})
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>editReceipent</code> function first gets the specific <code>Receipent</code> object you want to edit (identified by <code>receipient_id</code>), <em>and</em> verifies it belongs to you. When you submit the edited form, it updates the <code>receipent</code> object's fields with the new data. <code>receipent.save()</code> then writes these changes back to the database.</p>
-    <h4>4. Deleting a Recipient</h4>
-    <p>If a contact is no longer needed, you can remove them from your list.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified deleteRecipient view)
-from .models import emailUsers, Receipent
-from django.shortcuts import get_object_or_404, redirect
-
-def deleteRecipient(request, receipient_id):
-    user_id = request.session.get("user_id")
-    user = get_object_or_404(emailUsers, id=user_id) # Get logged-in user
-
-    # Get the recipient, ensuring it belongs to this user
-    recipient = get_object_or_404(Receipent, id=receipient_id, Sender=user)
-
-    recipient.delete() # Delete the recipient from the database
-    # ... (show success message and redirect) ...
-    return redirect("dashboard")
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>deleteRecipient</code> function finds the <code>Receipent</code> object using its ID and again verifies that it's owned by the logged-in user. The simple <code>recipient.delete()</code> command then removes that entry permanently from the database.</p>
-    <hr />
-    <h4>The <code>Receipent</code> Model (<code>Email/CreateUser/models.py</code>)</h4>
-    <p>This is the Python blueprint that defines the <code>Receipent</code> table in our database.</p>
-<pre><code class="language-python"># File: Email/CreateUser/models.py
-from django.db import models
-from datetime import datetime
-from .models import emailUsers # Import emailUsers model for the ForeignKey
-
-# ... (emailUsers model definition from Chapter 2) ...
-
-class Receipent(models.Model):
-    # Links to the emailUsers model (the owner/sender)
-    Sender = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
-    
-    email = models.CharField(max_length=200, null=False, unique=False)
-    name = models.CharField(max_length=150, null=False, default="Customer")
-    receipent_category = models.CharField(max_length=100, null=True)
-    comment = models.CharField(max_length=200, null=True)
-    added_date = models.DateTimeField(auto_now=True) # Automatically set on creation/update
-    send_time = models.IntegerField(default=0) # Counter for emails sent
-
-    def __str__(self):
-        # How a Receipent object is shown in Django admin
-        return f"{self.name}   -{self.email}"
-</code></pre>
-    <p>Let's look at the specific fields in detail:</p>
-    <table>
-<thead>
-<tr>
-<th>Field Name</th>
-<th>Type (<code>models.</code>)</th>
-<th>Explanation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>id</code></td>
-<td><code>BigAutoField</code></td>
-<td>(Automatically added by Django) A unique ID for each recipient.</td>
-</tr>
-<tr>
-<td><code>Sender</code></td>
-<td><code>ForeignKey</code></td>
-<td>This is the <strong>most important</strong> field. It creates a link (a foreign key) to the <code>emailUsers</code> model. <code>on_delete=models.CASCADE</code> means if the <code>emailUsers</code> account is deleted, all its <code>Receipent</code> entries are also deleted.</td>
-</tr>
-<tr>
-<td><code>email</code></td>
-<td><code>CharField</code></td>
-<td>Stores the recipient's email address. <code>max_length</code> defines the maximum length. <code>null=False</code> means it cannot be empty. <code>unique=False</code> means multiple users can have a recipient with the same email, but each recipient entry is unique to its <code>Sender</code>.</td>
-</tr>
-<tr>
-<td><code>name</code></td>
-<td><code>CharField</code></td>
-<td>Stores the recipient's name. <code>default="Customer"</code> provides a fallback name if none is given.</td>
-</tr>
-<tr>
-<td><code>receipent_category</code></td>
-<td><code>CharField</code></td>
-<td>Stores a category string for the recipient. <code>null=True</code> means this field can be left empty.</td>
-</tr>
-<tr>
-<td><code>comment</code></td>
-<td><code>CharField</code></td>
-<td>Stores additional notes about the recipient. <code>null=True</code> allows it to be empty.</td>
-</tr>
-<tr>
-<td><code>added_date</code></td>
-<td><code>DateTimeField</code></td>
-<td>Records the date and time the recipient was added or last updated. <code>auto_now=True</code> automatically updates this timestamp whenever the recipient record is saved.</td>
-</tr>
-<tr>
-<td><code>send_time</code></td>
-<td><code>IntegerField</code></td>
-<td>Stores a whole number representing how many times an email has been sent to this recipient. <code>default=0</code> starts the count at zero.</td>
-</tr>
-<tr>
-<td><code>__str__(self)</code></td>
-<td>(Method)</td>
-<td>Defines how a <code>Receipent</code> object is shown as a readable string, which is very helpful in the Django admin panel.</td>
-</tr>
-</tbody>
-</table>
-    <h4><code>admin.py</code> Integration (<code>Email/CreateUser/admin.py</code>)</h4>
-    <p>Just like with <code>emailUsers</code>, we need to register <code>Receipent</code> so we can manage it easily
-        through the Django administration panel:</p>
-<pre><code class="language-python"># File: Email/CreateUser/admin.py
-from django.contrib import admin
-from . import models
-
-admin.site.register(models.emailUsers)
-admin.site.register(models.Receipent) # Registering our Receipent model
-admin.site.register(models.reset_link)
-</code></pre>
-    <p><strong>Explanation:</strong>
-This line tells Django's admin interface to display and allow management of <code>Receipent</code> objects. This means you can log into <code>/admin</code> and view all recipients, filter them by owner, and perform bulk actions if needed.</p>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>The <code>Receipent</code> model is your personal address book within the Bulk Email Sending System. It's how you
-        keep track of all the people you want to send emails to, organized, categorized, and ready for your campaigns.
-        By linking each recipient to your <code>emailUsers</code> account, the system ensures your contact list is
-        private and personal.</p>
-    <p>Now that we know who is sending the emails (<a href="#chapter-2-emailusers-model"><code>emailUsers</code> Model</a>)
-        and who is receiving them (<code>Receipent</code> Model), the next step is to figure out <em>what</em> to send! In the next chapter, we'll explore the <a href="#chapter-4-template-model">Template Model</a>, which allows you to
-        create and manage reusable email content.</p>
-    <h2 id="chapter-4-template-model">Chapter 4: Template Model</h2>
-    <p>Welcome back! In our <a href="#chapter-3-receipent-model">previous chapter</a>, we learned about the
-        <code>Receipent</code> Model, which helps you manage your list of email recipients – the people you want to send
-        emails to. So far, we know <em>who</em> is sending emails (<a href="#chapter-2-emailusers-model"><code>emailUsers</code> Model</a>) and <em>who</em> is receiving them
-        (<code>Receipent</code> Model).
-    </p>
-    <p>Now, the big question is: <strong>what content are we going to send in these emails?</strong> Do we have to type
-        out every email for every person? Luckily, no! This is where the <strong><code>Template</code> Model</strong>
-        comes in.</p>
-    <h3>What problem does the <code>Template</code> Model solve?</h3>
-    <p>Imagine you send similar emails often – maybe a welcome email to new sign-ups, a monthly newsletter, or a special
-        offer. Typing the same subject and body over and over is a huge waste of time and can lead to inconsistencies.
-    </p>
-    <p>The <code>Template</code> Model is like your library of pre-written email drafts. It allows you to:</p>
-    <ol>
-        <li><strong>Create and save reusable email content:</strong> Write an email once, and use it many times.</li>
-        <li><strong>Ensure consistency:</strong> All your welcome emails will have the exact same wording and subject.
-        </li>
-        <li><strong>Save time:</strong> Simply pick a template, and the subject and body are filled in automatically.
-        </li>
-        <li><strong>Designate a default template:</strong> Choose one template as your 'primary' template for quick
-            sending.</li>
-        <li><strong>Track usage:</strong> See how many times a template has been used.</li>
-    </ol>
-    <p>Think of it like having a collection of fancy letterheads and pre-printed forms. When you need to send a specific
-        type of letter, you just grab the right form, fill in a few details, and send it off!</p>
-    <h3>Our Central Use Case: Managing Your Email Templates</h3>
-    <p>Let's say you've successfully logged in and now you want to:
-        1. <strong>Create a new email template</strong> for your next campaign.
-        2. <strong>View all your existing templates.</strong>
-        3. <strong>Edit the subject or body</strong> of an existing template.
-        4. <strong>Set a specific template as your 'primary' (default) one.</strong>
-        5. <strong>Delete a template</strong> you no longer need.</p>
-    <p>The <code>Template</code> Model is the key that unlocks all this content management!</p>
-    <hr />
-    <h3>Key Concepts: What's in an Email Template?</h3>
-    <p>Each entry in your template library (each <code>Template</code> object) holds several pieces of information:</p>
-    <h4 id="1-the-owner-user">1. The Owner (<code>user</code>)</h4>
-    <p>Just like recipients, every template you create belongs to you.</p>
-    <ul>
-        <li><strong><code>user</code></strong>: This field links each <code>Template</code> entry directly to
-            <em>your</em> <code>emailUsers</code> account. It's how the system knows which templates belong to which
-            user. If your <code>emailUsers</code> account is deleted, all your associated <code>Template</code> entries
-            are also automatically deleted, keeping your data clean and private.
-        </li>
-    </ul>
-    <h4 id="2-the-email-content">2. The Email Content</h4>
-    <p>This is the actual message that will be sent.</p>
-    <ul>
-        <li><strong><code>template_name</code></strong>: A memorable name for your template (e.g., "Welcome Email,"
-            "Monthly Newsletter," "Product Update"). This helps you find it easily.</li>
-        <li><strong><code>subject</code></strong>: The subject line of the email.</li>
-        <li><strong><code>body</code></strong>: The main content of the email. This is usually a longer text that makes
-            up the bulk of your message.</li>
-    </ul>
-    <h4 id="3-status-and-tracking">3. Status and Tracking</h4>
-    <p>These fields help you manage and understand how your templates are being used.</p>
-    <ul>
-        <li><strong><code>primary</code></strong>: A <code>True</code> or <code>False</code> flag. If <code>True</code>,
-            this template is designated as your default template. When you choose to send a bulk email without picking a
-            specific template, the system will use the one marked <code>primary</code>. Only one template can be primary
-            at a time per user.</li>
-        <li><strong><code>no_of_time_used</code></strong>: A counter that keeps track of how many times this specific
-            template has been used to send emails. This helps you see which templates are most popular or effective.
-        </li>
-        <li><strong><code>created_at</code></strong>: The date and time when the template was first created. The system
-            records this automatically.</li>
-        <li><strong><code>updated_at</code></strong>: The date when the template was last modified. This also updates
-            automatically when you edit a template.</li>
-    </ul>
-    <hr />
-    <h3>How Our System Uses the <code>Template</code> Model (Solving the Use Case)</h3>
-    <p>Let's see how our application uses the <code>Template</code> model to create, view, edit, and set templates.</p>
-    <h4>1. Creating a New Template</h4>
-    <p>When you want to add a new reusable email message, you'll fill out a form, and our system will create a new
-        <code>Template</code> entry for you.
-    </p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified createTemplate view)
-from .models import Template
-from CreateUser.models import emailUsers
-from django.shortcuts import get_object_or_404 # ... and other imports
-
-def createTemplate(request):
-    user_id = request.session.get('user_id') # Get logged-in user ID
-    user = get_object_or_404(emailUsers, pk=user_id) # Find the logged-in user
-
-    if request.method == "POST":
-        template_name = request.POST.get('name')
-        subject = request.POST.get('subject')
-        body = request.POST.get('body')
-        is_primary = request.POST.get('primary') # Value is 'on' if checkbox is checked
-
-        # Create a new template and link it to the user
-        new_template = Template.objects.create(
-            template_name=template_name,
-            user=user,
-            subject=subject,
-            body=body,
-            primary=(is_primary == 'on') # Set primary based on the checkbox
-        )
-        
-        # If this new template is marked as primary, ensure all other templates
-        # for this user are set to non-primary.
-        if new_template.primary:
-            for t in Template.objects.filter(user=user).exclude(pk=new_template.pk):
-                t.primary = False
-                t.save()
-        # messages.success(request, "Email template created successfully!")
-        # return redirect('templates')
-    # return render(request, 'EmailTemplates/create.html')
-</code></pre>
-    <p><strong>Explanation:</strong>
-This <code>createTemplate</code> function handles the creation of new templates. It first identifies the logged-in <code>emailUsers</code> (the owner). Then, it grabs the <code>template_name</code>, <code>subject</code>, <code>body</code>, and whether it should be <code>primary</code> from your form input. It then creates a new <code>Template</code> object in the database, correctly linking it to your <code>emailUsers</code> account. If you mark it as primary, the code ensures that any other template you previously set as primary is now switched off.</p>
-    <h4>2. Viewing Your Templates</h4>
-    <p>To see all your available templates, the system fetches them from the database and displays them, highlighting
-        which one is currently primary.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified Templates view)
-from .models import Template
-from CreateUser.models import emailUsers # ... and other imports
-
-def Templates(request):
-    user_id = request.session.get('user_id') # Get logged-in user ID
-    user = emailUsers.objects.get(id=user_id) # Get the user object
-
-    # Fetch all templates that belong to the logged-in user
-    all_user_templates = Template.objects.filter(user=user)
-
-    primary_template = None
-    other_templates = []
-
-    # Separate primary template from others
-    for t in all_user_templates:
-        if t.primary:
-            primary_template = t
-        else:
-            other_templates.append(t)
-            
-    # return render(request, 'EmailTemplates/templates.html', {
-    #     'templates': other_templates, # List of non-primary templates
-    #     'primary_template': primary_template, # The single primary template
-    #     'username': user.name,
-    # })
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>Templates</code> function gets your <code>user_id</code> from the session (as learned in <a href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</a>). It then uses <code>Template.objects.filter(user=user)</code> to retrieve <em>only</em> the templates linked to your account. This list is then divided into the <code>primary_template</code> (if one exists) and <code>other_templates</code> to display them appropriately on your templates page.</p>
-    <h4>3. Editing a Template</h4>
-    <p>If you need to change the subject or body of a template, you can edit it.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified editTemplate view)
-from .models import Template
-from django.shortcuts import get_object_or_404 # ... and other imports
-from datetime import datetime
-
-def editTemplate(request, template_id):
-    user_id = request.session.get('user_id')
-    user = get_object_or_404(emailUsers, pk=user_id)
-
-    # Get the specific template, ensuring it belongs to the logged-in user
-    template_to_edit = get_object_or_404(Template, pk=template_id, user=user)
-
-    if request.method == "POST":
-        template_to_edit.template_name = request.POST.get('name')
-        template_to_edit.subject = request.POST.get('subject')
-        template_to_edit.body = request.POST.get('body')
-        template_to_edit.updated_at = datetime.now() # Update the 'last modified' date
-        
-        template_to_edit.save() # Save changes to the database
-        # messages.success(request, "Mail template updated successfully!")
-        # return redirect('templates')
-    # return render(request, 'EmailTemplates/edit.html', {'template': template_to_edit})
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>editTemplate</code> function first fetches the specific <code>Template</code> object you wish to modify (identified by <code>template_id</code>), <em>and</em> verifies it belongs to you. When you submit the edited form, it updates the <code>template_to_edit</code> object's fields with the new data. The <code>template_to_edit.save()</code> command then writes these changes back to the database.</p>
-    <h4>4. Setting a Template as Primary</h4>
-    <p>You can switch which template is your default 'primary' one.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified MakePrimary view)
-from .models import Template
-from CreateUser.models import emailUsers
-from django.shortcuts import get_object_or_404 # ... and other imports
-
-def MakePrimary(request, template_id):
-    user_id = request.session.get('user_id')
-    user = get_object_or_404(emailUsers, pk=user_id)
-
-    # First, find ALL templates belonging to this user
-    user_templates = Template.objects.filter(user=user)
-
-    # Now, set all of the user's templates to NOT primary
-    for template in user_templates:
-        template.primary = False
-        template.save()
-
-    # Finally, find the specific template by ID and set it as primary
-    selected_template = get_object_or_404(Template, pk=template_id, user=user)
-    selected_template.primary = True
-    selected_template.save()
-    # messages.success(request, "Primary template updated!")
-    # return redirect('templates')
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>MakePrimary</code> function ensures that only one template can be primary at a time for a given user. It first finds all your templates and sets their <code>primary</code> flag to <code>False</code>. Then, it finds the specific template you selected (using <code>template_id</code>) and sets its <code>primary</code> flag to <code>True</code>. This makes sure there's always one, and only one, active primary template.</p>
-    <h4>5. Deleting a Template</h4>
-    <p>If a template is no longer needed, you can remove it.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified deleteTemplate view)
-from .models import Template
-from CreateUser.models import emailUsers
-from django.shortcuts import get_object_or_404 # ... and other imports
-
-def deleteTemplate(request, template_id):
-    user_id = request.session.get('user_id')
-    user = get_object_or_404(emailUsers, pk=user_id) # Get logged-in user
-
-    # Get the template, ensuring it belongs to this user
-    template_to_delete = get_object_or_404(Template, pk=template_id, user=user)
-
-    template_to_delete.delete() # Delete the template from the database
-    # messages.success(request, "Email template deleted successfully!")
-    # return redirect('templates')
-</code></pre>
-    <p><strong>Explanation:</strong>
-The <code>deleteTemplate</code> function finds the <code>Template</code> object using its ID and verifies it's owned by the logged-in user. The simple <code>template_to_delete.delete()</code> command then removes that entry permanently from the database.</p>
-    <hr />
-    <h4>The <code>Template</code> Model (<code>Email/EmailTemplates/models.py</code>)</h4>
-    <p>This is the Python blueprint that defines the <code>Template</code> table in our database.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/models.py
-from django.db import models
-from CreateUser.models import emailUsers # Import emailUsers model for the ForeignKey
-
-class Template(models.Model):
-    # Template identification and owner
-    template_name = models.CharField(max_length=100)
-    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE) # Links to the owner
-
-    # Email content
-    subject = models.CharField(max_length=500, null=True)
-    body = models.TextField(null=True) # TextField for longer content
-
-    # Tracking and status
-    created_at = models.DateTimeField(auto_now=True) # Auto-set on creation/update
-    updated_at = models.DateField(null=True, auto_now=True) # Auto-set on creation/update
-    primary = models.BooleanField(default=False) # Is this the default template?
-    no_of_time_used = models.IntegerField(default=0) # How many times used?
-
-    def __str__(self):
-        # How a Template object is shown in Django admin
-        return f" {self.id}  -{self.user.name}  -{self.template_name} -{self.created_at}"
-</code></pre>
-    <p>Let's look at the specific fields in detail:</p>
-    <table>
-<thead>
-<tr>
-<th>Field Name</th>
-<th>Type (<code>models.</code>)</th>
-<th>Explanation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>id</code></td>
-<td><code>BigAutoField</code></td>
-<td>(Automatically added by Django) A unique ID for each template.</td>
-</tr>
-<tr>
-<td><code>template_name</code></td>
-<td><code>CharField</code></td>
-<td>A descriptive name for the template. <code>max_length</code> defines its maximum length.</td>
-</tr>
-<tr>
-<td><code>user</code></td>
-<td><code>ForeignKey</code></td>
-<td>The <strong>most important</strong> field. It links this template to an <code>emailUsers</code> account. <code>on_delete=models.CASCADE</code> means if the user is deleted, all their templates are also deleted.</td>
-</tr>
-<tr>
-<td><code>subject</code></td>
-<td><code>CharField</code></td>
-<td>Stores the email's subject line. <code>null=True</code> means it can be left empty (though usually you'd want a subject!).</td>
-</tr>
-<tr>
-<td><code>body</code></td>
-<td><code>TextField</code></td>
-<td>Stores the main content of the email. <code>TextField</code> is used for long text, suitable for email bodies, and handles multiple lines. <code>null=True</code> allows it to be empty.</td>
-</tr>
-<tr>
-<td><code>created_at</code></td>
-<td><code>DateTimeField</code></td>
-<td>Records the date and time the template was created. <code>auto_now=True</code> automatically updates this timestamp whenever the template record is saved.</td>
-</tr>
-<tr>
-<td><code>updated_at</code></td>
-<td><code>DateField</code></td>
-<td>Records the date the template was last updated. <code>auto_now=True</code> automatically updates this date whenever the template record is saved.</td>
-</tr>
-<tr>
-<td><code>primary</code></td>
-<td><code>BooleanField</code></td>
-<td>A <code>True</code>/<code>False</code> flag. If <code>True</code>, this template is designated as the default for the user. <code>default=False</code> means it's not primary by default.</td>
-</tr>
-<tr>
-<td><code>no_of_time_used</code></td>
-<td><code>IntegerField</code></td>
-<td>A counter for how many times this template has been used to send an email. <code>default=0</code> starts the count at zero. This field is updated in the <code>send_bulk_email</code> utility function (refer to <code>Email/CreateUser/utils.py</code> in the provided code snippets).</td>
-</tr>
-<tr>
-<td><code>__str__(self)</code></td>
-<td>(Method)</td>
-<td>Defines how a <code>Template</code> object is displayed as a readable string, which is very helpful in the Django admin panel.</td>
-</tr>
-</tbody>
-</table>
-    <h4><code>admin.py</code> Integration (<code>Email/EmailTemplates/admin.py</code>)</h4>
-    <p>To easily manage our <code>Template</code> models in Django's administration panel, we register it:</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/admin.py
-from django.contrib import admin
-from .models import Template
-
-admin.site.register(Template) # Registering our Template model
-</code></pre>
-    <p><strong>Explanation:</strong>
-This simple line <code>admin.site.register(Template)</code> tells Django's admin interface to display and allow management of <code>Template</code> objects. You can log into <code>/admin</code> and directly view, add, edit, or delete email templates.</p>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>The <code>Template</code> model is an incredibly powerful feature for any bulk email sending system. It
-        transforms the tedious task of crafting individual emails into a streamlined process of selecting and reusing
-        professional, consistent messages. By providing a structured way to store subjects and bodies, and by allowing
-        users to designate a 'primary' template, it greatly enhances efficiency and consistency in your email campaigns.
-    </p>
-    <p>Now that we understand who is sending emails, who is receiving them, and <em>what</em> content is being sent, the
-        next step is to look at how all these pieces come together through the web interface. In the next chapter, we'll dive into <a href="#chapter-5-django-views">Django Views</a>, which are the "control centers" that process user
-        requests and interact with our models.</p>
-    <h2 id="chapter-5-django-views">Chapter 5: Django Views</h2>
-    <p>Welcome back! In our <a href="#chapter-4-template-model">previous chapter</a>, we explored the <code>Template</code>
-        Model, where you learned how to store and reuse your email content. We now know <em>who</em> is sending (<a href="#chapter-2-emailusers-model"><code>emailUsers</code> Model</a>), <em>who</em> is receiving (<a
-            href="#chapter-3-receipent-model"><code>Receipent</code> Model</a>), and <em>what</em> content is being sent
-        (<code>Template</code> Model).</p>
-    <p>But how do all these pieces come together? How does our web application actually <em>do</em> things when a user
-        clicks a button or types an address in their browser? This is where <strong>Django Views</strong> come into
-        play!</p>
-    <h3>What problem do Django Views solve?</h3>
-    <p>Imagine our Bulk Email Sending System as a bustling restaurant. You, the user, are the customer. When you order a
-        meal (like "show me my dashboard" or "add a new contact"), someone needs to take that order, go to the kitchen
-        (our database and models), prepare the meal (process data), and serve it back to you.</p>
-    <p>Django Views are those skilled chefs! They are Python functions that act as the <strong>core logic units</strong>
-        of our web application. When a web request comes in (an "order"), a view is responsible for:</p>
-    <ol>
-        <li><strong>Receiving the request:</strong> Understanding what the user wants.</li>
-        <li><strong>Processing the request:</strong> This might involve:<ul>
-                <li>Fetching data from the database (using our models).</li>
-                <li>Handling form submissions (like adding a new recipient).</li>
-                <li>Performing some calculations or logic.</li>
-            </ul>
-        </li>
-        <li><strong>Returning a response:</strong> Sending something back to the user's browser, usually by showing an
-            HTML page or redirecting them to another page.</li>
-    </ol>
-    <p>They make our application interactive and bring our models to life!</p>
-    <h3>Our Central Use Case: Interacting with the Application</h3>
-    <p>Let's imagine two common things you'd want to do:
-        1. <strong>View your personalized dashboard:</strong> See your name and all your stored recipients.
-        2. <strong>Add a new recipient:</strong> Fill out a form and save a new contact to your list.</p>
-    <p>Django Views are the heart of how our system handles these actions!</p>
-    <hr />
-    <h3>Key Concepts: Understanding a View's Job</h3>
-    <p>Let's break down the basic ingredients of a Django View.</p>
-    <h4 id="1-its-a-python-function">1. It's a Python Function</h4>
-    <p>A view is simply a Python function that takes at least one argument, <code>request</code>.</p>
-<pre><code class="language-python"># A very basic Django view function
-from django.shortcuts import HttpResponse
-
-def my_first_view(request):
-    # Do something here
-    return HttpResponse("Hello, World!") # Send back a simple text response
-</code></pre>
-    <ul>
-        <li><code>request</code>: This object holds all the information about the incoming web request (who sent it, what data they sent, etc.).</li>
-        <li><code>HttpResponse</code>: This is one way to send a simple text response back to the user.</li>
-    </ul>
-    <h4 id="2-the-request-object">2. The <code>request</code> Object</h4>
-    <p>The <code>request</code> object is like the waiter's order pad. It contains everything the view needs to know
-        about what the user is asking for.</p>
-    <ul>
-        <li><strong><code>request.method</code></strong>: Tells us if the user is <code>GET</code>ting information (like
-            visiting a page) or <code>POST</code>ing information (like submitting a form).</li>
-        <li><strong><code>request.session</code></strong>: Stores information about the logged-in user, like their
-            <code>user_id</code>, so the system remembers them as they navigate. (We saw this in <a href="#chapter-1-user-authentication--session-management">Chapter 1: User Authentication &amp; Session Management</a>).
-        </li>
-        <li><strong><code>request.POST</code></strong>: If a form was submitted, this holds all the data the user typed
-            into the form fields.</li>
-    </ul>
-    <h4 id="3-the-render-function-showing-html-pages">3. The <code>render()</code> Function (Showing HTML Pages)</h4>
-    <p>Most of the time, a view doesn't just return plain text. It returns a beautifully designed HTML page. The
-        <code>render()</code> function helps with this.
-    </p>
-<pre><code class="language-python">from django.shortcuts import render
-
-def my_page_view(request):
-    # ... some logic ...
-    context = {'greeting': 'Welcome to my page!'} # Data to send to the HTML
-    return render(request, 'my_template.html', context)
-</code></pre>
-    <ul>
-        <li><code>render(request, 'template_name.html', context_dictionary)</code>:
-        <ul>
-            <li><code>request</code>: The original request object.</li>
-            <li><code>'template_name.html'</code>: The path to the HTML file you want to show.</li>
-            <li><code>context_dictionary</code>: A Python dictionary where you can put data (like a user's name or a list of items) that you want to display in the HTML template.</li>
-        </ul></li>
-    </ul>
-    <h4 id="4-the-redirect-function-sending-users-to-another-page">4. The <code>redirect()</code> Function (Sending Users to Another Page)</h4>
-    <p>Sometimes, after a user performs an action (like logging in or saving data), you don't want to show them the same
-        page. You want to send them to a <em>different</em> page. This is what <code>redirect()</code> does.</p>
-<pre><code class="language-python">from django.shortcuts import redirect
-
-def login_success_view(request):
-    # ... (user successfully logged in) ...
-    return redirect('dashboard') # Send the user to the 'dashboard' URL
-</code></pre>
-    <ul>
-        <li><code>redirect('url_name')</code>: Sends the user's browser to the URL associated with the given name (e.g., <code>dashboard</code>).</li>
-    </ul>
-    <hr />
-    <h3>How Our System Uses Views (Solving the Use Case)</h3>
-    <p>Let's see how views act as the "chefs" for our central use cases.</p>
-    <h4>1. Viewing Your Personalized Dashboard</h4>
-    <p>When you go to <code>/dashboard/</code>, the <code>dashboard</code> view springs into action.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified dashboard view)
-from django.shortcuts import render, redirect
-from .models import emailUsers, Receipent # Our models!
-
-def dashboard(request):
-    user_id = request.session.get("user_id") # Get logged-in user's ID
-    if not user_id:
-        return redirect('Login') # If no user_id, redirect to login
-
-    user = emailUsers.objects.get(id=user_id) # Fetch the user's details
-    
-    # Fetch all recipients that belong to this logged-in user
-    recipients = Receipent.objects.filter(Sender=user) 
-
-    # Prepare data for the HTML template
-    context = {
-        'title': f"Welcome, {user.name}",
-        'receipients': recipients, # Pass the list of recipients
-        'username': user.name,
+    section .card {
+        border: 1px solid #343a40;
+        border-radius: 0.5rem;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
-    return render(request, 'CreateUser/dashboard.html', context)
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ol>
-<li>The view checks <code>request.session</code> to see if <code>user_id</code> exists. If not, you're not logged in, so it <code>redirect</code>s you to the <a href="#2-user-login">Login</a> page.</li>
-<li>If you are logged in, it uses <code>emailUsers.objects.get(id=user_id)</code> to find <em>your</em> complete profile from the <a href="#chapter-2-emailusers-model"><code>emailUsers</code> Model</a>.</li>
-<li>Then, it fetches all <code>Receipent</code> objects that are linked to you (<code>Sender=user</code>) from the <a href="#chapter-3-receipent-model"><code>Receipent</code> Model</a>.</li>
-<li>Finally, it uses <code>render()</code> to display the <code>dashboard.html</code> page, passing your name (<code>user.name</code>) and your list of <code>recipients</code> so the page can show personalized content.</li>
-</ol>
-    <h4>2. Adding a New Recipient</h4>
-    <p>When you fill out the "Add Recipient" form and click "Save", the <code>addReceipent</code> view handles it.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified addReceipent view)
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import emailUsers, Receipent # Our models!
-
-def addReceipent(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
-        return redirect('Login')
-    
-    if request.method == 'POST': # Is this a form submission?
-        name = request.POST.get('name')       # Get data from the form
-        email = request.POST.get('email')
-        category = request.POST.get('category')
-        
-        user = get_object_or_404(emailUsers, pk=user_id) # Find the logged-in user
-
-        Receipent.objects.create( # Create a NEW recipient in the database
-            Sender = user, # Link it to YOU!
-            email = email,
-            name = name,
-            receipent_category = category,
-        )
-        return redirect('dashboard') # After saving, go back to the dashboard
-        
-    # If not a POST request (e.g., first time visiting the page), show the form
-    return render(request, 'Receipent/add.html', {'title':'Add Recipient'})
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ol>
-<li>The view first checks if you're logged in.</li>
-<li>It then checks <code>request.method == 'POST'</code>. This tells it if the user just submitted a form with new data.</li>
-<li>If it's a <code>POST</code> request, it extracts the <code>name</code>, <code>email</code>, and <code>category</code> that you typed from <code>request.POST</code>.</li>
-<li>It finds your <code>emailUsers</code> object.</li>
-<li>It then uses <code>Receipent.objects.create()</code> to create a brand new entry in the <code>Receipent</code> table, making sure to link it to <em>your</em> <code>emailUsers</code> account (<code>Sender = user</code>).</li>
-<li>After successfully saving, it <code>redirect</code>s you to the <code>dashboard</code> to see your updated list of recipients.</li>
-<li>If it's not a <code>POST</code> request (meaning you just visited the "Add Recipient" page for the first time), it simply <code>render</code>s the empty <code>add.html</code> form page.</li>
-</ol>
-    <hr />
-    <h4>The <code>views.py</code> Files: Where the Magic Happens</h4>
-    <p>All our application's logic, interacting with users and models, lives in Python files named <code>views.py</code>
-        inside each app.</p>
-    <p>Let's look at key examples from <code>Email/CreateUser/views.py</code> and
-        <code>Email/EmailTemplates/views.py</code>.
-    </p>
-    <p><strong>1. Handling Login (<code>Login</code> view):</strong>
-        This view is where users first interact with our system by proving their identity.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-def Login(request):
-    if request.method == "POST": # If a login form was submitted
-        email = request.POST.get("email")
-        password = request.POST.get('password')
-        try:
-            user = emailUsers.objects.get(email_address=email) # Find user
-            if user.login_password == password: # Check password
-                request.session["user_id"] = user.id # Store user ID in session
-                return redirect("dashboard") # Go to dashboard
-            # ... else show error ...
-        except emailUsers.DoesNotExist:
-            # ... show error ...
-    return render(request, 'CreateUser/login.html' ,{'title':'Login Page'}) # Show login form
-</code></pre>
-    <ul>
-        <li>This view shows how <code>request.method == "POST"</code> is used to detect form submissions.</li>
-        <li>It interacts with the <code>emailUsers</code> Model using <code>emailUsers.objects.get()</code>.</li>
-        <li>Crucially, <code>request.session["user_id"] = user.id</code> establishes the user's session.</li>
-        <li>It <code>redirect</code>s on success and <code>render</code>s the login page (with potential errors) otherwise.</li>
-    </ul>
-    <p><strong>2. Viewing Profile (<code>profile</code> view):</strong>
-        This is a straightforward view that fetches data for display.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-def profile(request):
-    user_id = request.session.get("user_id") # Get user ID from session
-    if not user_id: return redirect('Login') # If not logged in, go to login
-
-    user = get_object_or_404(emailUsers, pk=user_id) # Get user details
-    
-    context = {
-        'title': user.name,
-        'name':user.name,
-        'email':user.email_address,
-        # ... other profile data from user object ...
+    section .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
-    return render(request, "CreateUser/viewProfile.html", context=context)
-</code></pre>
-    <ul>
-        <li>This shows how a view relies on the session to identify the user.</li>
-        <li><code>get_object_or_404(emailUsers, pk=user_id)</code> is a handy shortcut to get an object or show a "Not Found" error if it doesn't exist.</li>
-        <li>It prepares a <code>context</code> dictionary to send all the user's details to the <code>viewProfile.html</code> template for display.</li>
-    </ul>
-    <p><strong>3. Editing Profile (<code>edit_profile_process</code> view):</strong>
-        This view handles updating existing data.</p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-def edit_profile_process(request):
-    user_id = request.session.get("user_id")
-    if not user_id: return redirect('profile')
-    
-    user = get_object_or_404(emailUsers, pk=user_id)
+    h2, h4, h5 {
+        font-weight: 600;
+    }
+    h2 .fas, h2 .fa-solid {
+        color: #0d6efd; /* Bootstrap primary for accent */
+        margin-right: 0.75rem;
+    }
+    a {
+        color: #3da9fc;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #6bc1ff;
+        text-decoration: underline;
+    }
 
-    if request.method == 'POST': # If form submitted with new data
-        user.name = request.POST.get('name') # Update fields
-        user.personalEmail = request.POST.get('personalEmail')
-        # ... update other fields ...
-        user.save() # Save changes to the database
-        # messages.success(request, "Your profile has been updated.")
-        return redirect('profile') # Go back to profile page
-    
-    # If not POST, something went wrong or direct access to process URL
-    return redirect('profile')
-</code></pre>
-    <ul>
-        <li>This view retrieves the existing <code>user</code> object.</li>
-        <li>It updates the attributes of this <code>user</code> object with the new data from <code>request.POST</code>.</li>
-        <li>Crucially, <code>user.save()</code> tells Django to write these updated values back to the database.</li>
-    </ul>
-    <p><strong>4. Managing Templates (<code>Templates</code> view from <code>EmailTemplates</code> app):</strong>
-        This view fetches and displays a list of templates belonging to the logged-in user.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/views.py (Simplified)
-from .models import Template
-from CreateUser.models import emailUsers # Need emailUsers here
+    /* --- Sidebar Navigation --- */
+    .sticky-top .card {
+        border-radius: 0.5rem;
+    }
+    .list-group-item-dark-custom {
+        background-color: #2c3034;
+        color: #f8f9fa;
+        border-color: #3a4045;
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+        padding: 0.85rem 1.25rem;
+    }
+    .list-group-item-dark-custom:hover,
+    .list-group-item-dark-custom:focus {
+        background-color: #3a4045;
+        color: #ffffff;
+        border-left: 3px solid #0d6efd;
+        transform: translateX(5px);
+    }
 
-def Templates(request):
-    user_id = request.session.get('user_id')
-    if not user_id: return redirect('Login')
-    
-    user = emailUsers.objects.get(id=user_id) # Get the logged-in user
+    /* --- Card & Content Styling --- */
+    .card-header-dark-custom {
+        background-color: #212529; /* Darker header for contrast */
+        border-bottom: 1px solid #454d55;
+        padding: 1.25rem;
+    }
+    .card-body ul, .card-body ol {
+        padding-left: 1.5rem;
+    }
+    .card-body li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+    }
+    pre.code-block {
+        background-color: #111;
+        color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.3rem;
+        border: 1px solid #444;
+        white-space: pre-wrap;
+    }
+</style>
 
-    # Get templates specifically for this user
-    all_user_templates = Template.objects.filter(user=user)
-
-    primary_template = None
-    other_templates = []
-    for t in all_user_templates: # Loop to find primary and other templates
-        if t.primary:
-            primary_template = t
-        else:
-            other_templates.append(t)
-            
-    return render(request, 'EmailTemplates/templates.html',{
-        'templates': other_templates,
-        'primary_template': primary_template,
-        'username': user.name
-    })
-</code></pre>
-    <ul>
-        <li>This demonstrates fetching data from the <a href="#chapter-4-template-model"><code>Template</code> Model</a> and filtering it (<code>filter(user=user)</code>) to show only templates owned by the current user.</li>
-        <li>It then processes this data (identifying the <code>primary_template</code>) before sending it to the template for display.</li>
-    </ul>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>Django Views are the operational brain of our Bulk Email Sending System. They are the Python functions that
-        listen for web requests, interpret user actions, interact with our database models to fetch or save data, and
-        then return meaningful responses, usually in the form of interactive web pages. Think of them as the busy chefs
-        making sure every customer's order is taken, prepared, and served correctly!</p>
-    <p>Now that we understand how views handle user interaction and manage our data, the next logical step is to see how
-        these views can actually send emails. In the next chapter, we'll dive into the <a href="#chapter-6-email-sending-utilities">Email Sending Utilities</a> that power our system's core
-        functionality.</p>
-    <h2 id="chapter-6-email-sending-utilities">Chapter 6: Email Sending Utilities</h2>
-    <p>Welcome back! In our <a href="#chapter-5-django-views">previous chapter</a>, we learned about <strong>Django Views</strong>, which are the "control centers" of our web application. Views listen for your requests, interact with our data models (like <a href="#chapter-2-emailusers-model"><code>emailUsers</code></a>, <a href="#chapter-3-receipent-model"><code>Receipent</code></a>, and <a href="#chapter-4-template-model"><code>Template</code></a>), and then show you a web page or redirect you.</p>
-    <p>Now, we've gathered all the ingredients: we know <em>who</em> is sending, <em>who</em> is receiving, and
-        <em>what</em> content to send. But how do we actually <em>deliver</em> the email? How do we connect to an email
-        server and push that message out into the world? This is where <strong>Email Sending Utilities</strong> come
-        into play!
-    </p>
-    <h3>What problem do Email Sending Utilities solve?</h3>
-    <p>Imagine you've written a letter (your template), you have a list of friends' addresses (your recipients), and you
-        know who you are (your <code>emailUsers</code> profile). But to actually send the letter, you need to:</p>
-    <ol>
-        <li><strong>Go to the post office:</strong> Connect to an email server (like <code>smtp.gmail.com</code>).</li>
-        <li><strong>Hand over your letter:</strong> Give the server your email's subject and body.</li>
-        <li><strong>Provide the addresses:</strong> Tell the server who to send it to.</li>
-        <li><strong>Show your ID and pay for postage:</strong> Authenticate with your email account's username and
-            password.</li>
-        <li><strong>Make sure it's secure:</strong> Use a secure truck (like TLS encryption) to protect your mail in
-            transit.</li>
-        <li><strong>Do this for many letters efficiently:</strong> Manage sending to a large list.</li>
-    </ol>
-    <p>The <strong>Email Sending Utilities</strong> are like our system's dedicated postal service and its mail trucks.
-        They handle all these "low-level" details. They take your nicely prepared template, your list of recipients, and
-        <em>your</em> email account's sending details, and then they connect, secure, and deliver your emails. They
-        separate the complex email-sending process from the simpler web page logic handled by views.
-    </p>
-    <h3>Our Central Use Case: Sending a Bulk Email Campaign</h3>
-    <p>Let's say you're on your dashboard, you've selected a few recipients from your list, and you want to send them an
-        email using your default template. Your goal for this chapter is:</p>
-    <p><strong>Send a bulk email to your selected recipients using your primary template.</strong></p>
-    <p>These utilities are what make that email actually leave our system and arrive in their inboxes!</p>
-    <hr />
-    <h3>Key Concepts: The Mailroom Operations</h3>
-    <p>The core of our email sending utilities involves a few main steps:</p>
-    <h4 id="1-getting-your-email-accounts-postal-details">1. Getting Your Email Account's "Postal Details"</h4>
-    <p>Before sending any email, our system needs to know <em>your</em> specific email account's settings (host, port,
-        username, password) to connect to its server. These are stored in your <a href="#chapter-2-emailusers-model"><code>emailUsers</code> Model</a> profile.</p>
-    <h4 id="2-preparing-the-email-letter">2. Preparing the Email "Letter"</h4>
-    <p>We need the email's <code>subject</code> and <code>body</code>. This content comes from your chosen (or primary)
-        <a href="#chapter-4-template-model"><code>Template</code> Model</a>.
-    </p>
-    <h4 id="3-gathering-the-addresses">3. Gathering the "Addresses"</h4>
-    <p>We need the actual email addresses of all the people you've selected. These are stored in your <a href="#chapter-3-receipent-model"><code>Receipent</code> Model</a>.</p>
-    <h4 id="4-the-post-office-connection">4. The "Post Office Connection"</h4>
-    <p>Django provides tools to establish a secure connection to an SMTP (Simple Mail Transfer Protocol) server, which
-        is the standard way to send emails. This connection uses your account details.</p>
-    <h4 id="5-sending-the-letter">5. Sending the "Letter"</h4>
-    <p>Once connected, we hand over the prepared email and the list of recipients to the server.</p>
-    <h4 id="6-updating-our-records">6. Updating Our Records</h4>
-    <p>After successfully sending, we update our records: incrementing the <code>send_time</code> for each recipient and
-        <code>no_of_time_used</code> for the template. This helps you track your campaigns.
-    </p>
-    <hr />
-    <h3>How Our System Uses Email Sending Utilities (Solving the Use Case)</h3>
-    <p>Let's trace how your request to send an email travels from the web page to the actual email delivery.</p>
-    <h4>The <code>sendMail</code> View: Triggering the Process</h4>
-    <p>When you click the "Send Email" button on the dashboard after selecting recipients, it triggers the
-        <code>sendMail</code> view. This view's main job is to collect the necessary information and then call our
-        specialized utility function.
-    </p>
-<pre><code class="language-python"># File: Email/CreateUser/views.py (Simplified)
-from django.shortcuts import redirect
-from django.contrib import messages
-# Import our utility function!
-from .utils import send_bulk_email 
-
-def sendMail(request):
-    user_id = request.session.get('user_id')
-    if not user_id: 
-        messages.error(request, 'Login First')
-        return redirect('Login')
-
-    if request.method == "POST":
-        selected_ids = request.POST.getlist("selected") # Get selected recipient IDs
-        if not selected_ids:
-            messages.error(request, "No recipients selected!")
-            return redirect("dashboard")
-
-        # &lt;&lt;&lt; This is the core call to our email sending utility! &gt;&gt;&gt;
-        success = send_bulk_email(user_id, selected_ids) 
-
-        if success:
-            messages.success(request, f"Emails sent to {len(selected_ids)} recipient(s)!")
-        else:
-            messages.error(request, "Failed to send emails. Check your email settings!")
-        return redirect("dashboard")
-    return redirect("dashboard") # If not a POST request, just go to dashboard
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ol>
-<li>The <code>sendMail</code> view first checks if a user is logged in.</li>
-<li>If the request is a <code>POST</code> (meaning you submitted the form), it gets a list of <code>selected_ids</code> from the checkboxes you ticked on the dashboard.</li>
-<li>It then calls the <code>send_bulk_email</code> function (our utility!) and passes your <code>user_id</code> and the <code>selected_ids</code>.</li>
-<li>Based on whether <code>send_bulk_email</code> returns <code>True</code> (success) or <code>False</code> (failure), it displays a message and redirects you back to the dashboard.</li>
-</ol>
-    <p>The <code>sendMail</code> view doesn't bother with <em>how</em> the email is sent; it delegates that
-        responsibility entirely to the <code>send_bulk_email</code> utility.</p>
-    <hr />
-    <h4>The <code>send_bulk_email</code> Function (<code>Email/CreateUser/utils.py</code>)</h4>
-    <p>This is the central utility function that orchestrates the entire email sending process. It needs to get
-        information from both your <code>emailUsers</code> model and your <code>Template</code> model.</p>
-<pre><code class="language-python"># File: Email/CreateUser/utils.py (Core Logic)
-from django.core.mail import EmailMessage, get_connection
-from .models import emailUsers # Access sender's details
-from EmailTemplates.models import Template # Access template content
-from django.shortcuts import get_object_or_404 # For safe object retrieval
-
-# Helper functions (details shown below)
-def get_filtered_recipients(user_id, selected_ids):
-    # ... (code to fetch recipient emails) ...
-    pass
-
-def update_recipients_send_time(selected_ids):
-    # ... (code to update send count) ...
-    pass
-
-def send_bulk_email(user_id, selected_ids):
-    try:
-        sender_user = get_object_or_404(emailUsers, id=user_id)
-        # Get the primary template for this user
-        template = get_object_or_404(Template, user=sender_user, primary=True)
-
-        # 1. Establish a secure connection to the SMTP server
-        connection = get_connection(
-            host=sender_user.email_host,
-            port=sender_user.email_port,
-            username=sender_user.email_address,
-            password=sender_user.email_password,
-            use_tls=sender_user.use_tls,
-        )
-        
-        # 2. Get the actual email addresses of the selected recipients
-        recipient_emails = get_filtered_recipients(user_id, selected_ids)
-
-        # 3. Construct the email message with subject, body, and sender
-        email = EmailMessage(
-            subject=template.subject,
-            body=template.body,
-            from_email=sender_user.email_address,
-            to=recipient_emails, # List of email addresses
-            connection=connection, # Use our established connection
-        )
-        
-        # 4. Send the email!
-        email.send()
-        
-        # 5. Update tracking information
-        template.no_of_time_used += len(selected_ids) # Increment template usage
-        template.save()
-        update_recipients_send_time(selected_ids) # Update each recipient's send count
-
-        return True # Indicate success
-    except Exception as e:
-        print(f"Error sending bulk email: {e}") 
-        return False # Indicate failure
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ul>
-<li><strong><code>sender_user</code></strong>: This line fetches your <code>emailUsers</code> profile, which contains all the necessary SMTP configuration (host, port, username, password, TLS setting) to connect to <em>your</em> email server.</li>
-<li><strong><code>template</code></strong>: This fetches your <code>Template</code> marked as <code>primary=True</code>. This provides the <code>subject</code> and <code>body</code> for the email.</li>
-<li><strong><code>get_connection(...)</code></strong>: This is a powerful Django function that creates a connection object to an email server. It uses your <code>sender_user</code>'s <code>email_host</code>, <code>email_port</code>, <code>email_address</code> (as username), <code>email_password</code>, and <code>use_tls</code> setting to establish a secure link.</li>
-<li><strong><code>get_filtered_recipients(...)</code></strong>: This helper function (detailed below) takes the <code>user_id</code> and the <code>selected_ids</code> from the dashboard and returns a simple list of email addresses.</li>
-<li><strong><code>EmailMessage(...)</code></strong>: This Django class helps create the actual email object. You pass it the <code>subject</code>, <code>body</code>, <code>from_email</code> (your email address), <code>to</code> (the list of recipient emails), and the <code>connection</code> object we just made.</li>
-<li><strong><code>email.send()</code></strong>: This is the command that finally sends the constructed email through the established connection to the SMTP server.</li>
-<li><strong>Tracking Updates</strong>: After sending, <code>template.no_of_time_used</code> is increased by the number of emails sent, and <code>update_recipients_send_time</code> is called to update each recipient's individual <code>send_time</code> count.</li>
-</ul>
-    <h4>Helper: Getting Recipient Emails (<code>get_filtered_recipients</code>)</h4>
-    <p>This function simply queries the <code>Receipent</code> model to get the email addresses of the selected
-        recipients.</p>
-<pre><code class="language-python"># File: Email/CreateUser/utils.py (Helper for send_bulk_email)
-from .models import Receipent
-
-def get_filtered_recipients(user_id, selected_ids):
-    # Find all Receipent objects that belong to this user AND are in the selected_ids list
-    recipients = Receipent.objects.filter(Sender__id=user_id, id__in=selected_ids)
-    
-    # Extract only the email addresses into a list
-    return [r.email for r in recipients]
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ul>
-<li><code>Receipent.objects.filter(...)</code>: This uses Django's database querying tools.
-<ul>
-<li><code>Sender__id=user_id</code>: Ensures we only get recipients belonging to the current logged-in user.</li>
-<li><code>id__in=selected_ids</code>: Filters the recipients to include only those whose <code>id</code> is present in the <code>selected_ids</code> list provided by the <code>sendMail</code> view.</li>
-</ul>
-</li>
-<li><code>[r.email for r in recipients]</code>: This is a Python "list comprehension" that quickly creates a new list containing just the <code>email</code> field from each <code>Receipent</code> object found.</li>
-</ul>
-    <h4>Helper: Updating Recipient Send Counts (<code>update_recipients_send_time</code>)</h4>
-    <p>After sending, this function updates the <code>send_time</code> for each recipient.</p>
-<pre><code class="language-python"># File: Email/CreateUser/utils.py (Helper for send_bulk_email)
-from .models import Receipent
-
-def update_recipients_send_time(selected_ids):
-    # Get all selected recipient objects
-    recipients_to_update = Receipent.objects.filter(id__in=selected_ids)
-    for r in recipients_to_update:
-        r.send_time += 1 # Increase the counter by 1
-        r.save()       # Save the change back to the database
-</code></pre>
-    <p><strong>Explanation:</strong></p>
-<ul>
-<li><code>Receipent.objects.filter(id__in=selected_ids)</code>: Again, fetches the specific recipient objects that were just emailed.</li>
-<li><code>for r in recipients_to_update</code>: It then loops through each of these recipient objects.</li>
-<li><code>r.send_time += 1</code>: For each recipient, its <code>send_time</code> counter is increased by one.</li>
-<li><code>r.save()</code>: This crucial command writes the updated <code>send_time</code> value back into the database for that specific recipient.</li>
-</ul>
-    <h4>Email Configuration in <code>settings.py</code></h4>
-    <p>While the user's <code>emailUsers</code> model stores their <em>personal</em> SMTP settings, Django also has
-        global email settings defined in <code>Email/Email/settings.py</code>. These global settings are used as
-        defaults or for system-level emails (like the password reset link if it wasn't customized per user).</p>
-<pre><code class="language-python"># File: Email/Email/settings.py (Relevant parts)
-# ...
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"  # Default host, often overridden by user's emailUsers
-EMAIL_PORT = 587             # Default port
-EMAIL_USE_TLS = True         # Default TLS setting
-# DEFAULT_FROM_EMAIL and EMAIL_HOST_USER/PASSWORD are for system emails
-DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-# ...
-</code></pre>
-    <p><strong>Explanation:</strong>
-These settings tell Django <em>how</em> to send emails by default. Our <code>send_bulk_email</code> utility, however, overrides these defaults by using the specific <code>email_host</code>, <code>email_port</code>, <code>username</code>, <code>password</code>, and <code>use_tls</code> from the <code>emailUsers</code> object of the logged-in sender. This allows each user to send emails from their <em>own</em> email account, not just a single system account.</p>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>The <strong>Email Sending Utilities</strong> are the unsung heroes of our Bulk Email Sending System! They
-        encapsulate all the complex technical steps involved in connecting to an email server, securely sending
-        messages, and updating our tracking records. By separating this logic into dedicated functions, our Django views
-        remain clean and focused on user interaction, while the utilities handle the heavy lifting of actual email
-        delivery.</p>
-    <p>Now that we know how emails are actually sent, the final piece of the puzzle is understanding how our application directs users to all these different views and functionalities. In the next chapter, we'll learn about <a href="#chapter-7-django-url-routing">Django URL Routing</a>, which is like the map that guides users through our
-        system.</p>
-    <h2 id="chapter-7-django-url-routing">Chapter 7: Django URL Routing</h2>
-    <p>Welcome back! In our <a href="#chapter-6-email-sending-utilities">previous chapter: Email Sending Utilities</a>, we
-        learned how our system actually sends emails by connecting to mail servers and using your
-        <code>emailUsers</code> account and <code>Template</code> content. We have all the pieces for a functional email
-        system: users, recipients, templates, views (the logic), and email utilities.
-    </p>
-    <p>But how do you, the user, tell the system what you want to do? How does your browser request to see the
-        dashboard, or add a new recipient, or send an email? This is where <strong>Django URL Routing</strong> comes
-        into play!</p>
-    <h3>What problem does Django URL Routing solve?</h3>
-    <p>Imagine our Bulk Email Sending System is like a large city. Each feature (like "Login," "Dashboard," "Create
-        Template," "Send Mail") is a specific building or destination in that city. When you type an address into your
-        browser (like <code>http://127.0.0.1:8000/user/dashboard/</code>), you're essentially telling the web
-        application where you want to go.</p>
-    <p>Django URL Routing is like the city's <strong>road map and its address system</strong>. It defines all the
-        available pathways (URLs) in our web application and connects each pathway to a specific function that handles
-        the request (a <strong>view</strong>, which we learned about in <a href="#chapter-5-django-views">Chapter 5: Django Views</a>).</p>
-    <p>It makes sure that when you type <code>/user/dashboard/</code>, Django knows <em>exactly</em> which
-        <code>dashboard</code> view function should run to show you your personalized page. Without routing, Django
-        wouldn't know how to navigate your requests!
-    </p>
-    <h3>Our Central Use Case: Navigating the Application</h3>
-    <p>Let's imagine you've successfully logged in and now you want to:
-        1. <strong>Go to your Dashboard</strong> to see your overview.
-        2. <strong>Visit the page to add a new recipient.</strong>
-        3. <strong>Edit a specific recipient's details.</strong></p>
-    <p>URL Routing is the invisible guide that directs your browser requests to the correct part of our application for
-        all these actions!</p>
-    <hr />
-    <h3>Key Concepts: Understanding the Road Map</h3>
-    <p>Let's break down the main parts of Django's URL routing.</p>
-    <h4 id="1-urls-and-paths">1. URLs and Paths</h4>
-    <p>A <strong>URL</strong> (Uniform Resource Locator) is just a web address, like
-        <code>http://127.0.0.1:8000/user/dashboard/</code>.
-        In Django, we define the "paths" that come <em>after</em> the domain name (like <code>/user/dashboard/</code>).
-        These paths are what Django matches.
-    </p>
-    <h4 id="2-the-urlpatterns-list">2. The <code>urlpatterns</code> List</h4>
-    <p>In Django, URL rules are defined in Python lists called <code>urlpatterns</code>. These lists contain
-        <code>path()</code> functions that map URL patterns to view functions.
-    </p>
-    <h4 id="3-the-path-function-connecting-roads-to-buildings-views">3. The <code>path()</code> Function: Connecting Roads to Buildings (Views)</h4>
-    <p>The <code>path()</code> function is the core of URL routing. It tells Django: "If you see <em>this</em> URL
-        pattern, then call <em>that</em> view function."</p>
-<pre><code class="language-python"># A simple example of a path() function
-# In a urls.py file
-
-from django.urls import path
-from . import views # Assuming 'views' contains your view functions
-
-urlpatterns = [
-    path('login/', views.Login, name='Login'),
-]
-</code></pre>
-    <p>Let's look at the parts of <code>path()</code>:</p>
-    <ul>
-        <li><strong><code>'login/'</code> (URL Pattern):</strong> This is the part of the URL Django tries to match. If
-            a user visits <code>/user/login/</code>, Django looks for this pattern.</li>
-        <li><strong><code>views.Login</code> (View Function):</strong> This tells Django which Python function (from
-            <code>Email/CreateUser/views.py</code> in this case) should be executed when the URL pattern matches. This <code>Login</code> function (<a href="#chapter-5-django-views">Chapter 5: Django Views</a>) then handles showing
-            the login page or processing login data.
-        </li>
-        <li><strong><code>name='Login'</code> (URL Name):</strong> This is a handy nickname for your URL. Instead of
-            writing <code>/user/login/</code> directly in your HTML templates or Python code, you can just say
-            <code>Login</code>. This makes your code more flexible; if you ever change the URL pattern from
-            <code>login/</code> to <code>sign-in/</code>, you only need to change it in one <code>path()</code>
-            definition, not everywhere it's used!
-        </li>
-    </ul>
-    <h4 id="4-include-organizing-your-road-map-by-neighborhood">4. <code>include()</code>: Organizing Your Road Map by Neighborhood</h4>
-    <p>As your application grows, you'll have many URLs. Django encourages you to organize your code into smaller,
-        reusable "apps." Each app can have its own <code>urls.py</code> file. The <code>include()</code> function is
-        used in the main project's <code>urls.py</code> file to "point" to these app-specific <code>urls.py</code>
-        files.</p>
-    <p>Think of it like having a master city map that says, "For anything related to 'users,' look at the
-        <code>CreateUser</code> neighborhood map."
-    </p>
-<pre><code class="language-python"># Example in the project's main urls.py (Email/Email/urls.py)
-from django.urls import path, include
-
-urlpatterns = [
-    path('user/', include("CreateUser.urls")), # Directs '/user/...' requests to CreateUser app's urls.py
-    path('templates/', include("EmailTemplates.urls")), # Directs '/templates/...' requests to EmailTemplates app's urls.py
-]
-</code></pre>
-    <ul>
-        <li><strong><code>'user/'</code></strong>: This is the "base" path. Any URL starting with <code>/user/</code> will be handled by the included URL patterns.</li>
-        <li><strong><code>include("CreateUser.urls")</code></strong>: This tells Django to look inside the <code>CreateUser</code> app's <code>urls.py</code> file for more specific patterns. So, <code>/user/login/</code> would first match <code>user/</code> here, and then Django would look for <code>login/</code> inside <code>CreateUser.urls</code>.</li>
-    </ul>
-    <h4 id="5-url-parameters-dynamic-addresses">5. URL Parameters: Dynamic Addresses</h4>
-    <p>Sometimes, you need part of the URL to change based on what you're looking for. For example, to edit a
-        <em>specific</em> recipient, you need its ID in the URL.
-    </p>
-<pre><code class="language-python"># Example from Email/CreateUser/urls.py
-urlpatterns = [
-    path('receipient/&lt;int:receipient_id&gt;/edit/', views.editReceipent, name="edit_recepient"),
-    path('reset-password/&lt;str:token&gt;/', views.reset_password, name='reset_password'),
-]
-</code></pre>
-    <ul>
-        <li><strong><code>&lt;int:receipient_id&gt;</code></strong>: This is a URL parameter.
-        <ul>
-            <li><code>int</code>: Tells Django to expect an integer (whole number) here.</li>
-            <li><code>receipient_id</code>: This is the name of the variable that will hold the integer value. Django will pass this value as an argument to the <code>views.editReceipent</code> function. So, if you visit <code>/user/receipient/123/edit/</code>, the <code>editReceipent</code> view will receive <code>123</code> as its <code>receipient_id</code> argument.</li>
-        </ul>
-        </li>
-        <li><strong><code>&lt;str:token&gt;</code></strong>: Similar to <code>int</code>, but <code>str</code> means Django expects a string (text) here. This is used for unique codes like password reset tokens.</li>
-    </ul>
-    <hr />
-    <h3>How Our System Uses URL Routing (Solving the Use Case)</h3>
-    <p>Let's see how our application uses URL routing to direct your requests.</p>
-    <h4>1. Going to Your Dashboard</h4>
-    <p>When you type <code>http://127.0.0.1:8000/user/dashboard/</code> into your browser:</p>
-    <ol>
-        <li><strong><code>Email/Email/urls.py</code></strong> (Project-level map) sees <code>user/</code> and uses
-            <code>include("CreateUser.urls")</code>.
-        </li>
-        <li><strong><code>Email/CreateUser/urls.py</code></strong> (App-level map) then looks for
-            <code>dashboard/</code>.
-        </li>
-    </ol>
-<pre><code class="language-python"># File: Email/CreateUser/urls.py (Simplified)
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    # ... other paths ...
-    path('dashboard/', views.dashboard, name='dashboard'), # This matches!
-    # ... other paths ...
-]
-</code></pre>
-    <p><strong>Explanation:</strong>
-Django finds the <code>dashboard/</code> pattern in <code>Email/CreateUser/urls.py</code>. It then calls the <code>dashboard</code> view function from <code>Email/CreateUser/views.py</code> (<a href="#chapter-5-django-views">Chapter 5: Django Views</a>) to process the request and show you your personalized dashboard HTML page.</p>
-    <h4>2. Visiting the Page to Add a New Recipient</h4>
-    <p>When you click a link that leads to <code>http://127.0.0.1:8000/user/receipient/add/</code>:</p>
-    <ol>
-        <li><strong><code>Email/Email/urls.py</code></strong> sees <code>user/</code> and
-            <code>include("CreateUser.urls")</code>.
-        </li>
-        <li><strong><code>Email/CreateUser/urls.py</code></strong> then looks for <code>receipient/add/</code>.</li>
-    </ol>
-<pre><code class="language-python"># File: Email/CreateUser/urls.py (Simplified)
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    # ... other paths ...
-    path('receipient/add/', views.addReceipent, name="add_recepient"), # This matches!
-    # ... other paths ...
-]
-</code></pre>
-    <p><strong>Explanation:</strong>
-Django calls the <code>addReceipent</code> view function from <code>Email/CreateUser/views.py</code>. This view function (<a href="#chapter-5-django-views">Chapter 5: Django Views</a>) would then <code>render</code> the HTML form for adding a new recipient.</p>
-    <h4>3. Editing a Specific Recipient's Details</h4>
-    <p>When you click "Edit" for a recipient with ID <code>5</code>, leading to
-        <code>http://127.0.0.1:8000/user/receipient/5/edit/</code>:
-    </p>
-    <ol>
-        <li><strong><code>Email/Email/urls.py</code></strong> sees <code>user/</code> and
-            <code>include("CreateUser.urls")</code>.
-        </li>
-        <li><strong><code>Email/CreateUser/urls.py</code></strong> then looks for
-            <code>receipient/&lt;int:receipient_id&gt;/edit/</code>.
-        </li>
-    </ol>
-<pre><code class="language-python"># File: Email/CreateUser/urls.py (Simplified)
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    # ... other paths ...
-    path('receipient/&lt;int:receipient_id&gt;/edit/', views.editReceipent, name="edit_recepient"), # This matches!
-    # ... other paths ...
-]
-</code></pre>
-    <p><strong>Explanation:</strong>
-Django matches the pattern, extracts <code>5</code> as the <code>receipient_id</code>, and calls the <code>editReceipent</code> view function from <code>Email/CreateUser/views.py</code>. The <code>editReceipent</code> view then receives <code>5</code> as an argument, uses it to fetch the <code>Receipent</code> from the database (<a href="#chapter-3-receipent-model">Chapter 3: Receipent Model</a>), and displays an edit form.</p>
-    <hr />
-    <h4>The <code>urls.py</code> Files: Our Application's Road Maps</h4>
-    <p>Our project uses several <code>urls.py</code> files to keep the routing organized.</p>
-    <p><strong>1. Project-Level <code>urls.py</code> (<code>Email/Email/urls.py</code>)</strong></p>
-    <p>This is the main map that directs traffic to different <em>apps</em> within our project.</p>
-<pre><code class="language-python"># File: Email/Email/urls.py
-from django.contrib import admin
-from django.urls import path, include # Import include!
-from django.conf import settings
-from django.conf.urls.static import static
-
-urlpatterns = [
-    path("admin/", admin.site.urls), # For Django's admin panel
-    path('',include('Home.urls')), # For URLs like '/'
-    path('user/',include("CreateUser.urls")), # Directs /user/... to CreateUser app
-    path("__reload__/", include("django_browser_reload.urls")), # For development
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-</code></pre>
-    <ul>
-        <li><code>path("admin/", admin.site.urls)</code>: This is how Django makes its powerful admin panel available at <code>/admin/</code>.</li>
-        <li><code>path('',include('Home.urls'))</code>: If someone visits <em>just</em> the root URL (e.g., <code>http://127.0.0.1:8000/</code>), it goes to the <code>Home</code> app's URLs.</li>
-        <li><code>path('user/',include("CreateUser.urls"))</code>: Any URL starting with <code>/user/</code> (like <code>/user/login/</code>, <code>/user/dashboard/</code>) is handled by the <code>CreateUser</code> app's <code>urls.py</code>.</li>
-    </ul>
-    <p><strong>2. <code>CreateUser</code> App <code>urls.py</code> (<code>Email/CreateUser/urls.py</code>)</strong></p>
-    <p>This file handles all routing related to user authentication, profiles, and recipient management.</p>
-<pre><code class="language-python"># File: Email/CreateUser/urls.py
-from django.urls import path
-from . import views # Important: from . import views means views in THIS app
-
-urlpatterns = [
-    path('login/', views.Login, name='Login'),
-    path('signUp/', views.signUp, name='signUp'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('logout/', views.logout, name='logout'),
-    path('send-mail/', views.sendMail, name="send-mail"), # Leads to views.sendMail (<a href="#chapter-6-email-sending-utilities">Chapter 6: Email Sending Utilities</a>)
-    path('viewProfile/', views.profile, name='profile'),
-    path('receipient/add/', views.addReceipent, name="add_recepient"),
-    path('receipient/&lt;int:receipient_id&gt;/edit/', views.editReceipent, name="edit_recepient"), # Uses URL parameter!
-    path('templates/', include('EmailTemplates.urls')), # Another include for nested templates URLs
-]
-</code></pre>
-    <ul>
-        <li>Each <code>path()</code> here points to a specific view function within <code>Email/CreateUser/views.py</code>.</li>
-        <li>Notice <code>path('templates/', include('EmailTemplates.urls'))</code>. This is an <code>include()</code> <em>within an app's urls.py</em>. This means if you go to <code>/user/templates/</code>, it then looks into the <code>EmailTemplates</code> app for further routing!</li>
-    </ul>
-    <p><strong>3. <code>EmailTemplates</code> App <code>urls.py</code>
-            (<code>Email/EmailTemplates/urls.py</code>)</strong></p>
-    <p>This file focuses solely on routes for managing email templates.</p>
-<pre><code class="language-python"># File: Email/EmailTemplates/urls.py
-from django.urls import path
-from . import views # Views specific to EmailTemplates app
-
-urlpatterns = [
-    path('',views.Templates, name='templates'), # Default for /user/templates/
-    path('primary/&lt;int:id&gt;',views.MakePrimary, name='primary'), # Dynamic URL for setting primary template
-    path('edit/&lt;int:id&gt;', views.editTemplate, name='editTemplate'), # Dynamic URL for editing
-    path('create/',views.createTemplate, name='createTemplate'),
-]
-</code></pre>
-    <ul>
-        <li>If the URL is <code>/user/templates/</code> (after the <code>CreateUser</code> app's <code>include</code> takes <code>/user/templates/</code> and passes the empty string <code>''</code> to <code>EmailTemplates.urls</code>), it matches <code>path('', views.Templates)</code>.</li>
-        <li><code>primary/&lt;int:id&gt;</code> and <code>edit/&lt;int:id&gt;</code> show how URL parameters are used to select a <em>specific</em> template (identified by its ID) for an action. These IDs are then passed to the <code>views.MakePrimary</code> or <code>views.editTemplate</code> functions.</li>
-    </ul>
-    <p><strong>4. <code>Home</code> App <code>urls.py</code> (<code>Email/Home/urls.py</code>)</strong></p>
-    <p>This handles simple informational pages for the main website.</p>
-<pre><code class="language-python"># File: Email/Home/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.Home, name='home'), # Matches the root URL '/'
-    path('documentation/', views.documentation, name='documentation'),
-    path('about/', views.about_us, name='about_us'),
-]
-</code></pre>
-    <ul>
-        <li><code>path('', views.Home)</code>: This tells Django that if someone visits the very root of the website (e.g., <code>http://127.0.0.1:8000/</code>), the <code>views.Home</code> function should be called.</li>
-    </ul>
-    <hr />
-    <h3>Conclusion</h3>
-    <p>Django URL Routing is the essential navigation system of our Bulk Email Sending System. It defines the addresses
-        (URLs) for every part of our application and ensures that when a user requests a specific address, the correct view function (<a href="#chapter-5-django-views">Chapter 5: Django Views</a>) is called to handle that request. By
-        using <code>path()</code> for individual routes and <code>include()</code> for organizing URLs by application,
-        Django helps us build a structured, scalable, and easy-to-manage web application.</p>
-    <p>This concludes our journey through the core concepts of the Bulk Email Sending System! You now have a solid
-        understanding of how users are managed, data is stored, emails are sent, and requests are routed.</p>
-</div>
-
-
-
-    <div class="card mb-4" style="background-color: #212121; color: #e0e0e0;">
-        <div class="card-header">
-            <h2 class="h5 mb-0">Developer Information</h2>
+<div class="container my-5 text-white">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="sticky-top" style="top: 2rem;">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h5><i class="fas fa-compass fa-fw me-2"></i> Navigation</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="#introduction" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-rocket fa-fw me-2"></i> Introduction</a>
+                        <a href="#features" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-star fa-fw me-2"></i> Key Features</a>
+                        <a href="#user-manual" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-book-open fa-fw me-2"></i> User Manual</a>
+                        <a href="#bulk-add" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-file-csv fa-fw me-2"></i> Bulk Add</a>
+                        <a href="#app-password" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-key fa-fw me-2"></i> App Passwords</a>
+                        <a href="#backend" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-cogs fa-fw me-2"></i> Backend</a>
+                        <a href="#rules" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-gavel fa-fw me-2"></i> Rules of Use</a>
+                        <a href="#developer" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-laptop-code fa-fw me-2"></i> Developer</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <p>This project is built with Django, a high-level Python web framework. For more information on Django, visit the <a href="https://www.djangoproject.com/" target="_blank">official Django website</a>.</p>
-            <p>The source code for this project is available on GitHub. You can access it here: <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" target="_blank">https://github.com/Mehta-g1/Bulk-Email-Sending-System.git</a></p>
-        </div>
-    </div>
 
-    <div class="card" style="background-color: #212121; color: #e0e0e0;">
-        <div class="card-header">
-            <h2 class="h5 mb-0">Support</h2>
-        </div>
-        <div class="card-body">
-            <p>If you encounter any issues or have any questions, please feel free to open an issue on our <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git/issues" target="_blank">GitHub repository</a>.</p>
+        <div class="col-lg-9">
+            <!-- Introduction Section -->
+            <section id="introduction" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-rocket"></i> Bulk Email Sending System</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Bulk Email Sending System designed to streamline the process of sending personalized emails to a large number of recipients. It provides a user-friendly interface for managing users, creating email templates, handling recipient lists, and sending emails efficiently.</p>
+                        <p>Built with the powerful Django framework, it ensures security, scalability, and maintainability. The system is ideal for marketing campaigns, newsletters, notifications, and any scenario requiring mass email distribution.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-star"></i> Key Features</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>User Authentication:</strong> Secure user registration, login, and session management. Includes password reset functionality via email.</li>
+                            <li><strong>Profile Management:</strong> Users can view and update their profile information, including changing their password.</li>
+                            <li><strong>Dashboard:</strong> A central hub for users to get an overview of their activity, manage recipients, and handle email templates.</li>
+                            <li><strong>Template Management:</strong> Full CRUD (Create, Read, Update, Delete) for reusable email templates with dynamic placeholders.</li>
+                            <li><strong>Recipient Management:</strong> Full CRUD for recipients. Add individually or in bulk using CSV or XLSX files.</li>
+                            <li><strong>Personalized Emails:</strong> Use placeholders in templates (e.g., `{{name}}`) to send personalized content to each recipient.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Manual Section -->
+            <section id="user-manual" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-book-open"></i> Your Step-by-Step Guide</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Welcome aboard! Think of this guide as your personal walkthrough to becoming a pro at using the Email Sender. Let's get you started.</p>
+                        
+                        <hr class="my-4">
+
+                        <h4 class="mt-3">Part 1: Getting Your Account Ready</h4>
+                        <p>Everything starts with your account. Follow these steps to get set up in just a couple of minutes.</p>
+                        <ol>
+                            <li><strong>Signing Up:</strong> Head to the "Sign Up" page. You'll be asked for some basic info: your name, a username for the platform, your email address, and a secure password. Fill that in, and you're in!</li>
+                            <li><strong>Logging In:</strong> Once you've signed up, you can log in anytime from the "Login" page using your email and the password you created.</li>
+                            <li><strong>Spruce Up Your Profile:</strong> After you log in, you'll land on your Dashboard. We recommend heading over to "Edit Profile" to add more details about yourself. You can upload a profile picture, add your phone number, address, and more. This is great for personalizing your presence.</li>
+                            <li><strong>CRUCIAL - Set Your Sending Credentials:</strong> Before you can send any emails, you need to tell the system which email account to send from. Go to your <strong>Account Settings</strong> page. Here, you must enter the email address you want to send from and, most importantly, an <strong>App Password</strong> for that account. Not sure what that is? No worries, just jump to the <a href="#app-password">App Password section</a> for a full explanation.</li>
+                        </ol>
+
+                        <hr class="my-4">
+
+                        <h4 class="mt-3">Part 2: Crafting Your Messages (Managing Templates)</h4>
+                        <p>Templates are your best friend for saving time. Instead of writing the same email over and over, you create a template once and reuse it whenever you want.</p>
+                        <ul>
+                            <li><strong>Finding Your Templates:</strong> On your dashboard, you'll see a section for "Templates". Click it to go to your template manager.</li>
+                            <li><strong>Creating a New Template:</strong> Hit the "Add Template" button. You'll see a simple form.
+                                <ul>
+                                    <li><strong>Name:</strong> This is just for you, so you can easily identify the template later (e.g., "Monthly Newsletter").</li>
+                                    <li><strong>Subject:</strong> This is the actual subject line your recipients will see. Make it catchy!</li>
+                                    <li><strong>Body:</strong> This is the content of your email.</li>
+                                </ul>
+                            </li>
+                            <li><strong>The Magic of Personalization:</strong> In the body of your email, you can use placeholders like `{{name}}`. When you send your email, the system will automatically replace this with each recipient's actual name. It makes a bulk email feel personal! You can also use `{{email}}` and `{{comment}}`.</li>
+                            <li><strong>Editing and Deleting:</strong> Your list of templates is easy to manage. If you need to make a change, just click "Edit". If you're done with a template, click "Delete". We'll always ask you to confirm before permanently removing anything.</li>
+                        </ul>
+
+                        <hr class="my-4">
+
+                        <h4 class="mt-3">Part 3: Building Your Audience (Managing Recipients)</h4>
+                        <p>Now that you have a message, you need people to send it to. Let's look at how to manage your recipient lists.</p>
+                        <ul>
+                            <li><strong>Finding Your Recipients:</strong> From the dashboard, click on the "Recipients" section.</li>
+                            <li><strong>Adding One by One:</strong> If you just met someone new, click "Add Recipient" and fill in their details. It's quick and easy for single entries.</li>
+                            <li><strong>The Time-Saver - Bulk Upload:</strong> Have a whole list of people? Use the "Add in Bulk" feature. You'll need to upload a CSV or XLSX file. For the exact format (it's very specific!), please check the <a href="#bulk-add">Bulk Add section</a> below. This is the most powerful way to build your audience quickly.</li>
+                            <li><strong>Keeping Your List Clean:</strong> Made a typo in someone's email? No problem. Find them in the list and click "Edit". If someone asks to be removed, just click "Delete" to take them off your list respectfully.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bulk Add Section -->
+            <section id="bulk-add" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-file-csv"></i> Bulk Add (CSV/XLSX) File Structure</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>To add recipients in bulk, you must structure your CSV or XLSX file with the following columns in this exact order. The header row is mandatory.</p>
+                        <div class="alert alert-secondary">
+                            <strong>Note:</strong> The `email` column is the only mandatory field. Other fields are optional but recommended for personalization.
+                        </div>
+                        <pre class="code-block"><code>email,name,receipent_category,source,comment</code></pre>
+                        <h5>Example:</h5>
+                        <table class="table table-bordered table-dark">
+                            <thead>
+                                <tr>
+                                    <th>email</th>
+                                    <th>name</th>
+                                    <th>receipent_category</th>
+                                    <th>comment</th></tr>
+                                </thead>
+                            <tbody>
+                                <tr>
+                                    <td>john.doe@example.com</td>
+                                    <td>John Doe</td>
+                                    <td>Customer</td>
+                                    <td>Interested in product A.</td>
+                                </tr>
+                                <tr>
+                                    <td>jane.smith@example.com</td>
+                                    <td>Jane Smith</td>
+                                    <td>Subscriber</td>
+                                    <td>Signed up on 2024-10-10.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- App Password Section -->
+            <section id="app-password" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-key"></i> What is an App Password?</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>For sending emails through services like Gmail, Outlook, or Yahoo, you cannot use your regular account password directly in this application, especially if you have Two-Factor Authentication (2FA) enabled.</p>
+                        <p>An <strong>App Password</strong> is a 16-digit code that gives a third-party app (like this one) permission to access your email account. It's a security measure that allows you to send emails without exposing your main password.</p>
+                        <h5>How to Get an App Password (for Gmail):</h5>
+                        <ol>
+                            <li>Go to your Google Account settings: <a href="https://myaccount.google.com/" target="_blank">myaccount.google.com</a>.</li>
+                            <li>Navigate to the "Security" section.</li>
+                            <li>Under "Signing in to Google," make sure "2-Step Verification" is turned ON. You cannot create App Passwords without it.</li>
+                            <li>On the same page, find and click on "App passwords".</li>
+                            <li>When prompted, select "Mail" for the app and "Other (Custom name)" for the device. Give it a name like "Django Email Sender".</li>
+                            <li>Google will generate a 16-digit password. Copy this password (without spaces) and use it as your `EMAIL_HOST_PASSWORD` in the application's settings.</li>
+                        </ol>
+                        <div class="alert alert-warning"><strong>Important:</strong> Treat this App Password like a real password. Do not share it. You will enter it into the `EMAIL_HOST_PASSWORD` field in your user account settings within this application.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Backend Operations Section -->
+            <section id="backend" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-cogs"></i> Backend Operations</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The application is powered by the following technologies:</p>
+                        <ul>
+                            <li><strong>Framework:</strong> Django 4+</li>
+                            <li><strong>Language:</strong> Python 3.10+</li>
+                            <li><strong>Database:</strong> SQLite (default)</li>
+                            <li><strong>Email Protocol:</strong> SMTP, using Django's built-in email libraries. The user provides their email credentials (including an App Password) which are used to send emails.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rules of Use Section -->
+            <section id="rules" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-gavel"></i> Rules of Use</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Do not use this service for sending unsolicited spam.</li>
+                            <li>Ensure you have consent from recipients before adding them to your lists.</li>
+                            <li>You are responsible for securing your account and your App Password.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Developer Info Section -->
+            <section id="developer" class="mb-5">
+                <div class="card bg-dark text-white">
+                    <div class="card-header card-header-dark-custom">
+                        <h2><i class="fas fa-laptop-code"></i> Developer Info</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>This application was developed by <strong><a target="_blank" href="https://portfolio-gxln.onrender.com/">Vikash Mehta</a></strong>.</p>
+                        <p>For inquiries, you can visit the <a href="{% url 'contact_us' %}">Contact Us</a> page or connect via GitHub.</p>
+                        <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" class="btn btn-light"><i class="fab fa-github"></i> GitHub Repository</a>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>

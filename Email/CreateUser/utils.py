@@ -8,7 +8,7 @@ from EmailTemplates.models import Template
 from django.contrib import messages
 import pandas as pd
 from io import BytesIO
-
+import re
 
 
 def profileCompletetion(user):
@@ -53,17 +53,68 @@ def update_recipients_send_time(selected_ids):
     
 
 
-def send_bulk_email(user_id,selected_ids):
+def send_bulk_email(user_id, selected_ids):
     account = emailUsers.objects.get(id=user_id)
+
+    # Normalize and prepare defaults
+    host = account.email_host.lower().strip()
+    port = account.email_port or 587
+    use_tls = account.use_tls
+    use_ssl = False
+
+    # --- Auto configuration per provider ---
+    if 'zoho' in host:
+        host = 'smtp.zoho.in' if host.endswith('.in') else 'smtp.zoho.com'
+        port = 465
+        use_ssl = True
+        use_tls = False
+
+    elif 'gmail' in host:
+        host = 'smtp.gmail.com'
+        port = 587
+        use_tls = True
+        use_ssl = False
+
+    elif 'outlook' in host or 'office365' in host or 'live' in host:
+        host = 'smtp.office365.com'
+        port = 587
+        use_tls = True
+        use_ssl = False
+
+    elif 'yahoo' in host:
+        host = 'smtp.mail.yahoo.com'
+        port = 465
+        use_ssl = True
+        use_tls = False
+
+    elif 'icloud' in host or 'me.com' in host:
+        host = 'smtp.mail.me.com'
+        port = 587
+        use_tls = True
+        use_ssl = False
+
     try:
+        # Explicitly clear both TLS/SSL defaults
         connection = get_connection(
-            host=account.email_host,
-            port=account.email_port,
+            host=host,
+            port=port,
             username=account.email_address,
             password=account.email_password,
-            use_tls=account.use_tls,
+            use_tls=False,
+            use_ssl=False,
         )
-        template = Template.objects.get(user=get_object_or_404(emailUsers, id=user_id),primary=True)
+
+        # Now enable only one
+        if use_ssl:
+            connection.use_ssl = True
+        elif use_tls:
+            connection.use_tls = True
+
+        # Test connection with your template
+        template = Template.objects.get(
+            user=get_object_or_404(emailUsers, id=user_id),
+            primary=True
+        )
 
         email = EmailMessage(
             subject=template.subject,
@@ -72,20 +123,21 @@ def send_bulk_email(user_id,selected_ids):
             to=get_filtered_recipients(user_id, selected_ids),
             connection=connection,
         )
+        email.content_subtype = "html"
         email.send()
-        template.no_of_time_used =int(template.no_of_time_used) + len(selected_ids)
+
+        # Update info
+        template.no_of_time_used = int(template.no_of_time_used) + len(selected_ids)
         template.save()
-
-
         update_recipients_send_time(selected_ids)
+
     except Exception as e:
-        print('\n\n--------------------')
-        print("Error:",e)
+        print("\n\n--------------------")
+        print("Error while sending email:", e)
         print("---------------------\n\n")
         return False
+
     return True
-
-
 def send_forget_password_link(user_email, token):
     """
     Sends a password reset link to the given user email.
@@ -144,12 +196,17 @@ def check_token(token):
         return False
     return True
 
+def is_validEmail(email):
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if re.fullmatch(pattern, email):
+        return True
+    return False
 
 
 
 
 
-def extract_receipients_from_file(user, file, request):
+def extract_receipients_from_file(user, file, group,  request):
     if not file.file:
         messages.warning(request, "No file found or Crupted file. Please upload again CSV/XLS/XLSX file.")
         return False
@@ -171,28 +228,33 @@ def extract_receipients_from_file(user, file, request):
         df.columns = ["name", "email", "category", "comments"]
 
         added_count = 0
+        skipped_count = 0
         for _, row in df.iterrows():
             name = row['name']
             email = row['email']
             category = row['category']
             comments = row['comments']
 
-            if not Receipent.objects.filter(Sender=user, email=email).exists():
+
+
+            if not Receipent.objects.filter(Sender=user, email=email).exists() and is_validEmail(email):
                 Receipent.objects.create(
                     Sender=user,
                     name=name,
                     email=email,
-                    receipent_category=category,   # 🔹 Fix: field name `receipent_category`
-                    comment=comments,              # 🔹 Fix: field name `comment`
-                    source=f"File Upload - {file.file_name}"
+                    receipent_category=category,   
+                    comment=comments,              
+                    source=f"File - {file.file_name}",
+                    group=group
                 )
                 added_count += 1
             else:
-                messages.warning(request, f"Email {email} already exists and was skipped.")
-        messages.success(request, f"{added_count} recipients added successfully.")
+                skipped_count += 1
+                # messages.warning(request, f"Email {email} already exists or not an email and was skipped.")
+        messages.success(request, f"{added_count} recipients added successfully, {skipped_count} skipped.")
     except Exception as e:
         print("Error processing file:", e)
-        messages.error(request, "There was an error processing the file. Please ensure it has the correct format.")
+        messages.error(request, f"Error processing file. Ensure correct format. {e}")
         return False
 
     return True

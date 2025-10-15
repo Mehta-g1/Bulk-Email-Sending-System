@@ -6,6 +6,7 @@ This is a Django-based web application for sending bulk emails. Users can sign u
 
 - [Project Status](#project-status)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -51,6 +52,23 @@ This is a Django-based web application for sending bulk emails. Users can sign u
 *   **Primary Template:** Set a default template for sending emails.
 *   **Bulk Emailing:** Send emails to all registered recipients with a single click.
 *   **SMTP Integration:** Uses SMTP to send emails, configured via environment variables.
+
+## Screenshots
+
+| Feature | Screenshot |
+| :--- | :--- |
+| Home Page | ![Screenshot of the Home page](screenshots/home.png) |
+| Sign Up Page | ![Screenshot of the Sign Up page](screenshots/signUp_page.png) |
+| Login Page | ![Screenshot of the Login page](screenshots/Login_page.png) |
+| Dashboard | ![Screenshot of the Dashboard](screenshots/dashboard.png) |
+| Profile Page | ![Screenshot of the Profile page](screenshots/profile.png) |
+| Add Recipient Page | ![Screenshot of the Add Recipient page](screenshots/add_receipient.png) |
+| View/Delete Recipient Page | ![Screenshot of the View/Delete Recipient page](screenshots/view_delete.png) |
+| Add Template Page | ![Screenshot of the Add Template page](screenshots/add_template.png) |
+| View Template Page | ![Screenshot of the View Template page](screenshots/template_view.png) |
+| Primary Template | ![Screenshot of the Primary Template](screenshots/primary_template.png) |
+| Forgot Password Page | ![Screenshot of the Forgot Password page](screenshots/forget_pass.png) |
+| Reset Password Page | ![Screenshot of the Reset Password page](screenshots/reset_pass.png) |
 
 ## Getting Started
 
@@ -130,7 +148,7 @@ The application will be available at `http://127.0.0.1:8000/`.
 
 #### Forgot Password
 
-1.  Navigate to the [Forgot Password](http.127.0.0.1:8000/user/forgot-password/) page.
+1.  Navigate to the [Forgot Password](http://127.0.0.1:8000/user/forgot-password/) page.
 2.  Enter your registered email address.
 3.  Click the "Submit" button. A password reset link will be sent to your email.
 
@@ -176,21 +194,24 @@ After logging in, you will be redirected to the dashboard. The dashboard display
 
 ### Recipient Management
 
-#### Add Recipient
+#### Add Recipient (One by One)
 
-1.  From the dashboard, click the "Add Recipient" button.
-2.  Fill in the recipient's details (name, email, category, comment).
-3.  Click the "Add" button.
+1.  From the dashboard, click the "Add Recipients" button and select "One by One".
+2.  Fill in the recipient's details (name, email, etc.) and select a group to assign them to.
+3.  Click the "Save Recipient" button.
 
-![Screenshot of the Add Recipient page](screenshots/add_receipient.png)
+#### Add Recipients in Bulk (CSV/XLS)
 
-#### View, Edit, and Delete Recipient
+1.  From the dashboard, click "Add Recipients" and select "Bulk (CSV/XLS)".
+2.  Select a group to which all recipients from the file will be assigned.
+3.  Choose your CSV or XLSX file. Ensure it follows the specified column format.
+4.  Click "Upload".
+
+#### View, Edit, and Delete
 
 -   **View:** Click on the recipient's name on the dashboard to see their details.
 -   **Edit:** On the recipient details page, click the "Edit" button. Update the information and click "Save".
 -   **Delete:** On the recipient details page, click the "Delete" button.
-
-![Screenshot of the Recipient Details page](screenshots/view_delete.png)
 
 ### Email Template Management
 

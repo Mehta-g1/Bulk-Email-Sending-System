@@ -6,43 +6,69 @@
 {% block content %}
 
 
+<style>
+    .form-control.bg-dark::placeholder { 
+        color: rgba(255, 255, 255, 0.5); 
+        opacity: 1; 
+    }
+    .form-control.bg-dark:-ms-input-placeholder { 
+    }
+    .form-control.bg-dark::-ms-input-placeholder { 
+        color: rgba(255, 255, 255, 0.5);
+    }
+</style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        
-        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
+        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
 
-        <h2>Welcome, {{username }}</h2>
-        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
-            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
-            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%</span>
-            
-        </div>
-        <div class="d-flex gap-2 align-items-center">
-            <a href=" {% url "home" %} " class="btn btn-outline-light"><i class="fa-solid fa-house"></i></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <a href="{% url "templates" %}" class="btn btn-warning">
-            <i class="fa-solid fa-envelope-open-text"></i> Configure Mail Templates
-            </a>
-            <a href="{% url 'logout' %}" class="btn btn-danger">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </a>
-            {% if image %}
-                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
-                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                </a>
-                {% else %}
-                <div class="progileImage rounded-5 bg-light me-2">
-                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
-                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Left-aligned items -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "home" %}">
+                        <i class="fa-solid fa-house me-1"></i>Home
                     </a>
-                </div>
-            {% endif %}
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "templates" %}">
+                        <i class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Right-aligned items -->
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if image %}
+                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                        {% else %}
+                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
+                        {% endif %}
+                        <span class="d-none d-lg-inline">{{ username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'profile' %}">
+                                <span class="d-flex justify-content-between"><span>Profile Completion</span> <span>{{ progress }}%</span></span>
+                                <div class="progress" style="height: 5px;"><div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div></div>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </nav> <hr>
-        
 
-<div class=" dashboard container mt-4 mb-5 pb-4 rounded-4 shadow-lg bg-dark text-light">
+<div class="dashboard container  mt-4 mb-5  pb-4 rounded-4 shadow-lg bg-dark text-light">
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
@@ -52,44 +78,51 @@
         {% endfor %}
     {% endif %}
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Recipients</h2>
-        <div class="search">
-            <form action="#" method='post'>
+    <!-- Dashboard Header: Title, Search, and Actions -->
+    <div class="row gy-3 mb-4 mt-3 align-items-center">
+        <!-- Title -->
+        <div class="col-12 col-lg-auto">
+            <h2 class="mb-0">Recipients</h2>
+        </div>
+
+        <!-- Search Form -->
+        <div class="col-12 col-lg">
+            <form action="{% url 'dashboard' %}" method='post'>
                 {% csrf_token %}
-                <div class='p-2'>
-                    {% if search_query %}
-                        <input class=" search-input rounded-pill bg-dark text-light border p-2 m-2 " type="text" name='search' placeholder="Search by name, Category, Comments, Emails" value='{{search_query}}'>
-                    {% else %}
-                        <input class="search-input rounded-pill bg-dark text-light border p-2 m-2 " type="text" name='search' placeholder="Search by name, Category, Comments, Emails">
-                    {% endif %}
-                    <button type='submit' class='rounded-3 p-2 m-2'>🔍</button>
+                <div class="input-group gap-2">
+                    <select name="group_filter" class="form-select bg-dark text-light border-secondary rounded-pill" style="max-width: 180px;" onchange="this.form.submit()">
+                        <option value="all">All Groups</option>
+                        {% for group in user_groups %}
+                            <option value="{{ group.id }}" {% if group.id == selected_group_id %}selected{% endif %}>
+                                {{ group.group }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <input class="form-control bg-dark text-light border-secondary rounded-pill" type="text" name='search' placeholder="Search within group..." {% if search_query %}value="{{ search_query }}"{% endif %}>
+                    <button type='submit' class='btn btn-outline-secondary rounded-pill'><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </form>
         </div>
-        <div>
-            <div id = "addReceipient-btn" class="dropdown d-inline-block me-2">
+
+        <!-- Action Buttons -->
+        <div class="col-12 col-lg-auto">
+            <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2">
+                <div class="dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Add Recipients
+                        <i class="fa-solid fa-plus"></i> Add Recipients
                 </button>
-                <ul class="dropdown-menu text-light rounded-3 p-1">
-                    <li><a class="dropdown-item text-light rounded-3 p-1"  href=" {% url "add_recepient" %} ">One by One</a></li>
-                    <li><a class="dropdown-item text-light rounded-3 p-1" href=" {% url "add_in_bulk" %} ">Bulk (CSV/XLS)</a></li>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="{% url "add_recepient" %}"><i class="fa-solid fa-user-plus me-2"></i>One by One</a></li>
+                        <li><a class="dropdown-item" href="{% url "add_in_bulk" %}"><i class="fa-solid fa-layer-group me-2"></i>Bulk (CSV/XLS)</a></li>
                 </ul>
             </div>
-            <div id="deleteSelectedBtn" class="d-inline-block me-2 hidden" >
-                <button type="submit" class="btn btn-danger" form="recipientsForm"  onclick="return confirm('Are you sure you want to delete this recipient?');" name='action' value='delete'>
-                    <i class="fa-solid fa-trash"></i> Delete Selected
-                </button>
+                <button type="submit" class="btn btn-danger d-none" id="deleteSelectedBtn" form="recipientsForm" onclick="return confirm('Are you sure you want to delete the selected recipients?');" name='action' value='delete'><i class="fa-solid fa-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-success" form="recipientsForm" name='action' value='send'><i class="fa-solid fa-paper-plane"></i> Send</button>
             </div>
-            <button type="submit" class="btn btn-success me-2" form="recipientsForm" name='action' value='send'>
-                <i class="fa-solid fa-paper-plane"></i> Send to Selected
-            </button>
-            
         </div>
     </div>
 
-    <div class="table-responsive rounded-4">
+    <div class=" rounded-4">
         {% if search_query %}
             <div class="alert alert-info ms-4 p-2">
             Showing results for <strong>'{{ search_query }}'</strong>
@@ -99,16 +132,16 @@
         <form method="post" id="recipientsForm" action=" {% url "submit_form" %} ">
         {% csrf_token %}
         
-            <table class="table table-dark table-striped table-hover table-bordered">
+            <table class="table table-dark table-striped table-hover table-bordered table-responsive">
                 <thead>
                     <tr>
                         <th scope="col"><input type="checkbox" id="selectAll"> </th>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Added date</th>
                         <th scope="col">Category</th>
-                        <th scope="col">Comments</th>
+                        <th scope="col">Group</th>
+                        {% comment %} <th scope="col">Comments</th> {% endcomment %}
                         <th scope="col">Source</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -122,9 +155,9 @@
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ r.name }}</td>
                         <td>{{ r.email }}</td>
-                        <td>{{ r.added_date|date:"Y-m-d" }}</td>
                         <td>{{ r.category }}</td>
-                        <td>{{ r.comment }}</td>
+                        <td>{{ r.group.group }}</td>
+                        {% comment %} <td>{{ r.comment }}</td> {% endcomment %}
                         <td>{{r.source}}</td>
                         <td class="d-flex gap-1">
                             <a class="btn btn-sm btn-info p-1" href="{% url 'view_recepient' r.id %}">

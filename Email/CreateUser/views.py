@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import emailUsers, Receipent, reset_link, UserFiles
+from .models import emailUsers, Receipent, reset_link, UserFiles, Receipent_Group
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
 from .utils import send_bulk_email, check_token, send_forget_password_link,profileCompletetion, extract_receipients_from_file
@@ -79,8 +79,14 @@ def dashboard(request):
 
     recipients = Receipent.objects.filter(Sender__id=user_id).order_by('-added_date')
     search_query = ""
+    selected_group_id = ""
+
     if request.method == "POST":
         search_query = request.POST.get("search", "").strip()
+        selected_group_id = request.POST.get("group_filter", "")
+
+        if selected_group_id and selected_group_id != 'all':
+            recipients = recipients.filter(group__id=selected_group_id)
         
         if search_query:
             recipients = recipients.filter(
@@ -88,9 +94,11 @@ def dashboard(request):
                 Q(email__icontains=search_query) |
                 Q(receipent_category__icontains=search_query) |
                 Q(comment__icontains=search_query) |
-                Q(source__icontains=search_query)
+                Q(source__icontains=search_query) |
+                Q(group__group__icontains=search_query)
             ).order_by('-added_date')
 
+    user_groups = Receipent_Group.objects.filter(user=user)
     receipient_list = [
         {
             'id':r.id,
@@ -100,6 +108,7 @@ def dashboard(request):
             'comment': r.comment,
             'added_date': r.added_date,
             'source': r.source,
+            'group': r.group,
         }
         for r in recipients
     ]
@@ -116,6 +125,8 @@ def dashboard(request):
             'receipients': receipient_list,
             'username': str(user.name).split(" ")[0],
             'search_query': search_query,
+            'user_groups': user_groups,
+            'selected_group_id': int(selected_group_id) if selected_group_id and selected_group_id != 'all' else None,
         }
     )
 
@@ -137,6 +148,9 @@ def profile(request):
     recent_recipients = Receipent.objects.filter(Sender=user).order_by('-added_date')[:5]
     recent_attachments = UserFiles.objects.filter(user=user).order_by('-uploaded_at')[:5]
     total_sent_mail = sum(r.send_time for r in Receipent.objects.filter(Sender=user))
+    groups = Receipent_Group.objects.filter(user=user).count()
+    user_groups = Receipent_Group.objects.filter(user=user).order_by('-created_at')
+
 
     data = {
         'user': user,
@@ -148,6 +162,8 @@ def profile(request):
         'username': str(user.name).split(" ")[0],
         'title': f"{user.name}'s Profile",
         'total_sent_mail': total_sent_mail,
+        'groups': groups,
+        'user_groups': user_groups,
     }
     
     return render(request, "CreateUser/viewProfile.html", context=data)
@@ -367,12 +383,18 @@ def addReceipent(request):
         email = request.POST.get('email')
         category = request.POST.get('category')
         comment = request.POST.get('comment')
+        group_input = request.POST.get('group')
+        if not group_input or group_input == '0':
+            messages.warning(request, "Please select a group")
+            return redirect('add_recepient')
 
         user = get_object_or_404(emailUsers, pk=user_id)
+        group = Receipent_Group.objects.get(pk=group_input, user=user)
         Receipent.objects.create(
             Sender = user,
             email = email,
             name = name,
+            group = group,
             receipent_category = category,
             comment = comment,
         )
@@ -382,6 +404,7 @@ def addReceipent(request):
     username = user.name
     image = user.image
     progress = profileCompletetion(user)
+    groups = Receipent_Group.objects.filter(user=user)
     return render(
             request, 
             'Receipent/add.html',
@@ -389,7 +412,9 @@ def addReceipent(request):
                 'image': image,
                 'username': username,
                 'progress': progress,
-                'title':'Add Recipient'
+                'title':'Add Recipient',
+                'groups':groups,
+                
             }
         )
 
@@ -423,7 +448,13 @@ def add_in_bulk(request):
     
     if request.method == "POST":
         file = request.FILES.get('bulk_file') 
-        filename = file.name.lower()       
+        filename = file.name.lower()
+        group_input = request.POST.get('group')
+        if not group_input or group_input == '0':
+            messages.warning(request, "Please select a group")
+            return redirect('add_in_bulk')
+        group = Receipent_Group.objects.get(pk=group_input, user=user)
+        print(group, group_input)
         if not file:
             print("No file uploaded!")
             messages.warning(request, "No file uploaded!")
@@ -450,20 +481,21 @@ def add_in_bulk(request):
             file_type = file_type,
             file = file,
         )
-        if not extract_receipients_from_file(user, user_file, request):
-            messages.error(request, "There was an error processing the file. Please ensure it has the correct format.")
+        if not extract_receipients_from_file(user, user_file,group, request):
+            messages.warning(request, "There was an error processing the file. Please ensure it has the correct format.")
             return redirect('add_in_bulk')
        
 
         messages.success(request, "File uploaded successfully!")
         return redirect('dashboard')
-
+    groups = Receipent_Group.objects.filter(user=user)
     return render(request, 'Receipent/add_in_bulk.html', 
                 {
                     'title': 'Add Recipients in Bulk',
                     'image': image,
                     'username': username,
                     'progress': profileCompletetion(user),
+                    'groups':groups,
                 })
 
 def delete_file(request, file_id):
@@ -535,7 +567,7 @@ def read_file(request, file_id):
         return redirect('dashboard')
     except Exception as e:
         print("Error reading file:", e)
-        messages.error(request, "An error occurred while reading the file.")
+        messages.warning(request, "An error occurred while reading the file.")
         return redirect('profile')
     
 def sendMail(request):
@@ -548,7 +580,6 @@ def sendMail(request):
         messages.warning(request, "Please update your email settings in profile before proceeding.")
         return redirect('edit_profile')
 
-     # Process the form submission
     if request.method == "POST":
         selected_ids = request.POST.getlist("selected") 
         
@@ -556,12 +587,14 @@ def sendMail(request):
             messages.warning(request, "No recipients selected!")
             return redirect("dashboard")
 
-        send_bulk_email(user_id, selected_ids)
+        if send_bulk_email(user_id, selected_ids):
 
         # for r in Receipent.objects.filter(id__in=selected_ids):
         #     messages.success(request,f"Sending mail to: {r.email}") 
 
-        messages.success(request, f"Emails sent to {len(selected_ids)} recipient(s)!")
+            messages.success(request, f"Emails sent to {len(selected_ids)} recipient(s)!")
+        else:
+            messages.warning(request, "Something went wrong !")
         return redirect("dashboard")
     else:
         return redirect("dashboard")
@@ -586,6 +619,8 @@ def account_settings(request):
     progress = profileCompletetion(user)
     username = str(user.name).split(" ")[0]
     image = user.image
+    groups = Receipent_Group.objects.filter(user=user).count()
+    total_sent_mail = sum(r.send_time for r in Receipent.objects.filter(Sender=user))
     return render(request, 'CreateUser/accountSettings.html', 
             {
                 'user': user,
@@ -594,4 +629,7 @@ def account_settings(request):
                 'image': image,
                 'username': username,
                 'title': f'Account Settings -{username}',
+                'total_sent_mail':total_sent_mail,
+                'groups':groups,
             })
+

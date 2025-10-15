@@ -37,34 +37,39 @@
 
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark "> 
-    <div class="container-fluid text-light">
-
-        <a class="navbar-brand fs-3" href=" {% url "dashboard" %} ">Dashboard</a>
-
-        <h2>Welcome, {{username }}</h2>
-        <div class="progress p-2 rounded-pill bg-black shadow-lg border pb-4">
-            <span class="text-light me-3 fw-bolder">Profile Completetion</span> 
-            <span><progress max="100" value="{{progress}}" min="0" ></progress></span><span class="ms-2">{{progress}}%<span>    
-        </div>
-        <div class="d-flex align-items-center">
-            <a href="{% url "templates" %}" class="btn btn-warning me-2">
-            <i class="fa-solid fa-envelope-open-text"></i> Configure Mail Templates
-            </a>
-            <a href="{% url 'logout' %}" class="btn btn-danger me-2">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </a>
-            {% if image %}
-                <a href="{% url "profile" %}" class="progileImage rounded-5 bg-light ">
-                    <img src=" {{image.url}} " alt="" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                </a>
-                {% else %}
-                <div class="progileImage rounded-5 bg-light me-2">
-                    <a class="btn btn-light rounded-5" href="{% url "profile" %}">
-                    <i class="fa-solid fa-user fa-xl" style="color: #050505ff;"></i>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "home" %}">
+                        <i class="fa-solid fa-house me-1"></i>Home
                     </a>
-                </div>
-            {% endif %}
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "templates" %}"><i class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if image %}
+                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                        {% else %}
+                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
+                        {% endif %}
+                        <span class="d-none d-lg-inline">{{ username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </nav> <hr>
@@ -80,31 +85,51 @@
 
 <div class="container mt-5 mb-5">
     <div class="row ">
-        <div class="col-lg-4 ">
-            <div class="card mb-4">
+        <div class="col-lg-5  rounded-3">
+            <div class="card mb-3">
                 <div class="card-body text-center">
-                    {% if image %}
-                        <img src="{{ image.url }}" alt="avatar" class="rounded-circle img-fluid profile-img">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" alt="avatar" class="rounded-circle img-fluid profile-img">
-                    {% endif %}
-                    <h5 class="my-3">{{ username }}</h5>
-                    <p class="text-muted mb-1">{{ user.post|default:'' }}</p>
+                    <div class="d-flex justify-content-arround mb-4">
+                        <div>
+                            {% if user.image %}
+                                <img src="{{ user.image.url }}" alt="avatar" class="rounded-circle img-fluid profile-img">
+                            {% else %}
+                                <img src="{% static 'images/default.png' %}" alt="avatar" class="rounded-circle img-fluid profile-img">
+                            {% endif %}
+                        </div>
+                        <div class="ms-5 text-start">
+                            <h4 class="my-2"><strong>{{ user.name }}</strong></h4>
+                            <p class="mb-1">{{ user.post|default:"N/A" }}</p>
+                            <p class="mb-2">{{ user.address|default:"-" }}</p>
+                            <p class='mb-1'><strong>No. of Email Sent: </strong> {{total_sent_mail}}</p>
+                            <p class='mb-4'><strong>No. of Groups: </strong> {{ groups }}</p>
+                        </div>
+                   
+                    </div>
+                    
+
+                    <div class="d-flex justify-content-center mb-2">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary me-2">Edit Profile</a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary ms-1 me-2"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                        <a href=" {% url "account_settings" %} " class='btn btn-outline-warning ms-1 me-2'><i class="fa-solid fa-gear"></i> Settings</a>
+                        <br>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger ms-1 me-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Navigation</h5>
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="mb-4 d-flex justify-content-between ">
+                        <span class="font-italic me-1">Profile Completion</span>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary me-3">Complete Profile</a>
+                    </p>
+                    <p class="mb-1" style="font-size: .77rem;">{{ progress }}% Complete</p>
+                    <div class="progress rounded" style="height: 5px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush border border-primary">
-                    <li class="list-group-item bg-dark p-3"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                    <li class="list-group-item bg-dark p-3"><a href="{% url 'profile' %}">View Profile</a></li>
-                    <li class="list-group-item bg-dark p-3"><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
-                    <li class="list-group-item bg-dark p-3"><a href="{% url 'change_password' %}">Change Password</a></li>
-                </ul>
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Email Account Settings</h4>
@@ -126,6 +151,7 @@
                                 <p>For services like Gmail or Outlook that use 2-Factor Authentication (2FA), it is <strong class="text-primary">strongly recommended</strong> to use an <strong class="text-primary">App Password</strong> instead of your regular account password. An App Password is a unique 16-digit code that gives this application permission to send emails from your account without exposing your main password.</p>
                                 <p class="mb-1">Learn how to create one:</p>
                                 <ul class="mb-0" style="padding-left: 1.5rem;">
+                                    <li><a href="https://help.zoho.com/portal/en/kb/bigin/channels/email/articles/generate-an-app-specific-password#What_is_TFA_Two_factor_Authentication" target="_blank">Create an App Password for Zoho Mail</a></li>
                                     <li><a href="https://support.google.com/accounts/answer/185833" target="_blank">Create an App Password for Gmail</a></li>
                                     <li><a href="https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944" target="_blank">Create an App Password for Outlook/Microsoft</a></li>
                                 </ul>
@@ -134,34 +160,37 @@
 
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label for="email_host" class="form-label">Email Host</label>
-                                <select class="form-select bg-dark text-light" id="email_host" name="email_host">
+                                <label for="email_host_select" class="form-label">Email Host</label>
+                                <select class="form-select bg-dark text-light" id="email_host_select" name="email_host_select">
                                     <option value="smtp.gmail.com" {% if user.email_host == 'smtp.gmail.com' or not user.email_host %}selected{% endif %}>smtp.gmail.com (Gmail)</option>
                                     <option value="smtp.mail.yahoo.com" {% if user.email_host == 'smtp.mail.yahoo.com' %}selected{% endif %}>smtp.mail.yahoo.com (Yahoo)</option>
                                     <option value="smtp.office365.com" {% if user.email_host == 'smtp.office365.com' %}selected{% endif %}>smtp.office365.com (Outlook)</option>
                                     <option value="smtp.mail.me.com" {% if user.email_host == 'smtp.mail.me.com' %}selected{% endif %}>smtp.mail.me.com (iCloud)</option>
-                                    {% if user.email_host and user.email_host not in "smtp.gmail.com,smtp.mail.yahoo.com,smtp.office365.com,smtp.mail.me.com" %}
-                                    <option value="{{ user.email_host }}" selected>{{ user.email_host }} (Custom)</option>
-                                    {% endif %}
+                                    <option value="smtp.zoho.in" {% if user.email_host == 'smtp.zoho.in' %}selected{% endif %}>smtp.zoho.in (Zoho Mail)</option>
+                                    <option value="custom" {% if user.email_host and user.email_host not in "smtp.gmail.com,smtp.mail.yahoo.com,smtp.office365.com,smtp.mail.me.com,smtp.zoho.com" %}selected{% endif %}>Custom</option>
                                 </select>
+                                <input type="text" class="form-control mt-2" id="email_host_custom" name="email_host_custom" placeholder="Enter custom host" style="display: none;" value="{{ user.email_host }}">
+                                <!-- Hidden input to hold the final host value -->
+                                <input type="hidden" name="email_host" id="email_host_final">
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="email_port" class="form-label">Port</label>
-                                <select class="form-select bg-dark text-light" id="email_port" name="email_port">
-                                    <option value="587" {% if user.email_port == 587 or not user.email_port %}selected{% endif %}>587 -TLS <i>(Recemended )</i></option>
-                                    <option value="465" {% if user.email_port == 465 %}selected{% endif %}>465 (SSL)</option>
-                                    <option value="25" {% if user.email_port == 25 %}selected{% endif %}>25</option>
-                                    {% if user.email_port and user.email_port != 587 and user.email_port != 465 and user.email_port != 25 %}
-                                    <option value="{{ user.email_port }}" selected>{{ user.email_port }} (Custom)</option>
-                                    {% endif %}
+                                <label for="email_port_select" class="form-label">Port</label>
+                                <select class="form-select bg-dark text-light" id="email_port_select" name="email_port_select">
+                                    <option value="587" {% if user.email_port == 587 or not user.email_port %}selected{% endif %}>587 (TLS - Recommended)</option>
+                                    <option value="465" {% if user.email_port == 465 %}selected{% endif %}>465 (SSL for Zoho Mail)</option>
+                                    <option value="25" {% if user.email_port == 25 %}selected{% endif %}>25 (Insecure)</option>
+                                    <option value="custom" {% if user.email_port and user.email_port not in "587,465,25" %}selected{% endif %}>Custom</option>
                                 </select>
+                                <input type="number" class="form-control mt-2" id="email_port_custom" name="email_port_custom" placeholder="Enter port" style="display: none;" value="{{ user.email_port }}">
+                                <!-- Hidden input to hold the final port value -->
+                                <input type="hidden" name="email_port" id="email_port_final">
                             </div>
                         </div>
 
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="use_tls" name="use_tls" {% if user.use_tls %}checked{% endif %}>
                             <label class="form-check-label" for="use_tls">
-                                Use TLS
+                                Use TLS (Recommended for port 587)
                             </label>
                         </div>
 
@@ -195,6 +224,54 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.add('fa-eye');
         }
     });
+
+    // --- Logic for custom host and port ---
+    const hostSelect = document.getElementById('email_host_select');
+    const customHostInput = document.getElementById('email_host_custom');
+    const finalHostInput = document.getElementById('email_host_final');
+
+    const portSelect = document.getElementById('email_port_select');
+    const customPortInput = document.getElementById('email_port_custom');
+    const finalPortInput = document.getElementById('email_port_final');
+
+    function handleHostChange() {
+        if (hostSelect.value === 'custom') {
+            customHostInput.style.display = 'block';
+        } else {
+            customHostInput.style.display = 'none';
+        }
+    }
+
+    function handlePortChange() {
+        if (portSelect.value === 'custom') {
+            customPortInput.style.display = 'block';
+        } else {
+            customPortInput.style.display = 'none';
+        }
+    }
+
+    // Set final values before form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        if (hostSelect.value === 'custom') {
+            finalHostInput.value = customHostInput.value;
+        } else {
+            finalHostInput.value = hostSelect.value;
+        }
+
+        if (portSelect.value === 'custom') {
+            finalPortInput.value = customPortInput.value;
+        } else {
+            finalPortInput.value = portSelect.value;
+        }
+    });
+
+    // Add event listeners
+    hostSelect.addEventListener('change', handleHostChange);
+    portSelect.addEventListener('change', handlePortChange);
+
+    // Initial check on page load
+    handleHostChange();
+    handlePortChange();
 });
 
 

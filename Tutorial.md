@@ -48,7 +48,8 @@ This project is a **bulk email sending system** designed to help users *manage t
   - [7.3 The `path()` Function: Connecting Roads to Buildings (Views)](#3-the-path-function-connecting-roads-to-buildings-views)
   - [7.4 `include()`: Organizing Your Road Map by Neighborhood](#4-include-organizing-your-road-map-by-neighborhood)
   - [7.5 URL Parameters: Dynamic Addresses](#5-url-parameters-dynamic-addresses)
-
+- **[Chapter 8: Deployment](#chapter-8-deployment)**
+  - [8.1 PythonAnywhere](#1-pythonanywhere)
 
 
 ---
@@ -57,9 +58,7 @@ This project is a **bulk email sending system** designed to help users *manage t
 
 
 
-## Chapter 1
-## Project Status
-User Authentication & Session Management
+## Chapter 1: User Authentication & Session Management
 
 Welcome to the **Bulk-Email-Sending-System** tutorial! In this first chapter, we're going to explore a fundamental concept for almost any application: **User Authentication & Session Management**.
 
@@ -485,7 +484,7 @@ Next, we'll dive deeper into the core data structure that holds all our user's i
 
 # Chapter 2: emailUsers Model
 
-Welcome back! In our [previous chapter](01_user_authentication___session_management_.md), we learned about **User Authentication & Session Management**. We discovered how users sign up and log in, proving who they are to our Bulk Email Sending System.
+Welcome back! In our [previous chapter](#chapter-1-user-authentication--session-management), we learned about **User Authentication & Session Management**. We discovered how users sign up and log in, proving who they are to our Bulk Email Sending System.
 
 Now that we know *how* users get into the system, let's explore *who* they are. This brings us to the **`emailUsers` Model**, which is the central "identity card" and "control panel" for every user in our application.
 
@@ -520,7 +519,7 @@ These fields are essential for identifying the user and allowing them to log int
 *   **`email_address`**: Your primary email. This is your unique username for logging into our system. No two users can have the same `email_address`.
 *   **`login_password`**: The password you use to log into *this* Bulk Email Sending System.
 
-    > **Important Security Note (Revisited from Chapter 1!):** As mentioned in [Chapter 1: User Authentication & Session Management](01_user_authentication___session_management_.md), this password is currently stored as plain text. In a real-world application, it should always be **hashed** for security!
+    > **Important Security Note (Revisited from Chapter 1!):** As mentioned in [Chapter 1: User Authentication & Session Management](#chapter-1-user-authentication--session-management), this password is currently stored as plain text. In a real-world application, it should always be **hashed** for security!
 
 #### 2. Email Sending Configuration (SMTP Details)
 
@@ -586,7 +585,7 @@ def profile(request):
     return render(request, "CreateUser/viewProfile.html", context)
 ```
 **Explanation:**
-This `profile` function first checks if a user is logged in using `user_id` from their session (as learned in [Chapter 1: User Authentication & Session Management](01_user_authentication___session_management_.md)). If so, it uses `get_object_or_404(emailUsers, pk=user_id)` to find that user's entire record in the `emailUsers` model. Finally, it passes all the user's details to the `viewProfile.html` page to be displayed.
+This `profile` function first checks if a user is logged in using `user_id` from their session (as learned in [Chapter 1: User Authentication & Session Management](#chapter-1-user-authentication--session-management)). If so, it uses `get_object_or_404(emailUsers, pk=user_id)` to find that user's entire record in the `emailUsers` model. Finally, it passes all the user's details to the `viewProfile.html` page to be displayed.
 
 #### 2. Updating Your Profile
 
@@ -705,7 +704,7 @@ The `emailUsers` model is truly the heart of our system when it comes to user da
 
 # Chapter 3: Receipent Model
 
-Welcome back! In our [previous chapter](02_emailusers_model_.md), we got to know the `emailUsers` Model, which holds all the important details about *you* – the sender – including your login info and how your email account sends messages.
+Welcome back! In our [previous chapter](#chapter-2-emailusers-model), we got to know the `emailUsers` Model, which holds all the important details about *you* – the sender – including your login info and how your email account sends messages.
 
 Now that we know who is sending the emails, it's time to figure out *who will receive them*! This brings us to the **`Receipent` Model**.
 
@@ -836,7 +835,7 @@ def dashboard(request):
     return render(request, 'CreateUser/dashboard.html', {'receipients': receipient_list})
 ```
 **Explanation:**
-The `dashboard` function retrieves your `user_id` from the session (as we learned in [Chapter 1: User Authentication & Session Management](01_user_authentication___session_management_.md)). Then, `Receipent.objects.filter(Sender__id=user_id)` is used to find *only* the recipients linked to your user ID. This ensures you only see your own contacts. The fetched data is then formatted and sent to the dashboard page to be displayed.
+The `dashboard` function retrieves your `user_id` from the session (as we learned in [Chapter 1: User Authentication & Session Management](#chapter-1-user-authentication--session-management)). Then, `Receipent.objects.filter(Sender__id=user_id)` is used to find *only* the recipients linked to your user ID. This ensures you only see your own contacts. The fetched data is then formatted and sent to the dashboard page to be displayed.
 
 #### 3. Editing a Recipient
 
@@ -962,13 +961,13 @@ This line tells Django's admin interface to display and allow management of `Rec
 
 The `Receipent` model is your personal address book within the Bulk Email Sending System. It's how you keep track of all the people you want to send emails to, organized, categorized, and ready for your campaigns. By linking each recipient to your `emailUsers` account, the system ensures your contact list is private and personal.
 
-Now that we know who is sending the emails ([`emailUsers` Model](02_emailusers_model_.md)) and who is receiving them (`Receipent` Model), the next step is to figure out *what* to send! In the next chapter, we'll explore the [Template Model](04_template_model_.md), which allows you to create and manage reusable email content.
+Now that we know who is sending the emails ([`emailUsers` Model](#chapter-2-emailusers-model)) and who is receiving them (`Receipent` Model), the next step is to figure out *what* to send! In the next chapter, we'll explore the [Template Model](#chapter-4-template-model), which allows you to create and manage reusable email content.
 
 
 
 # Chapter 4: Template Model
 
-Welcome back! In our [previous chapter](03_receipent_model_.md), we learned about the `Receipent` Model, which helps you manage your list of email recipients – the people you want to send emails to. So far, we know *who* is sending emails ([`emailUsers` Model](02_emailusers_model_.md)) and *who* is receiving them (`Receipent` Model).
+Welcome back! In our [previous chapter](#chapter-3-receipent-model), we learned about the `Receipent` Model, which helps you manage your list of email recipients – the people you want to send emails to. So far, we know *who* is sending emails ([`emailUsers` Model](#chapter-2-emailusers-model)) and *who* is receiving them (`Receipent` Model).
 
 Now, the big question is: **what content are we going to send in these emails?** Do we have to type out every email for every person? Luckily, no! This is where the **`Template` Model** comes in.
 
@@ -1107,7 +1106,7 @@ def Templates(request):
     # })
 ```
 **Explanation:**
-The `Templates` function gets your `user_id` from the session (as learned in [Chapter 1: User Authentication & Session Management](01_user_authentication___session_management_.md)). It then uses `Template.objects.filter(user=user)` to retrieve *only* the templates linked to your account. This list is then divided into the `primary_template` (if one exists) and `other_templates` to display them appropriately on your templates page.
+The `Templates` function gets your `user_id` from the session (as learned in [Chapter 1: User Authentication & Session Management](#chapter-1-user-authentication--session-management)). It then uses `Template.objects.filter(user=user)` to retrieve *only* the templates linked to your account. This list is then divided into the `primary_template` (if one exists) and `other_templates` to display them appropriately on your templates page.
 
 #### 3. Editing a Template
 
@@ -1264,8 +1263,7 @@ This simple line `admin.site.register(Template)` tells Django's admin interface 
 
 The `Template` model is an incredibly powerful feature for any bulk email sending system. It transforms the tedious task of crafting individual emails into a streamlined process of selecting and reusing professional, consistent messages. By providing a structured way to store subjects and bodies, and by allowing users to designate a 'primary' template, it greatly enhances efficiency and consistency in your email campaigns.
 
-Now that we understand who is sending emails, who is receiving them, and *what* content is being sent, the next step is to look at how all these pieces come together through the web interface. In the next chapter, we'll dive into [Django Views](05_django_views_.md), which are the "control centers" that process user requests and interact with our models.
-
+Now that we understand who is sending emails, who is receiving them, and *what* content is being sent, the next step is to look at how all these pieces come together through the web interface. In the next chapter, we'll dive into [Django Views](#chapter-5-django-views), which are the "control centers" that process user requests and interact with our models.
 
 
 
@@ -1273,7 +1271,7 @@ Now that we understand who is sending emails, who is receiving them, and *what* 
 
 # Chapter 5: Django Views
 
-Welcome back! In our [previous chapter](04_template_model_.md), we explored the `Template` Model, where you learned how to store and reuse your email content. We now know *who* is sending ([`emailUsers` Model](02_emailusers_model_.md)), *who* is receiving ([`Receipent` Model](03_receipent_model_.md)), and *what* content is being sent (`Template` Model).
+Welcome back! In our [previous chapter](#chapter-4-template-model), we explored the `Template` Model, where you learned how to store and reuse your email content. We now know *who* is sending ([`emailUsers` Model](#chapter-2-emailusers-model)), *who* is receiving ([`Receipent` Model](#chapter-3-receipent-model)), and *what* content is being sent (`Template` Model).
 
 But how do all these pieces come together? How does our web application actually *do* things when a user clicks a button or types an address in their browser? This is where **Django Views** come into play!
 
@@ -1326,7 +1324,7 @@ def my_first_view(request):
 The `request` object is like the waiter's order pad. It contains everything the view needs to know about what the user is asking for.
 
 *   **`request.method`**: Tells us if the user is `GET`ting information (like visiting a page) or `POST`ing information (like submitting a form).
-*   **`request.session`**: Stores information about the logged-in user, like their `user_id`, so the system remembers them as they navigate. (We saw this in [Chapter 1: User Authentication & Session Management](01_user_authentication___session_management_.md)).
+*   **`request.session`**: Stores information about the logged-in user, like their `user_id`, so the system remembers them as they navigate. (We saw this in [Chapter 1: User Authentication & Session Management](#chapter-1-user-authentication--session-management)).
 *   **`request.POST`**: If a form was submitted, this holds all the data the user typed into the form fields.
 
 #### 3. The `render()` Function (Showing HTML Pages)
@@ -1393,9 +1391,9 @@ def dashboard(request):
     return render(request, 'CreateUser/dashboard.html', context)
 ```
 **Explanation:**
-1.  The view checks `request.session` to see if `user_id` exists. If not, you're not logged in, so it `redirect`s you to the [Login](01_user_authentication___session_management_.md) page.
-2.  If you are logged in, it uses `emailUsers.objects.get(id=user_id)` to find *your* complete profile from the [`emailUsers` Model](02_emailusers_model_.md).
-3.  Then, it fetches all `Receipent` objects that are linked to you (`Sender=user`) from the [`Receipent` Model](03_receipent_model_.md).
+1.  The view checks `request.session` to see if `user_id` exists. If not, you're not logged in, so it `redirect`s you to the [Login](#2-user-login) page.
+2.  If you are logged in, it uses `emailUsers.objects.get(id=user_id)` to find *your* complete profile from the [`emailUsers` Model](#chapter-2-emailusers-model).
+3.  Then, it fetches all `Receipent` objects that are linked to you (`Sender=user`) from the [`Receipent` Model](#chapter-3-receipent-model).
 4.  Finally, it uses `render()` to display the `dashboard.html` page, passing your name (`user.name`) and your list of `recipients` so the page can show personalized content.
 
 #### 2. Adding a New Recipient
@@ -1554,7 +1552,7 @@ def Templates(request):
         'username': user.name
     })
 ```
-*   This demonstrates fetching data from the [`Template` Model](04_template_model_.md) and filtering it (`filter(user=user)`) to show only templates owned by the current user.
+*   This demonstrates fetching data from the [`Template` Model](#chapter-4-template-model) and filtering it (`filter(user=user)`) to show only templates owned by the current user.
 *   It then processes this data (identifying the `primary_template`) before sending it to the template for display.
 
 ---
@@ -1563,13 +1561,13 @@ def Templates(request):
 
 Django Views are the operational brain of our Bulk Email Sending System. They are the Python functions that listen for web requests, interpret user actions, interact with our database models to fetch or save data, and then return meaningful responses, usually in the form of interactive web pages. Think of them as the busy chefs making sure every customer's order is taken, prepared, and served correctly!
 
-Now that we understand how views handle user interaction and manage our data, the next logical step is to see how these views can actually send emails. In the next chapter, we'll dive into the [Email Sending Utilities](06_email_sending_utilities_.md) that power our system's core functionality.
+Now that we understand how views handle user interaction and manage our data, the next logical step is to see how these views can actually send emails. In the next chapter, we'll dive into the [Email Sending Utilities](#chapter-6-email-sending-utilities) that power our system's core functionality.
 
 
 
 # Chapter 6: Email Sending Utilities
 
-Welcome back! In our [previous chapter](05_django_views_.md), we learned about **Django Views**, which are the "control centers" of our web application. Views listen for your requests, interact with our data models (like [`emailUsers`](02_emailusers_model_.md), [`Receipent`](03_receipent_model_.md), and [`Template`](04_template_model_.md)), and then show you a web page or redirect you.
+Welcome back! In our [previous chapter](#chapter-5-django-views), we learned about **Django Views**, which are the "control centers" of our web application. Views listen for your requests, interact with our data models (like [`emailUsers`](#chapter-2-emailusers-model), [`Receipent`](#chapter-3-receipent-model), and [`Template`](#chapter-4-template-model)), and then show you a web page or redirect you.
 
 Now, we've gathered all the ingredients: we know *who* is sending, *who* is receiving, and *what* content to send. But how do we actually *deliver* the email? How do we connect to an email server and push that message out into the world? This is where **Email Sending Utilities** come into play!
 
@@ -1602,15 +1600,15 @@ The core of our email sending utilities involves a few main steps:
 
 #### 1. Getting Your Email Account's "Postal Details"
 
-Before sending any email, our system needs to know *your* specific email account's settings (host, port, username, password) to connect to its server. These are stored in your [`emailUsers` Model](02_emailusers_model_.md) profile.
+Before sending any email, our system needs to know *your* specific email account's settings (host, port, username, password) to connect to its server. These are stored in your [`emailUsers` Model](#chapter-2-emailusers-model) profile.
 
 #### 2. Preparing the Email "Letter"
 
-We need the email's `subject` and `body`. This content comes from your chosen (or primary) [`Template` Model](04_template_model_.md).
+We need the email's `subject` and `body`. This content comes from your chosen (or primary) [`Template` Model](#chapter-4-template-model).
 
 #### 3. Gathering the "Addresses"
 
-We need the actual email addresses of all the people you've selected. These are stored in your [`Receipent` Model](03_receipent_model_.md).
+We need the actual email addresses of all the people you've selected. These are stored in your [`Receipent` Model](#chapter-3-receipent-model).
 
 #### 4. The "Post Office Connection"
 
@@ -1813,13 +1811,13 @@ These settings tell Django *how* to send emails by default. Our `send_bulk_email
 
 The **Email Sending Utilities** are the unsung heroes of our Bulk Email Sending System! They encapsulate all the complex technical steps involved in connecting to an email server, securely sending messages, and updating our tracking records. By separating this logic into dedicated functions, our Django views remain clean and focused on user interaction, while the utilities handle the heavy lifting of actual email delivery.
 
-Now that we know how emails are actually sent, the final piece of the puzzle is understanding how our application directs users to all these different views and functionalities. In the next chapter, we'll learn about [Django URL Routing](07_django_url_routing_.md), which is like the map that guides users through our system.
+Now that we know how emails are actually sent, the final piece of the puzzle is understanding how our application directs users to all these different views and functionalities. In the next chapter, we'll learn about [Django URL Routing](#chapter-7-django-url-routing), which is like the map that guides users through our system.
 
 
 
 # Chapter 7: Django URL Routing
 
-Welcome back! In our [previous chapter: Email Sending Utilities](06_email_sending_utilities_.md), we learned how our system actually sends emails by connecting to mail servers and using your `emailUsers` account and `Template` content. We have all the pieces for a functional email system: users, recipients, templates, views (the logic), and email utilities.
+Welcome back! In our [previous chapter: Email Sending Utilities](#chapter-6-email-sending-utilities), we learned how our system actually sends emails by connecting to mail servers and using your `emailUsers` account and `Template` content. We have all the pieces for a functional email system: users, recipients, templates, views (the logic), and email utilities.
 
 But how do you, the user, tell the system what you want to do? How does your browser request to see the dashboard, or add a new recipient, or send an email? This is where **Django URL Routing** comes into play!
 
@@ -1827,7 +1825,7 @@ But how do you, the user, tell the system what you want to do? How does your bro
 
 Imagine our Bulk Email Sending System is like a large city. Each feature (like "Login," "Dashboard," "Create Template," "Send Mail") is a specific building or destination in that city. When you type an address into your browser (like `http://127.0.0.1:8000/user/dashboard/`), you're essentially telling the web application where you want to go.
 
-Django URL Routing is like the city's **road map and its address system**. It defines all the available pathways (URLs) in our web application and connects each pathway to a specific function that handles the request (a **view**, which we learned about in [Chapter 5: Django Views](05_django_views_.md)).
+Django URL Routing is like the city's **road map and its address system**. It defines all the available pathways (URLs) in our web application and connects each pathway to a specific function that handles the request (a **view**, which we learned about in [Chapter 5: Django Views](#chapter-5-django-views)).
 
 It makes sure that when you type `/user/dashboard/`, Django knows *exactly* which `dashboard` view function should run to show you your personalized page. Without routing, Django wouldn't know how to navigate your requests!
 
@@ -1873,7 +1871,7 @@ urlpatterns = [
 Let's look at the parts of `path()`:
 
 *   **`'login/'` (URL Pattern):** This is the part of the URL Django tries to match. If a user visits `/user/login/`, Django looks for this pattern.
-*   **`views.Login` (View Function):** This tells Django which Python function (from `Email/CreateUser/views.py` in this case) should be executed when the URL pattern matches. This `Login` function ([Chapter 5: Django Views](05_django_views_.md)) then handles showing the login page or processing login data.
+*   **`views.Login` (View Function):** This tells Django which Python function (from `Email/CreateUser/views.py` in this case) should be executed when the URL pattern matches. This `Login` function ([Chapter 5: Django Views](#chapter-5-django-views)) then handles showing the login page or processing login data.
 *   **`name='Login'` (URL Name):** This is a handy nickname for your URL. Instead of writing `/user/login/` directly in your HTML templates or Python code, you can just say `Login`. This makes your code more flexible; if you ever change the URL pattern from `login/` to `sign-in/`, you only need to change it in one `path()` definition, not everywhere it's used!
 
 #### 4. `include()`: Organizing Your Road Map by Neighborhood
@@ -1935,7 +1933,7 @@ urlpatterns = [
 ]
 ```
 **Explanation:**
-Django finds the `dashboard/` pattern in `Email/CreateUser/urls.py`. It then calls the `dashboard` view function from `Email/CreateUser/views.py` ([Chapter 5: Django Views](05_django_views_.md)) to process the request and show you your personalized dashboard HTML page.
+Django finds the `dashboard/` pattern in `Email/CreateUser/urls.py`. It then calls the `dashboard` view function from `Email/CreateUser/views.py` ([Chapter 5: Django Views](#chapter-5-django-views)) to process the request and show you your personalized dashboard HTML page.
 
 #### 2. Visiting the Page to Add a New Recipient
 
@@ -1956,7 +1954,7 @@ urlpatterns = [
 ]
 ```
 **Explanation:**
-Django calls the `addReceipent` view function from `Email/CreateUser/views.py`. This view function ([Chapter 5: Django Views](05_django_views_.md)) would then `render` the HTML form for adding a new recipient.
+Django calls the `addReceipent` view function from `Email/CreateUser/views.py`. This view function ([Chapter 5: Django Views](#chapter-5-django-views)) would then `render` the HTML form for adding a new recipient.
 
 #### 3. Editing a Specific Recipient's Details
 
@@ -1977,7 +1975,7 @@ urlpatterns = [
 ]
 ```
 **Explanation:**
-Django matches the pattern, extracts `5` as the `receipient_id`, and calls the `editReceipent` view function from `Email/CreateUser/views.py`. The `editReceipent` view then receives `5` as an argument, uses it to fetch the `Receipent` from the database ([Chapter 3: Receipent Model](03_receipent_model_.md)), and displays an edit form.
+Django matches the pattern, extracts `5` as the `receipient_id`, and calls the `editReceipent` view function from `Email/CreateUser/views.py`. The `editReceipent` view then receives `5` as an argument, uses it to fetch the `Receipent` from the database ([Chapter 3: Receipent Model](#chapter-3-receipent-model)), and displays an edit form.
 
 ---
 
@@ -2000,83 +1998,111 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("admin/", admin.site.urls), # For Django's admin panel
-    path('',include('Home.urls')), # For URLs like '/'
-    path('user/',include("CreateUser.urls")), # Directs /user/... to CreateUser app
-    path("__reload__/", include("django_browser_reload.urls")), # For development
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('admin/', admin.site.urls), # The built-in admin site
+    path('', include("Home.urls")), # URLs for the home page, about, etc.
+    path('user/', include("CreateUser.urls")), # All user-related URLs
+    path('templates/', include("EmailTemplates.urls")), # All template-related URLs
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ```
-*   `path("admin/", admin.site.urls)`: This is how Django makes its powerful admin panel available at `/admin/`.
-*   `path('',include('Home.urls'))`: If someone visits *just* the root URL (e.g., `http://127.0.0.1:8000/`), it goes to the `Home` app's URLs.
-*   `path('user/',include("CreateUser.urls"))`: Any URL starting with `/user/` (like `/user/login/`, `/user/dashboard/`) is handled by the `CreateUser` app's `urls.py`.
+*   `path('admin/', admin.site.urls)`: This is the URL for Django's powerful built-in administration panel.
+*   `path('', include("Home.urls"))`: This handles the main pages of the site, like the homepage (`/`) and about page (`/about/`).
+*   `path('user/', include("CreateUser.urls"))`: This is the main entry point for all user-specific actions, like logging in, viewing the dashboard, and managing recipients.
+*   `path('templates/', include("EmailTemplates.urls"))`: This handles all actions related to email templates.
+*   `+ static(...)`: This is a helper that tells Django how to serve user-uploaded files (like profile pictures) during development.
 
-**2. `CreateUser` App `urls.py` (`Email/CreateUser/urls.py`)**
+**2. App-Level `urls.py` (`Email/CreateUser/urls.py`)**
 
-This file handles all routing related to user authentication, profiles, and recipient management.
+This file contains the specific routes for the `CreateUser` app.
 
 ```python
 # File: Email/CreateUser/urls.py
 from django.urls import path
-from . import views # Important: from . import views means views in THIS app
+from . import views
 
 urlpatterns = [
+    # Authentication
     path('login/', views.Login, name='Login'),
     path('signUp/', views.signUp, name='signUp'),
-    path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/', views.logout, name='logout'),
-    path('send-mail/', views.sendMail, name="send-mail"), # Leads to views.sendMail ([Chapter 6: Email Sending Utilities](06_email_sending_utilities_.md))
-    path('viewProfile/', views.profile, name='profile'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('reset-password/<str:token>/', views.reset_password, name='reset_password'),
+
+    # Dashboard & Profile
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('profile/edit-process/', views.edit_profile_process, name='edit_profile_process'),
+    path('profile/change-password/', views.changePassword, name='changePassword'),
+
+    # Recipient Management
     path('receipient/add/', views.addReceipent, name="add_recepient"),
-    path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"), # Uses URL parameter!
-    path('templates/', include('EmailTemplates.urls')), # Another include for nested templates URLs
+    path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
+    path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
+    path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recepient"),
+
+    # Email Sending
+    path('send-mail/', views.sendMail, name="send_mail"),
 ]
 ```
-*   Each `path()` here points to a specific view function within `Email/CreateUser/views.py`.
-*   Notice `path('templates/', include('EmailTemplates.urls'))`. This is an `include()` *within an app's urls.py*. This means if you go to `/user/templates/`, it then looks into the `EmailTemplates` app for further routing!
+*   This file clearly organizes all the URLs related to user actions into logical groups: authentication, profile management, recipient management, and email sending.
+*   It uses URL parameters like `<int:receipient_id>` and `<str:token>` to handle requests for specific objects.
 
-**3. `EmailTemplates` App `urls.py` (`Email/EmailTemplates/urls.py`)**
+**3. App-Level `urls.py` (`Email/EmailTemplates/urls.py`)**
 
-This file focuses solely on routes for managing email templates.
+This file handles all routes related to managing email templates.
 
 ```python
 # File: Email/EmailTemplates/urls.py
 from django.urls import path
-from . import views # Views specific to EmailTemplates app
-
-urlpatterns = [
-    path('',views.Templates, name='templates'), # Default for /user/templates/
-    path('primary/<int:id>',views.MakePrimary, name='primary'), # Dynamic URL for setting primary template
-    path('edit/<int:id>', views.editTemplate, name='editTemplate'), # Dynamic URL for editing
-    path('create/',views.createTemplate, name='createTemplate'),
-]
-```
-*   If the URL is `/user/templates/` (after the `CreateUser` app's `include` takes `/user/templates/` and passes the empty string `''` to `EmailTemplates.urls`), it matches `path('', views.Templates)`.
-*   `primary/<int:id>` and `edit/<int:id>` show how URL parameters are used to select a *specific* template (identified by its ID) for an action. These IDs are then passed to the `views.MakePrimary` or `views.editTemplate` functions.
-
-**4. `Home` App `urls.py` (`Email/Home/urls.py`)**
-
-This handles simple informational pages for the main website.
-
-```python
-# File: Email/Home/urls.py
-from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.Home, name='home'), # Matches the root URL '/'
-    path('documentation/', views.documentation, name='documentation'),
-    path('about/', views.about_us, name='about_us'),
+    path('', views.Templates, name="templates"), # Main templates listing page
+    path('create/', views.createTemplate, name="create_template"),
+    path('<int:template_id>/', views.viewTemplate, name="view_template"),
+    path('<int:template_id>/edit/', views.editTemplate, name="edit_template"),
+    path('<int:template_id>/delete/', views.deleteTemplate, name="delete_template"),
+    path('<int:template_id>/make-primary/', views.MakePrimary, name="make_primary"),
 ]
 ```
-*   `path('', views.Home)`: This tells Django that if someone visits the very root of the website (e.g., `http://127.0.0.1:8000/`), the `views.Home` function should be called.
+*   This file follows a similar pattern, providing URLs to list, create, view, edit, delete, and manage primary status for templates.
 
 ---
 
 ### Conclusion
 
-Django URL Routing is the essential navigation system of our Bulk Email Sending System. It defines the addresses (URLs) for every part of our application and ensures that when a user requests a specific address, the correct view function ([Chapter 5: Django Views](05_django_views_.md)) is called to handle that request. By using `path()` for individual routes and `include()` for organizing URLs by application, Django helps us build a structured, scalable, and easy-to-manage web application.
+**Django URL Routing** is the essential navigation system of our web application. It provides a clean and organized way to map the URLs that users visit in their browsers to the specific Python view functions that should handle those requests. By using `urlpatterns`, `path()`, `include()`, and URL parameters, we can create a clear, maintainable, and flexible road map for our entire application, ensuring that every request gets to its correct destination.
 
-This concludes our journey through the core concepts of the Bulk Email Sending System! You now have a solid understanding of how users are managed, data is stored, emails are sent, and requests are routed.
+Congratulations! You've now journeyed through all the core components of the Bulk Email Sending System. You've learned about user authentication, the data models that store our information, the views that process requests, the utilities that send emails, and the URL routing that ties it all together.
+
+
+# Chapter 8: Deployment
+
+Welcome to the final chapter! We've explored the entire architecture of our Bulk Email Sending System, from user authentication to sending emails. But right now, our application only exists on our local computer. How do we share it with the world? This is where **Deployment** comes in.
+
+### What problem does Deployment solve?
+
+Deployment is the process of taking your web application from your personal development machine and making it accessible to anyone on the internet. It involves:
+
+1.  **Hosting:** Finding a server (a computer that's always on and connected to the internet) to run your code.
+2.  **Configuration:** Setting up the server environment with the correct software (Python, Django, etc.) and configuring your application to run in a production (live) setting.
+3.  **Static Files:** Managing your CSS, JavaScript, and images so they are served efficiently.
+4.  **Database:** Setting up a production-ready database.
+
+### 1. PythonAnywhere
+
+This project is deployed on **PythonAnywhere**, a platform that makes it easy to host, run, and scale Python applications in the cloud. Here's a general overview of the steps involved in deploying a Django project to PythonAnywhere:
+
+1.  **Sign up for a PythonAnywhere account.**
+2.  **Upload your code:** You can either upload your code as a zip file or clone it directly from a Git repository (like GitHub).
+3.  **Create a virtual environment:** Just like on your local machine, you'll create a virtual environment on PythonAnywhere to install your project's dependencies.
+4.  **Install dependencies:** Using `pip`, you'll install all the packages listed in your `requirements.txt` file.
+5.  **Set up your web app:** PythonAnywhere has a simple interface for creating a new web app. You'll select Django as your framework and point it to your project's code and virtual environment.
+6.  **Configure WSGI file:** You'll need to edit the WSGI (Web Server Gateway Interface) file on PythonAnywhere to point to your project's `settings.py` file. This is how the PythonAnywhere servers communicate with your Django application.
+7.  **Set up your database:** You can use PythonAnywhere's built-in database (like MySQL or PostgreSQL) or connect to an external one.
+8.  **Run migrations:** You'll run `python manage.py migrate` to set up your database tables.
+9.  **Collect static files:** You'll run `python manage.py collectstatic` to gather all your static files (CSS, JS, images) into a single directory that PythonAnywhere can serve efficiently.
+10. **Set environment variables:** You'll set your secret keys and other environment variables in the "Web" tab of the PythonAnywhere dashboard.
+11. **Reload your web app:** After making any changes, you'll need to reload your web app on PythonAnywhere for the changes to take effect.
+
+By following these steps, your Django application will be live on the internet, accessible to anyone with the URL provided by PythonAnywhere!

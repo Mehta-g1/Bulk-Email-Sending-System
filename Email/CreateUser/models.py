@@ -42,17 +42,31 @@ class UserFiles(models.Model):
         return f"{self.user.name}   -{self.file.name}"
 
 
+class Receipent_Group(models.Model):
+    group = models.CharField(max_length=100, null=False)
+    user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.group}   -{self.user.name}"
+
+
 class Receipent(models.Model):
     Sender = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
     email = models.CharField(max_length=200, null=False, unique=False)
     name = models.CharField(max_length=150, null=False, default="Customer")
-    receipent_category = models.CharField(max_length=100, null=True)
+    receipent_category = models.CharField(max_length=100, null=True, default='N/A')
     comment = models.CharField(max_length=200, null=True)
+    group = models.ForeignKey(Receipent_Group, on_delete=models.CASCADE, null=True, default=None)
+
     added_date = models.DateTimeField(auto_now=True)
     send_time = models.IntegerField(default=0)
     source = models.CharField(max_length=100, null=True, default="N/A")
     def __str__(self):
         return f"{self.name}   -{self.email}"
+
+
+
 
 class reset_link(models.Model):
     user = models.ForeignKey(emailUsers, on_delete=models.CASCADE)
