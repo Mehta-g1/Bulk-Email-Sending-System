@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
         function toggleButtons() {
             const anyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
             if (anyCheckboxChecked) {
-                addRecipientBtn.classList.add('hidden');
-                deleteSelectedBtn.classList.remove('hidden');
+                addRecipientBtn.classList.add('d-none');
+                deleteSelectedBtn.classList.remove('d-none');
             } else {
-                addRecipientBtn.classList.remove('hidden');
-                deleteSelectedBtn.classList.add('hidden');
+                addRecipientBtn.classList.remove('d-none');
+                deleteSelectedBtn.classList.add('d-none');
             }
         }
 
@@ -50,12 +50,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        selectAllCheckbox.addEventListener('change', function () {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+                toggleButtons();
             });
-            toggleButtons();
-        });
+        }
 
         toggleButtons();
     }
@@ -92,10 +94,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if(selectAllCheckbox){
-        document.getElementById("selectAll").addEventListener("change", function (e) {
-            let checkboxes = document.querySelectorAll(".recipient-checkbox");
-            checkboxes.forEach(cb => cb.checked = e.target.checked);
-        });
-    }
+
 });

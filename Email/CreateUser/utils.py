@@ -6,10 +6,15 @@ from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from EmailTemplates.models import Template
 from django.contrib import messages
+from django.db import transaction
+from django.contrib.sites.shortcuts import get_current_site
 import pandas as pd
 from io import BytesIO
 import re
+import logging
 
+# Configure Logger
+logger = logging.getLogger(__name__)
 
 def profileCompletetion(user):
     total_fields,filled_fields,=12,0
@@ -35,7 +40,6 @@ def profileCompletetion(user):
 
     # Calculate completion percentage
     completion_percentage = (filled_fields / total_fields) * 100
-    # print(completion_percentage)
     return int(completion_percentage)
 
 
@@ -132,17 +136,21 @@ def send_bulk_email(user_id, selected_ids):
         update_recipients_send_time(selected_ids)
 
     except Exception as e:
-        print("\n\n--------------------")
-        print("Error while sending email:", e)
-        print("---------------------\n\n")
+        logger.error(f"Error while sending email: {e}")
         return False
 
     return True
-def send_forget_password_link(user_email, token):
+
+def send_forget_password_link(request, user_email, token):
     """
     Sends a password reset link to the given user email.
+    Uses dynamic domain from request.
     """
-    reset_link = f"http://127.0.0.1:8000/user/reset-password/{token}/"
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    protocol = 'https' if request.is_secure() else 'http'
+    
+    reset_link = f"{protocol}://{domain}/user/reset-password/{token}/"
 
     subject = "Reset Your Password"
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -183,15 +191,14 @@ def send_forget_password_link(user_email, token):
 def check_token(token):
     Token = get_object_or_404(reset_link, token = token)
     if not Token:
-        print("Invalid Token")
+        logger.warning("Invalid Token accessed")
         return False
     if Token.is_attempted:
-        print("Already used token")
+        logger.warning("Attempted to use already used token")
         return False
     timediff = now() - Token.datetime  
-    print("\nSending time: ", Token.datetime)
-    print("Current time:", now())
-    print("Difference:", timediff)
+    logger.info(f"Token check: Sending time: {Token.datetime}, Current time: {now()}, Diff: {timediff}")
+    
     if timediff > timedelta(minutes=15):
         return False
     return True
@@ -203,16 +210,13 @@ def is_validEmail(email):
     return False
 
 
-
-
-
 def extract_receipients_from_file(user, file, group,  request):
     if not file.file:
-        messages.warning(request, "No file found or Crupted file. Please upload again CSV/XLS/XLSX file.")
+        messages.warning(request, "No file found or corrupted file. Please upload again CSV/XLS/XLSX file.")
         return False
+    
     try:
         if file.file_type.lower() == 'csv':
-            # CSV read
             df = pd.read_csv(file.file)
         else:
             # Excel read (wrap in BytesIO)
@@ -220,40 +224,63 @@ def extract_receipients_from_file(user, file, group,  request):
             df = pd.read_excel(BytesIO(file.file.read()), engine='openpyxl')
             file.file.close()
     except Exception as e:
-        print("Error reading file:", e)
+        logger.error(f"Error reading file: {e}")
         messages.warning(request, "There was an error reading the file. Please ensure it is a valid CSV/XLS/XLSX file.")
         return False
+        
     try:
-        # Rename columns
-        df.columns = ["name", "email", "category", "comments"]
+        # Normalize columns to lowercase to find matches
+        df.columns = [str(c).lower().strip() for c in df.columns]
+        
+        # Smart Column Matching
+        name_col = next((c for c in df.columns if c in ['name', 'fullname', 'user', 'username', 'client']), None)
+        email_col = next((c for c in df.columns if c in ['email', 'email_address', 'e-mail', 'mail']), None)
+        category_col = next((c for c in df.columns if c in ['category', 'type', 'designation']), 'category') # default if exists
+        comment_col = next((c for c in df.columns if c in ['comment', 'comments', 'description', 'remark']), 'comment')
+
+        # Check critical columns
+        if not name_col or not email_col:
+            missing = []
+            if not name_col: missing.append("Name")
+            if not email_col: missing.append("Email")
+            messages.error(request, f"Missing required columns: {', '.join(missing)}. Please check your file headers.")
+            return False
 
         added_count = 0
         skipped_count = 0
-        for _, row in df.iterrows():
-            name = row['name']
-            email = row['email']
-            category = row['category']
-            comments = row['comments']
+        
+        # Use transaction to ensure all-or-nothing (Atomicity)
+        with transaction.atomic():
+            for _, row in df.iterrows():
+                name = row[name_col]
+                email = row[email_col]
+                
+                # Get optional fields safely
+                category = row[category_col] if category_col in df.columns else 'N/A'
+                comments = row[comment_col] if comment_col in df.columns else ''
 
-
-
-            if not Receipent.objects.filter(Sender=user, email=email).exists() and is_validEmail(email):
-                Receipent.objects.create(
-                    Sender=user,
-                    name=name,
-                    email=email,
-                    receipent_category=category,   
-                    comment=comments,              
-                    source=f"File - {file.file_name}",
-                    group=group
-                )
-                added_count += 1
-            else:
-                skipped_count += 1
-                # messages.warning(request, f"Email {email} already exists or not an email and was skipped.")
+                # Handle NaN/None
+                if pd.isna(category): category = 'N/A'
+                if pd.isna(comments): comments = ''
+                
+                if not Receipent.objects.filter(Sender=user, email=email).exists() and is_validEmail(str(email)):
+                    Receipent.objects.create(
+                        Sender=user,
+                        name=name,
+                        email=email,
+                        receipent_category=category,   
+                        comment=comments,              
+                        source=f"File - {file.file_name}",
+                        group=group
+                    )
+                    added_count += 1
+                else:
+                    skipped_count += 1
+        
         messages.success(request, f"{added_count} recipients added successfully, {skipped_count} skipped.")
+    
     except Exception as e:
-        print("Error processing file:", e)
+        logger.error(f"Error processing file content: {e}")
         messages.error(request, f"Error processing file. Ensure correct format. {e}")
         return False
 

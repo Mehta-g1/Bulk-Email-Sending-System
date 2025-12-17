@@ -7,13 +7,14 @@
 
 
 <style>
-    .form-control.bg-dark::placeholder { 
-        color: rgba(255, 255, 255, 0.5); 
-        opacity: 1; 
+    .form-control.bg-dark::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+        opacity: 1;
     }
-    .form-control.bg-dark:-ms-input-placeholder { 
-    }
-    .form-control.bg-dark::-ms-input-placeholder { 
+
+    .form-control.bg-dark:-ms-input-placeholder {}
+
+    .form-control.bg-dark::-ms-input-placeholder {
         color: rgba(255, 255, 255, 0.5);
     }
 </style>
@@ -21,7 +22,8 @@
     <div class="container-fluid">
         <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -43,39 +45,51 @@
             <!-- Right-aligned items -->
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                        <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2"
+                            style="width: 32px; height: 32px; object-fit: cover;">
                         {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
+                        <i class="fa-solid fa-user-circle fa-xl me-2"></i>
                         {% endif %}
                         <span class="d-none d-lg-inline">{{ username }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i
+                                    class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'profile' %}">
-                                <span class="d-flex justify-content-between"><span>Profile Completion</span> <span>{{ progress }}%</span></span>
-                                <div class="progress" style="height: 5px;"><div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div></div>
+                                <span class="d-flex justify-content-between"><span>Profile Completion</span>
+                                    <span>{{ progress }}%</span></span>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;"
+                                        aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                                    class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
     </div>
-</nav> <hr>
+</nav>
+<hr>
 
 <div class="dashboard container  mt-4 mb-5  pb-4 rounded-4 shadow-lg bg-dark text-light">
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
+    {% for message in messages %}
+    <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert"
+        style="background-color: {{ message.color|default:'' }};">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
     {% endif %}
 
     <!-- Dashboard Header: Title, Search, and Actions -->
@@ -90,16 +104,20 @@
             <form action="{% url 'dashboard' %}" method='post'>
                 {% csrf_token %}
                 <div class="input-group gap-2">
-                    <select name="group_filter" class="form-select bg-dark text-light border-secondary rounded-pill" style="max-width: 180px;" onchange="this.form.submit()">
+                    <select name="group_filter" class="form-select bg-dark text-light border-secondary rounded-pill"
+                        style="max-width: 180px;" onchange="this.form.submit()">
                         <option value="all">All Groups</option>
                         {% for group in user_groups %}
-                            <option value="{{ group.id }}" {% if group.id == selected_group_id %}selected{% endif %}>
-                                {{ group.group }}
-                            </option>
+                        <option value="{{ group.id }}" {% if group.id == selected_group_id %}selected{% endif %}>
+                            {{ group.group }}
+                        </option>
                         {% endfor %}
                     </select>
-                    <input class="form-control bg-dark text-light border-secondary rounded-pill" type="text" name='search' placeholder="Search within group..." {% if search_query %}value="{{ search_query }}"{% endif %}>
-                    <button type='submit' class='btn btn-outline-secondary rounded-pill'><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <input class="form-control bg-dark text-light border-secondary rounded-pill" type="text"
+                        name='search' placeholder="Search within group..."
+                        {% if search_query %}value="{{ search_query }}" {% endif %}>
+                    <button type='submit' class='btn btn-outline-secondary rounded-pill'><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </form>
         </div>
@@ -107,31 +125,37 @@
         <!-- Action Buttons -->
         <div class="col-12 col-lg-auto">
             <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2">
-                <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown" id="addReceipient-btn">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         <i class="fa-solid fa-plus"></i> Add Recipients
-                </button>
+                    </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item" href="{% url "add_recepient" %}"><i class="fa-solid fa-user-plus me-2"></i>One by One</a></li>
-                        <li><a class="dropdown-item" href="{% url "add_in_bulk" %}"><i class="fa-solid fa-layer-group me-2"></i>Bulk (CSV/XLS)</a></li>
-                </ul>
-            </div>
-                <button type="submit" class="btn btn-danger d-none" id="deleteSelectedBtn" form="recipientsForm" onclick="return confirm('Are you sure you want to delete the selected recipients?');" name='action' value='delete'><i class="fa-solid fa-trash"></i> Delete</button>
-                <button type="submit" class="btn btn-success" form="recipientsForm" name='action' value='send'><i class="fa-solid fa-paper-plane"></i> Send</button>
+                        <li><a class="dropdown-item" href="{% url "add_recepient" %}"><i
+                                    class="fa-solid fa-user-plus me-2"></i>One by One</a></li>
+                        <li><a class="dropdown-item" href="{% url "add_in_bulk" %}"><i
+                                    class="fa-solid fa-layer-group me-2"></i>Bulk (CSV/XLS)</a></li>
+                    </ul>
+                </div>
+                <button type="submit" class="btn btn-danger d-none" id="deleteSelectedBtn" form="recipientsForm"
+                    onclick="return confirm('Are you sure you want to delete the selected recipients?');" name='action'
+                    value='delete'><i class="fa-solid fa-trash"></i> Delete Selected</button>
+                <button type="submit" class="btn btn-success" form="recipientsForm" name='action' value='send'><i
+                        class="fa-solid fa-paper-plane"></i> Send</button>
             </div>
         </div>
     </div>
 
     <div class=" rounded-4">
         {% if search_query %}
-            <div class="alert alert-info ms-4 p-2">
+        <div class="alert alert-info ms-4 p-2">
             Showing results for <strong>'{{ search_query }}'</strong>
-            </div>
-        
+        </div>
+
         {% endif %}
         <form method="post" id="recipientsForm" action=" {% url "submit_form" %} ">
-        {% csrf_token %}
-        
+            {% csrf_token %}
+
             <table class="table table-dark table-striped table-hover table-bordered table-responsive">
                 <thead>
                     <tr>
@@ -149,8 +173,8 @@
                 <tbody>
 
                     {% for r in receipients %}
-                    <tr >
-                        
+                    <tr>
+
                         <td><input type="checkbox" name="selected" value="{{ r.id }}" class="recipient-checkbox"></td>
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ r.name }}</td>
@@ -163,11 +187,11 @@
                             <a class="btn btn-sm btn-info p-1" href="{% url 'view_recepient' r.id %}">
                                 <i class="fa-solid fa-eye"></i> View
                             </a>
-                            <a href="{% url 'edit_recepient' r.id %}" class="btn btn-sm btn-warning p-1" >
+                            <a href="{% url 'edit_recepient' r.id %}" class="btn btn-sm btn-warning p-1">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
                             <a href="{% url 'delete_recipient' r.id %}" class="btn btn-danger p-1"
-                               onclick="return confirm('Are you sure you want to delete this recipient?');">
+                                onclick="return confirm('Are you sure you want to delete this recipient?');">
                                 <i class="fa-solid fa-trash"></i> Delete
                             </a>
                         </td>
@@ -176,11 +200,11 @@
                 </tbody>
             </table>
             {% if not receipients %}
-                <p class="text-center fs-4 fw-bolder text-warning">No recipients found. Please add some recipients.</p>
+            <p class="text-center fs-4 fw-bolder text-warning">No recipients found. Please add some recipients.</p>
             {% else %}
             <p class="text-center fw-bolder text-danger">------------- end of table ---------------</p>
             {% endif %}
-    </form>
+        </form>
     </div>
 </div>
 

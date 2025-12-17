@@ -8,6 +8,10 @@ from django.db.models import Q
 from django.utils.timezone import now
 from EmailTemplates.models import Template
 import os
+import logging
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 
 # Login view
@@ -214,7 +218,7 @@ def edit_profile_process(request):
             if old_image and old_image.path != user.image.path:
                 if os.path.isfile(old_image.path):
                     os.remove(old_image.path)
-                    # print("Old image file deleted:", old_image.path)
+                    logger.info(f"Old image file deleted: {old_image.path}")
 
         user.save()
         messages.success(request, "Your profile has been updated successfully.")
@@ -259,7 +263,7 @@ def forgot_password(request):
                 token = token
             )
             
-            send_forget_password_link(email, token)
+            send_forget_password_link(request, email, token)
             messages.success(request, "Reset link sent to registered email")
             return redirect('Login')
         else:
@@ -384,12 +388,20 @@ def addReceipent(request):
         category = request.POST.get('category')
         comment = request.POST.get('comment')
         group_input = request.POST.get('group')
-        if not group_input or group_input == '0':
-            messages.warning(request, "Please select a group")
-            return redirect('add_recepient')
+        new_group_name = request.POST.get('new_group_name')
 
         user = get_object_or_404(emailUsers, pk=user_id)
-        group = Receipent_Group.objects.get(pk=group_input, user=user)
+
+        # Logic to handle new group creation
+        if new_group_name:
+            # Create new group
+            group = Receipent_Group.objects.create(group=new_group_name, user=user)
+        elif not group_input or group_input == '0':
+            messages.warning(request, "Please select a group or create a new one")
+            return redirect('add_recepient')
+        else:
+            group = Receipent_Group.objects.get(pk=group_input, user=user)
+
         Receipent.objects.create(
             Sender = user,
             email = email,
@@ -450,30 +462,37 @@ def add_in_bulk(request):
         file = request.FILES.get('bulk_file') 
         filename = file.name.lower()
         group_input = request.POST.get('group')
-        if not group_input or group_input == '0':
-            messages.warning(request, "Please select a group")
+        new_group_name = request.POST.get('new_group_name')
+
+        if new_group_name:
+            group = Receipent_Group.objects.create(group=new_group_name, user=user)
+        elif not group_input or group_input == '0':
+            messages.warning(request, "Please select a group or create a new one")
             return redirect('add_in_bulk')
-        group = Receipent_Group.objects.get(pk=group_input, user=user)
-        print(group, group_input)
+        else:
+            group = Receipent_Group.objects.get(pk=group_input, user=user)
+        
+        logger.info(f"Group Selection: {group_input}, New Group: {new_group_name}")
+
         if not file:
-            print("No file uploaded!")
+            logger.warning("No file uploaded!")
             messages.warning(request, "No file uploaded!")
             return redirect('add_in_bulk')
         if not (filename.endswith('.csv') or filename.endswith('.xls') or filename.endswith('.xlsx')):
-            print("Please upload a valid CSV/XLS/XLSX file only.")
+            logger.warning("Invalid file type uploaded")
             messages.warning(request, "Please upload a valid CSV/XLS/XLSX file only.")
             return redirect('add_in_bulk')
+        
         file_name = request.POST.get('file_name')
         file_type = ''
         if request.POST.get('file_type') == 'csv':
             file_type = 'CSV'
-            print("File is CSV")
         elif request.POST.get('file_type') == 'xls':
-            print("File is XLS")
             file_type = 'XLS'
 
         file_size = file.size
-        print(f"File name: {file_name}, Size: {file_size} bytes, Type: {file_type}")
+        logger.info(f"File name: {file_name}, Size: {file_size} bytes, Type: {file_type}")
+        
         user_file = UserFiles.objects.create(
             user = user,
             file_name = file_name,
@@ -510,7 +529,7 @@ def delete_file(request, file_id):
     # Delete the file from storage
     if user_file.file and os.path.isfile(user_file.file.path):
         os.remove(user_file.file.path)
-        print("File deleted from storage:", user_file.file.path)
+        logger.info(f"File deleted from storage: {user_file.file.path}")
 
     # Delete the database record
     user_file.delete()
@@ -566,7 +585,7 @@ def read_file(request, file_id):
             messages.warning(request, "No recipients found in the file or there was an error processing it.")
         return redirect('dashboard')
     except Exception as e:
-        print("Error reading file:", e)
+        logger.error(f"Error reading file: {e}")
         messages.warning(request, "An error occurred while reading the file.")
         return redirect('profile')
     
@@ -633,3 +652,68 @@ def account_settings(request):
                 'groups':groups,
             })
 
+
+def create_group(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")
+    
+    user = get_object_or_404(emailUsers, pk=user_id)
+
+    if request.method == "POST":
+        group_name = request.POST.get("group_name")
+        if group_name:
+            Receipent_Group.objects.create(user=user, group=group_name)
+            messages.success(request, f"Group '{group_name}' created successfully!")
+            return redirect("profile")
+        else:
+            messages.warning(request, "Group name cannot be empty.")
+    
+    return render(request, "CreateUser/group_form.html", {
+        "title": "Create New Group",
+        "user": user, 
+        "username": str(user.name).split(" ")[0],
+        'image': user.image
+    })
+
+def edit_group(request, group_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")
+    
+    user = get_object_or_404(emailUsers, pk=user_id)
+    group = get_object_or_404(Receipent_Group, pk=group_id, user=user)
+
+    if request.method == "POST":
+        group_name = request.POST.get("group_name")
+        if group_name:
+            group.group = group_name
+            group.save()
+            messages.success(request, "Group updated successfully!")
+            return redirect("profile")
+        else:
+            messages.warning(request, "Group name cannot be empty.")
+            
+    return render(request, "CreateUser/group_form.html", {
+        "title": "Edit Group",
+        "group": group,
+        "user": user,
+        "username": str(user.name).split(" ")[0],
+        'image': user.image
+    })
+
+def delete_group(request, group_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        messages.warning(request, "Login first")
+        return redirect("Login")
+    
+    user = get_object_or_404(emailUsers, pk=user_id)
+    group = get_object_or_404(Receipent_Group, pk=group_id, user=user)
+    
+    group_name = group.group
+    group.delete()
+    messages.success(request, f"Group '{group_name}' and its recipients deleted successfully.")
+    return redirect("profile")

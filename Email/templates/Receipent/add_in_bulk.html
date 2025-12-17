@@ -7,7 +7,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -18,22 +19,27 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
+                    <a class="nav-link" href="{% url "templates" %}"><i
+                            class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
                 </li>
             </ul>
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                        <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2"
+                            style="width: 32px; height: 32px; object-fit: cover;">
                         {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
+                        <i class="fa-solid fa-user-circle fa-xl me-2"></i>
                         {% endif %}
                         <span class="d-none d-lg-inline">{{ username }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i
+                                    class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                                    class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -42,14 +48,15 @@
 </nav>
 <hr>
 {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-    
+{% for message in messages %}
+<div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert"
+    style="background-color: {{ message.color|default:'' }};">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
 <div class="container mt-4 mb-4 add_recepient">
     <h2><i class="fa-solid fa-layer-group"></i> Add Recipients in Bulk</h2>
     <hr>
@@ -60,24 +67,30 @@
                     <h5 class="card-title text-center border p-2 bg-secondary mb-2 rounded-3">Upload File</h5>
                     <div class="mb-2 mt-3 border border-primary p-2 rounded-3 bg-black">
                         <small class="text-light">
-                            <strong>Note:</strong> Fields marked with 
-                            <span class="text-danger fw-bolder">*</span> are required to proceed with <i class='text-primary'>add new recipient</i>. Please ensure all mandatory information is provided accurately.
+                            <strong>Note:</strong> Fields marked with
+                            <span class="text-danger fw-bolder">*</span> are required to proceed with <i
+                                class='text-primary'>add new recipient</i>. Please ensure all mandatory information is
+                            provided accurately.
                         </small>
-                    </div>  <hr>
+                    </div>
+                    <hr>
 
                     <form action="" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label class="form-label">Choose file type<i class="text-danger fw-bolder fs-5">*</i> :</label>
+                            <label class="form-label">Choose file type<i class="text-danger fw-bolder fs-5">*</i>
+                                :</label>
                             <div class=" d-flex justify-content-around">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="csv" id="csvCheck" name="file_type" checked>
+                                    <input class="form-check-input" type="radio" value="csv" id="csvCheck"
+                                        name="file_type" checked>
                                     <label class="form-check-label" for="csvCheck">
                                         CSV
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="xls" id="xlsCheck" name="file_type">
+                                    <input class="form-check-input" type="radio" value="xls" id="xlsCheck"
+                                        name="file_type">
                                     <label class="form-check-label" for="xlsCheck">
                                         XLS/XLSX
                                     </label>
@@ -85,34 +98,47 @@
                             </div>
                         </div>
                         <div class="row">
-                            
+
                             <div class="col-md-6 mb-3">
-                                <label for="group" class="form-label ">Select Group <i class="text-danger fw-bolder fs-5">*</i></label>
-                                <select name="group" class="form-select bg-dark text-light form-control bg-dark" id="select">
+                                <label for="group" class="form-label ">Select Group <i
+                                        class="text-danger fw-bolder fs-5">*</i></label>
+                                <select name="group" class="form-select bg-dark text-light form-control bg-dark"
+                                    id="select">
                                     <option value="0" class='bg-dark text-light'>-- Select Group --</option>
                                     {% for group in groups %}
-                                    <option value="{{ group.id }}" class="bg-dark text-light rounded-3">{{ group.group }}</option>
+                                    <option value="{{ group.id }}" class="bg-dark text-light rounded-3">
+                                        {{ group.group }}</option>
                                     {% endfor %}
                                 </select>
+                                <div class="mt-2 text-center text-light fw-bold">OR</div>
+                                <input type="text" name="new_group_name" class="form-control mt-2"
+                                    placeholder="Create New Group (Enter Name)">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="filename" class="form-label">File Name<i class="text-danger fw-bolder fs-5">*</i></label>
-                                <input class="form-control" type="text" id="filename" name="file_name" placeholder="Enter file name" required>
+                                <label for="filename" class="form-label">File Name<i
+                                        class="text-danger fw-bolder fs-5">*</i></label>
+                                <input class="form-control" type="text" id="filename" name="file_name"
+                                    placeholder="Enter file name" required>
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="mb-3">
-                            <label for="formFile" class="form-label">Select file <i class="text-danger fw-bolder fs-5">*</i></label>
+                            <label for="formFile" class="form-label">Select file <i
+                                    class="text-danger fw-bolder fs-5">*</i></label>
                             <input class="form-control" type="file" id="formFile" name="bulk_file" required>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="exampleCheck1" name="terms" required>
-                            <label class="form-check-label" for="exampleCheck1">I agree to the <a href="#">Terms and Conditions</a></label>
+                            <label class="form-check-label" for="exampleCheck1">I agree to the <a href="#">Terms and
+                                    Conditions</a></label>
                         </div>
                         <div class="d-flex justify-content-between gap-2">
-                            <a href=" {% url "dashboard" %} " class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
-                            <a href="{% url 'add_recepient' %}" class="btn btn-warning"><i class="fa-solid fa-user-plus"></i> Add Single Recipient</a>
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-upload"></i> Upload</button>
+                            <a href=" {% url "dashboard" %} " class="btn btn-secondary"><i
+                                    class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+                            <a href="{% url 'add_recepient' %}" class="btn btn-warning"><i
+                                    class="fa-solid fa-user-plus"></i> Add Single Recipient</a>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-upload"></i>
+                                Upload</button>
                         </div>
                     </form>
                 </div>
@@ -152,7 +178,8 @@
 
                         </tbody>
                     </table>
-                    <p class="fw-bolder p-2 border bg-black rounded-3 text-light"><strong>Note:</strong> Remove headers of files as given references</p>
+                    <p class="fw-bolder p-2 border bg-black rounded-3 text-light"><strong>Note:</strong> Remove headers
+                        of files as given references</p>
                 </div>
             </div>
         </div>

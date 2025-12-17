@@ -25,5 +25,11 @@ urlpatterns = [
     path('receipient/<int:receipient_id>/', views.viewReceipent, name="view_recepient"),
     path('receipient/<int:receipient_id>/edit/', views.editReceipent, name="edit_recepient"),
     path('receipient/<int:receipient_id>/delete/', views.deleteRecipient, name="delete_recipient"),
+    
+    # Group Management
+    path('group/create/', views.create_group, name='create_group'),
+    path('group/edit/<int:group_id>/', views.edit_group, name='edit_group'),
+    path('group/delete/<int:group_id>/', views.delete_group, name='delete_group'),
+
     path('templates/', include('EmailTemplates.urls')),
 ]
