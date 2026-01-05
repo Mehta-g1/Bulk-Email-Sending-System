@@ -5,6 +5,8 @@ from django.contrib import messages
 from CreateUser.models import Receipent
 from CreateUser.models import emailUsers
 from django.shortcuts import get_object_or_404
+
+
 # Home page view
 def Home(request):
     user_id = request.session.get('user_id')

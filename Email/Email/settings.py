@@ -80,7 +80,7 @@ USE_I18N = True
 USE_TZ = True
 
 # PRODUCTION SETTINGS - Change these based on environment
-DEBUG = config("DEBUG", default="False") == "True"
+DEBUG = True
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
 DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")

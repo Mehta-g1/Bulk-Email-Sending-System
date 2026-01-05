@@ -287,3 +287,52 @@ def extract_receipients_from_file(user, file, group,  request):
     return True
 
 
+def send_welcome_message(user, request):
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    protocol = 'https' if request.is_secure() else 'http'
+    subject = "Welcome to Email Sender 🚀"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = [user.email_address]
+
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Welcome to <strong>Email Sender</strong> 🚀</h2>
+
+        <p>Hi <strong>{user.name}</strong>,</p>
+
+        <p>
+            Your account has been successfully created on <strong>Email Sender</strong>.
+            You can now start managing and sending bulk emails with ease.
+        </p>
+
+        <ul>
+            <li>Add and manage recipients</li>
+            <li>Create reusable email templates</li>
+            <li>Send bulk emails using your own email account</li>
+        </ul>
+
+        <p>
+            👉 <a href="http://{domain}/user/login/" target="_blank">
+                Click here to login to your dashboard
+            </a>
+        </p>
+
+        <p style="margin-top: 20px;">
+            If you did not create this account, you can safely ignore this email.
+        </p>
+
+        <p>
+            Thanks,<br>
+            <strong>Email Sender Team</strong>
+        </p>
+    </body>
+    </html>
+    """
+
+    msg = EmailMultiAlternatives(subject, html_content, from_email, to_email)
+    msg.attach_alternative(html_content,"text/html")
+    msg.send()
+    messages.success(request, "Welcome Message Sent !")
+    return True
