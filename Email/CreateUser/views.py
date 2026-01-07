@@ -79,9 +79,6 @@ def dashboard(request):
         return redirect('Login')
     
     user = emailUsers.objects.get(id=user_id)
-    # if not user.email_password:
-    #     messages.warning(request, "Please update your email settings in profile before proceeding.")
-    #     return redirect('edit_profile')
 
     recipients = Receipent.objects.filter(Sender__id=user_id).order_by('-added_date')
     search_query = ""

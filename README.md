@@ -1,275 +1,241 @@
 # Bulk Email Sending System
 
-This is a Django-based web application for sending bulk emails. Users can sign up, manage their recipient lists, create email templates, and send emails to multiple recipients at once. This project is designed to be a simple and effective tool for small-scale email campaigns.
+A powerful, user-friendly, and secure Django-based web application designed for sending bulk emails efficiently. This system allows multi-user support where each user can manage their own recipients, groups, templates, and SMTP configurations to run personalized email campaigns.
+
+**Live Demo:** [https://emailsender.pythonanywhere.com/](https://emailsender.pythonanywhere.com/)
+
+---
 
 ## Table of Contents
 
-- [Project Status](#project-status)
 - [Features](#features)
 - [Screenshots](#screenshots)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Environment Setup](#environment-setup)
 - [User Guide](#user-guide)
-  - [User Authentication](#user-authentication)
-    - [Sign Up](#sign-up)
-    - [Login](#login)
-    - [Logout](#logout)
-    - [Forgot Password](#forgot-password)
-    - [Reset Password](#reset-password)
-  - [Dashboard](#dashboard)
-  - [Profile Management](#profile-management)
-    - [View Profile](#view-profile)
-    - [Edit Profile](#edit-profile)
-    - [Change Password](#change-password)
-  - [Recipient Management](#recipient-management)
-    - [Add Recipient](#add-recipient)
-    - [View, Edit, and Delete Recipient](#view-edit-and-delete-recipient)
-  - [Email Template Management](#email-template-management)
-    - [Create Template](#create-template)
-    - [View, Edit, and Delete Template](#view-edit-and-delete-template)
-    - [Set Primary Template](#set-primary-template)
-  - [Sending Bulk Emails](#sending-bulk-emails)
+  - [Authentication](#authentication)
+  - [Dashboard & Analytics](#dashboard--analytics)
+  - [Group Management](#group-management)
+  - [Recipient Management (Bulk Upload Policy)](#recipient-management)
+  - [Template System](#template-system)
+  - [SMTP Configuration (BYOS)](#smtp-configuration-byos)
+  - [Sending Emails](#sending-emails)
+- [API & URL Map](#api--url-map)
 - [Future Improvements](#future-improvements)
 - [Contributing](#contributing)
-- [Developer Credits](#developer-credits)
 - [License](#license)
 
-## Project Status
-
-**Under Development:** This project is currently under active development. New features are being added, and existing ones are being improved. Contributions are welcome!
-
-**Live Now:** This project is live at: https://emailsender.pythonanywhere.com/
+---
 
 ## Features
 
-*   **User Authentication:** Secure user sign-up, login, and logout system.
-*   **Profile Management:** Users can view and edit their profiles, including personal information and profile picture.
-*   **Password Reset:** Secure password reset functionality using email verification.
-*   **Recipient Management:** Users can add, view, edit, and delete their email recipients.
-*   **Bulk Recipient Upload:** Add recipients in bulk using file uploads.
-*   **Email Template Management:** Create, edit, and manage multiple email templates.
-*   **Primary Template:** Set a default template for sending emails.
-*   **Bulk Emailing:** Send emails to all registered recipients with a single click.
-*   **SMTP Integration:** Uses SMTP to send emails, configured via environment variables.
+*   **Secure Authentication**: Complete sign-up, login, password reset (via email link), and functionality to manage personal profiles.
+*   **Custom SMTP Configuration (BYOS)**: "Bring Your Own Server" model. Each user configures their own SMTP credentials (Gmail, Outlook, Zoho, etc.) directly in their account settings, ensuring their campaigns use their own reputation and limits.
+*   **Group Management**: Create, edit, and delete groups to organize recipients effectively (e.g., "Newsletter", "Clients", "Team").
+*   **Smart Bulk Import**: Upload recipients via CSV or Excel (XLS/XLSX). The system intelligently maps columns (finding flexible matches like 'Name', 'Fullname', 'Email', 'E-mail') and ignores duplicates automatically.
+*   **Template Engine**: Create rich HTML email templates. Set a "Primary" template for quick access.
+*   **Dashboard Analytics**: Visual progress bars for profile completion, quick stats on groups, and recent activity logs.
+*   **Bulk Emailing**: Select individual recipients or filter by group to send emails in bulk with a single click.
+*   **Attachment Handling**: Manages uploaded files for bulk import with options to read/delete file history.
+
+---
 
 ## Screenshots
 
-| Feature | Screenshot |
+| Feature | Description |
 | :--- | :--- |
-| Home Page | ![Screenshot of the Home page](screenshots/home.png) |
-| Sign Up Page | ![Screenshot of the Sign Up page](screenshots/signUp_page.png) |
-| Login Page | ![Screenshot of the Login page](screenshots/Login_page.png) |
-| Dashboard | ![Screenshot of the Dashboard](screenshots/dashboard.png) |
-| Profile Page | ![Screenshot of the Profile page](screenshots/profile.png) |
-| Add Recipient Page | ![Screenshot of the Add Recipient page](screenshots/add_receipient.png) |
-| View/Delete Recipient Page | ![Screenshot of the View/Delete Recipient page](screenshots/view_delete.png) |
-| Add Template Page | ![Screenshot of the Add Template page](screenshots/add_template.png) |
-| View Template Page | ![Screenshot of the View Template page](screenshots/template_view.png) |
-| Primary Template | ![Screenshot of the Primary Template](screenshots/primary_template.png) |
-| Forgot Password Page | ![Screenshot of the Forgot Password page](screenshots/forget_pass.png) |
-| Reset Password Page | ![Screenshot of the Reset Password page](screenshots/reset_pass.png) |
+| **Home Page** | Landing page with project overview. |
+| **Dashboard** | Central hub showing recipient stats and groups. |
+| **Account Settings** | **Unique Feature:** Configure your personal SMTP (Gmail/Outlook) here. |
+| **Group Manager** | specialized interface to create and manage recipient groups. |
+| **Template Editor** | Create reusable email contents with subjects. |
+
+*(See specific screenshots in the `screenshots/` directory)*
+
+---
+
+## Technology Stack
+
+*   **Backend Framework**: Django 5.x (Python 3.10+)
+*   **Database**: SQLite (Default) - Can be easily switched to PostgreSQL/MySQL via Django settings.
+*   **Frontend**: HTML5, CSS3, Vanilla JavaScript (No heavy framework overhead).
+*   **Data Processing**: Pandas (for robust CSV/Excel parsing).
+*   **Configuration**: Python-Decouple (for environment variable management).
+*   **Static Files**: Whitenoise (for serving static assets in production).
+
+---
+
+## Project Structure
+
+```text
+Email Send/
+├── .env                  # Environment variables (created by you)
+├── requirements.txt      # Python dependencies
+├── README.md             # Documentation
+├── Email/                # Main Project Directory
+    ├── manage.py         # Django management script
+    ├── Email/            # Project Settings
+    │   ├── settings.py   # Main configuration
+    │   ├── urls.py       # Global URL routing
+    │   └── wsgi.py       # WSGI entry point
+    ├── CreateUser/       # App: Auth, Dashboard, Recipients, Groups
+    │   ├── views.py      # Core logic
+    │   ├── models.py     # DB Models (emailUsers, Receipent, etc.)
+    │   └── utils.py      # Helpers (Email sending, File parsing)
+    ├── EmailTemplates/   # App: Template Management
+    └── Home/             # App: Landing pages
+```
+
+---
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
 ### Prerequisites
 
-*   Python 3.10 or higher
-*   Pip (Python package installer)
+*   **Python 3.10** or higher
+*   **pip** (Python Packet Manager)
+*   **Git**
 
 ### Installation
 
 1.  **Clone the repository:**
-    ```sh
+    ```bash
     git clone https://github.com/Mehta-g1/Bulk-Email-Sending-System.git
     cd Bulk-Email-Sending-System
     ```
 
-2.  **Create a virtual environment (recommended):**
-    ```sh
+2.  **Create a virtual environment:**
+    ```bash
+    # Windows
     python -m venv .venv
-    source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
+    .venv\Scripts\activate
+
+    # macOS/Linux
+    python3 -m venv .venv
+    source .venv/bin/activate
     ```
 
-3.  **Install the dependencies:**
-    ```sh
+3.  **Install dependencies:**
+    ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Set up environment variables:**
-    Create a `.env` file in the `Email` directory and add your email credentials:
-    ```
-    EMAIL_HOST_USER=your-email@gmail.com
-    EMAIL_HOST_PASSWORD=your-app-password
-    ```
+### Environment Setup
 
-5.  **Navigate to the project directory:**
-    ```sh
+Create a `.env` file in the `Email` directory (same level as `manage.py` is usually fine, or inside the inner `Email` config folder depending on how you run it, but standard practice is project root or inner folder. *Note: The settings.py looks for .env in usage with python-decouple*).
+
+**Required `.env` Variables:**
+
+```ini
+# Security
+SECRET_KEY=your-secure-random-key-here
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+
+# System Email (Used for Password Resets & Welcome Emails)
+# This is the "Admin" email address. Users will use their OWN credentials for sending campaigns.
+EMAIL_HOST_USER=admin-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+```
+
+4.  **Apply Migrations:**
+    ```bash
     cd Email
-    ```
-
-6.  **Apply database migrations:**
-    ```sh
     python manage.py migrate
     ```
 
-7.  **Run the development server:**
-    ```sh
+5.  **Run Server:**
+    ```bash
     python manage.py runserver
     ```
+    Access the app at `http://127.0.0.1:8000/`.
 
-The application will be available at `http://127.0.0.1:8000/`.
+---
 
 ## User Guide
 
-### User Authentication
+### Authentication
+*   **Sign Up**: Create an account with Name, Email, Phone.
+*   **Login**: Access your private dashboard.
+*   **Forgot Password**: Secure reset link sent to your registered email. 
+    *   *Note: This system email is sent using the credentials in `.env`.*
 
-#### Sign Up
+### Dashboard & Analytics
+Once logged in, the dashboard provides a snapshot of your recipients. You can use the **Search Bar** to filter recipients by name, email, or group.
 
-1.  Navigate to the [Sign Up](http://127.0.0.1:8000/user/signUp/) page.
-2.  Fill in the required details, including your name, email address, and password.
-3.  Click the "Sign Up" button.
-
-![Screenshot of the Sign Up page](screenshots/signUp_page.png)
-
-#### Login
-
-1.  Navigate to the [Login](http://127.0.0.1:8000/user/login/) page.
-2.  Enter your registered email address and password.
-3.  Click the "Login" button.
-
-![Screenshot of the Login page](screenshots/Login_page.png)
-
-#### Logout
-
-1.  Click on the "Logout" button in the navigation bar.
-
-#### Forgot Password
-
-1.  Navigate to the [Forgot Password](http://127.0.0.1:8000/user/forgot-password/) page.
-2.  Enter your registered email address.
-3.  Click the "Submit" button. A password reset link will be sent to your email.
-
-![Screenshot of the Forgot Password page](screenshots/forget_pass.png)
-
-#### Reset Password
-
-1.  Click on the reset password link sent to your email.
-2.  Enter your new password and confirm it.
-3.  Click the "Reset Password" button.
-
-![Screenshot of the Reset Password page](screenshots/reset_pass.png)
-
-### Dashboard
-
-After logging in, you will be redirected to the dashboard. The dashboard displays a list of your recipients and a search bar to find specific recipients.
-
-![Screenshot of the Dashboard](screenshots/dashboard.png)
-
-### Profile Management
-
-#### View Profile
-
-1.  Click on your username in the navigation bar.
-2.  Select "View Profile" from the dropdown menu.
-
-![Screenshot of the View Profile page](screenshots/profile.png)
-
-#### Edit Profile
-
-1.  On the View Profile page, click the "Edit Profile" button.
-2.  Update your personal information.
-3.  Click the "Save" button.
-
-![Screenshot of the Edit Profile page](screenshots/edit_profile.png)
-
-#### Change Password
-
-1.  On the View Profile page, click the "Change Password" button.
-2.  Enter your current password and the new password.
-3.  Click the "Change Password" button.
-
+### Group Management
+Go to **View Profile -> Groups**.
+*   **Create Group**: Add a new tag (e.g., "HR Dept").
+*   **Filter**: On the dashboard, use the dropdown to view recipients only from specific groups.
 
 ### Recipient Management
+You can add recipients in two ways:
 
-#### Add Recipient (One by One)
+1.  **Manually**: Enter Name, Email, Group, and Category one by one.
+2.  **Bulk Upload**: Upload a CSV or Excel file.
+    *   **Smart Matching**: The system looks for headers like `Name`, `Fullname`, `Email`, `Mail`.
+    *   **Duplicate Check**: Automatically skips emails that are already in your list.
+    *   **File History**: View uploaded files and their extraction status in your Profile.
 
-1.  From the dashboard, click the "Add Recipients" button and select "One by One".
-2.  Fill in the recipient's details (name, email, etc.) and select a group to assign them to.
-3.  Click the "Save Recipient" button.
+### Template System
+Navigate to **Templates**.
+*   Create rich text emails (Subject + Body).
+*   **Primary Template**: Mark one template as primary to be auto-selected when sending quick emails.
 
-#### Add Recipients in Bulk (CSV/XLS)
+### SMTP Configuration (BYOS)
+**Critical Step for Sending:**
+1.  Go to **View Profile -> Account Settings**.
+2.  Enter **your personal** Email, Password (App Password recommended), Host (e.g., `smtp.gmail.com`), and Port (`587`).
+3.  The system uses *these* credentials to send your bulk campaigns, ensuring high deliverability and personal branding.
 
-1.  From the dashboard, click "Add Recipients" and select "Bulk (CSV/XLS)".
-2.  Select a group to which all recipients from the file will be assigned.
-3.  Choose your CSV or XLSX file. Ensure it follows the specified column format.
-4.  Click "Upload".
+### Sending Emails
+1.  On the Dashboard, check the boxes next to the recipients you want to contact.
+2.  (Optional) Select "All" or filter by a Group first.
+3.  Click **Send Email**.
+4.  The system uses your **Primary Template** and your **Account Settings** SMTP to dispatch the mails.
 
-#### View, Edit, and Delete
+---
 
--   **View:** Click on the recipient's name on the dashboard to see their details.
--   **Edit:** On the recipient details page, click the "Edit" button. Update the information and click "Save".
--   **Delete:** On the recipient details page, click the "Delete" button.
+## API & URL Map
 
-### Email Template Management
+| Endpoint | Function |
+| :--- | :--- |
+| `/` | Landing Page |
+| `/user/login/` | User Login |
+| `/user/dashboard/` | Main User Dashboard |
+| `/user/receipient/add/` | Add Single Recipient |
+| `/user/receipient/bulk-add/` | Upload CSV/Excel |
+| `/user/templates/` | Manage Templates |
+| `/user/group/create/` | Create New Group |
+| `/user/account-settings/` | **SMTP Config Page** |
+| `/user/submit-form/` | Action Handler (Send/Delete) |
 
-#### Create Template
-
-1.  Navigate to the [Templates](http://127.0.0.1:8000/user/templates/) page.
-2.  Click the "Create New Template" button.
-3.  Fill in the template name, subject, and body.
-4.  Click the "Create" button.
-
-![Screenshot of the Create Template page](screenshots/add_template.png)
-
-#### View, Edit, and Delete Template
-
--   **View:** Click on the template name on the templates page to see its details.
--   **Edit:** On the template details page, click the "Edit" button. Update the information and click "Save".
--   **Delete:** On the template details page, click the "Delete" button.
-
-![Screenshot of the Template Details page](screenshots/template_view.png)
-
-#### Set Primary Template
-
-1.  On the templates page, click the "Make Primary" button next to the desired template.
-
-![Screenshot of the Set Primary Template action](screenshots/primary_template.png)
-
-### Sending Bulk Emails
-
-1.  From the dashboard, select the recipients you want to send an email to by checking the boxes next to their names.
-2.  Click the "Send Email" button.
-
-
+---
 
 ## Future Improvements
 
-*   **Email Scheduling:** Implement a feature to schedule emails to be sent at a specific date and time.
-*   **Analytics and Reporting:** Track email open rates, click-through rates, and other engagement metrics.
-*   **Advanced User Roles:** Introduce different user roles and permissions (e.g., admin, user).
-*   **Enhanced Security:** Implement two-factor authentication (2FA) for user accounts.
+*   **HTML Rich Text Editor**: Integrate a WYSIWYG editor for templates (e.g., CKEditor).
+*   **Scheduled Sending**: Cron jobs to send emails at specific times.
+*   **Open Tracking**: Pixel tracking to see if recipients opened the email.
+*   **Unsubscribe Link**: Auto-inject footer links for compliance.
+
+---
 
 ## Contributing
 
-Pull requests are welcome! This project is open for contributions. If you have suggestions for improvements or want to add new features, please feel free to open an issue or submit a pull request.
+Contributions are welcome!
+1.  Fork the Project.
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the Branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
-## Developer Credits
-
-This project is maintained by:
-
-*   **Vikash Kuamr Mehta** - *Initial Work*
-
-We are grateful to all contributors who have helped and will help to improve this project.
+---
 
 ## License
 
-This project is licensed under the MIT License.
+Distributed under the MIT License. See `LICENSE` for more information.
