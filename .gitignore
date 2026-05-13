@@ -1,8 +1,30 @@
-*.pyc
-*.env
-__pycache__/
+# Django
+Email/*.log
+Email/*.pot
+Email/*.pyc
+Email/**/__pycache__/
+Email/local_settings.py
+Email/db.sqlite3
+Email/db.sqlite3-journal
+Email/staticfiles/
+
+# Virtual Environment
 .venv/
-*.sqlite3
-*.csv
-*.xlsx
-*.xls
+venv/
+ENV/
+env/
+
+# Media and Static
+Email/media/
+Email/static/CreateUser/temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# IDEs
+.vscode/
+.idea/
