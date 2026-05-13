@@ -54,7 +54,7 @@ A powerful, user-friendly, and secure Django-based web application designed for 
 | **Group Manager** | specialized interface to create and manage recipient groups. |
 | **Template Editor** | Create reusable email contents with subjects. |
 
-*(See specific screenshots in the `screenshots/` directory)*
+*(See specific screenshots in the `screenshots` directory)*
 
 ---
 
