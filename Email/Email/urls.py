@@ -22,9 +22,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('',include('Home.urls')),
-    path('user/',include("CreateUser.urls")),
-
+    path('', include('Home.urls')),
+    path('user/', include("CreateUser.urls")),
+    path('campaigns/', include('campaigns.urls')),
+    path('otp/', include('otp.urls')),
+    path('api/', include('api.urls')),
+    path('tracking/', include('tracking.urls')),
 
     path("__reload__/", include("django_browser_reload.urls")),
 ]

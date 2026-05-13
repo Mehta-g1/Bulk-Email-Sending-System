@@ -4,7 +4,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand p-2 rounded-3 bg-secondry fw-bolder" href=" {% url "home" %} ">Email Sender</a>
+        <h3><i class="fa-solid fa-envelope-circle-check"></i> EmailAuto</h3>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -33,7 +33,7 @@
 </nav> <hr>
 
 
-<div class="container card col-5 mt-3 mb-2 p-2 rounded-4 shadow-lg">
+<div class="container card col-5 mt-3 mb-2 p-2 rounded-4 shadow-lg" style="background: linear-gradient(to bottom, #3c3b3b, #1c1916)">
   <form id="registerForm" action=" {% url "signUp" %} " method="POST">
         <h2 class="text-center">Create New Account</h2>
         <hr>

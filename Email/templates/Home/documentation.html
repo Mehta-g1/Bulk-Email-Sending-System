@@ -93,7 +93,7 @@
                         <a href="#user-manual" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-book-open fa-fw me-2"></i> User Manual</a>
                         <a href="#bulk-add" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-file-csv fa-fw me-2"></i> Bulk Add</a>
                         <a href="#app-password" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-key fa-fw me-2"></i> App Passwords</a>
-                        <a href="#backend" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-cogs fa-fw me-2"></i> Backend</a>
+                        <a href="#api-reference" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-code fa-fw me-2"></i> API Reference</a>
                         <a href="#rules" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-gavel fa-fw me-2"></i> Rules of Use</a>
                         <a href="#developer" class="list-group-item list-group-item-action list-group-item-dark-custom"><i class="fas fa-laptop-code fa-fw me-2"></i> Developer</a>
                     </div>
@@ -123,13 +123,80 @@
                     </div>
                     <div class="card-body">
                         <ul>
-                            <li><strong>User Authentication:</strong> Secure user registration, login, and session management. Includes password reset functionality via email.</li>
-                            <li><strong>Profile Management:</strong> Users can view and update their profile information, including changing their password.</li>
-                            <li><strong>Dashboard:</strong> A central hub for users to get an overview of their activity, manage recipients, and handle email templates.</li>
-                            <li><strong>Template Management:</strong> Full CRUD (Create, Read, Update, Delete) for reusable email templates with dynamic placeholders.</li>
-                            <li><strong>Recipient Management:</strong> Full CRUD for recipients. Add individually or in bulk using CSV or XLSX files.</li>
-                            <li><strong>Personalized Emails:</strong> Use placeholders in templates (e.g., `{{name}}`) to send personalized content to each recipient.</li>
+                            <li><strong>User Authentication:</strong> Secure user registration, login, and session management.</li>
+                            <li><strong>Dashboard Analytics:</strong> Real-time tracking of sent, failed, opened, and clicked emails.</li>
+                            <li><strong>Campaign Management:</strong> Group email sending operations into campaigns for better tracking.</li>
+                            <li><strong>REST API:</strong> Programmatic access to send emails and manage data.</li>
+                            <li><strong>OTP Service:</strong> Integrated One-Time Password verification for security.</li>
+                            <li><strong>Template Management:</strong> TinyMCE rich-text editor with dynamic placeholders.</li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Reference Section -->
+            <section id="api-reference" class="mb-5">
+                <div class="card bg-dark text-white border-primary">
+                    <div class="card-header card-header-dark-custom bg-primary bg-opacity-10">
+                        <h2><i class="fas fa-code"></i> API Reference</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Integrate our platform into your own applications using our secure REST API.</p>
+                        
+                        <h4 class="mt-4">Authentication</h4>
+                        <p>All API requests must include your API key in the <code>Authorization</code> header as a Bearer token.</p>
+                        <pre class="code-block"><code>Authorization: Bearer <your_api_key></code></pre>
+                        <p class="small text-muted">You can generate your API key from the <a href="{% url 'account_settings' %}">Account Settings</a> page.</p>
+
+                        <h4 class="mt-4">Endpoints</h4>
+                        
+                        <h5>1. Send Single Email</h5>
+                        <p><strong>URL:</strong> <code>POST /api/send-email/</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="code-block"><code>{
+  "to_email": "recipient@example.com",
+  "subject": "Greetings",
+  "body": "<h1>Hello!</h1><p>Sent via API.</p>"
+}</code></pre>
+
+                        <h5>2. Create Bulk Campaign</h5>
+                        <p><strong>URL:</strong> <code>POST /api/send-bulk/</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="code-block"><code>{
+  "recipient_ids": [12, 15, 23],
+  "campaign_name": "API Marketing Campaign"
+}</code></pre>
+
+                        <h5>3. OTP Service (Public)</h5>
+                        <p>Send and verify OTPs without an API key.</p>
+                        <ul>
+                            <li><code>POST /api/send-otp/</code> - Payload: <code>{"email": "..."}</code></li>
+                            <li><code>POST /api/verify-otp/</code> - Payload: <code>{"email": "...", "otp": "..."}</code></li>
+                        </ul>
+
+                        <h4 class="mt-4">Response Format</h4>
+                        <p>All responses are returned in JSON format.</p>
+                        <pre class="code-block"><code>{
+  "success": true,
+  "message": "Operation successful",
+  "data": { ... }
+}</code></pre>
+
+                        <h4 class="mt-4">JavaScript Example (Fetch)</h4>
+                        <pre class="code-block"><code>fetch('/api/send-email/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    to_email: 'recipient@example.com',
+    subject: 'API Test',
+    body: '&lt;p&gt;Hello!&lt;/p&gt;'
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data));</code></pre>
                     </div>
                 </div>
             </section>
@@ -138,49 +205,16 @@
             <section id="user-manual" class="mb-5">
                 <div class="card bg-dark text-white">
                     <div class="card-header card-header-dark-custom">
-                        <h2><i class="fas fa-book-open"></i> Your Step-by-Step Guide</h2>
+                        <h2><i class="fas fa-book-open"></i> User Manual</h2>
                     </div>
                     <div class="card-body">
-                        <p class="lead">Welcome aboard! Think of this guide as your personal walkthrough to becoming a pro at using the Email Sender. Let's get you started.</p>
-                        
-                        <hr class="my-4">
-
-                        <h4 class="mt-3">Part 1: Getting Your Account Ready</h4>
-                        <p>Everything starts with your account. Follow these steps to get set up in just a couple of minutes.</p>
+                        <p>Follow these steps to start sending emails:</p>
                         <ol>
-                            <li><strong>Signing Up:</strong> Head to the "Sign Up" page. You'll be asked for some basic info: your name, a username for the platform, your email address, and a secure password. Fill that in, and you're in!</li>
-                            <li><strong>Logging In:</strong> Once you've signed up, you can log in anytime from the "Login" page using your email and the password you created.</li>
-                            <li><strong>Spruce Up Your Profile:</strong> After you log in, you'll land on your Dashboard. We recommend heading over to "Edit Profile" to add more details about yourself. You can upload a profile picture, add your phone number, address, and more. This is great for personalizing your presence.</li>
-                            <li><strong>CRUCIAL - Set Your Sending Credentials:</strong> Before you can send any emails, you need to tell the system which email account to send from. Go to your <strong>Account Settings</strong> page. Here, you must enter the email address you want to send from and, most importantly, an <strong>App Password</strong> for that account. Not sure what that is? No worries, just jump to the <a href="#app-password">App Password section</a> for a full explanation.</li>
+                            <li><strong>Configure SMTP:</strong> Go to Account Settings and enter your SMTP details (host, port, app password).</li>
+                            <li><strong>Create Template:</strong> Use the Template builder to craft your email message.</li>
+                            <li><strong>Add Recipients:</strong> Import recipients via CSV or add them manually.</li>
+                            <li><strong>Send Campaign:</strong> Go to the Dashboard, select recipients, and click "Send Campaign".</li>
                         </ol>
-
-                        <hr class="my-4">
-
-                        <h4 class="mt-3">Part 2: Crafting Your Messages (Managing Templates)</h4>
-                        <p>Templates are your best friend for saving time. Instead of writing the same email over and over, you create a template once and reuse it whenever you want.</p>
-                        <ul>
-                            <li><strong>Finding Your Templates:</strong> On your dashboard, you'll see a section for "Templates". Click it to go to your template manager.</li>
-                            <li><strong>Creating a New Template:</strong> Hit the "Add Template" button. You'll see a simple form.
-                                <ul>
-                                    <li><strong>Name:</strong> This is just for you, so you can easily identify the template later (e.g., "Monthly Newsletter").</li>
-                                    <li><strong>Subject:</strong> This is the actual subject line your recipients will see. Make it catchy!</li>
-                                    <li><strong>Body:</strong> This is the content of your email.</li>
-                                </ul>
-                            </li>
-                            <li><strong>The Magic of Personalization:</strong> In the body of your email, you can use placeholders like `{{name}}`. When you send your email, the system will automatically replace this with each recipient's actual name. It makes a bulk email feel personal! You can also use `{{email}}` and `{{comment}}`.</li>
-                            <li><strong>Editing and Deleting:</strong> Your list of templates is easy to manage. If you need to make a change, just click "Edit". If you're done with a template, click "Delete". We'll always ask you to confirm before permanently removing anything.</li>
-                        </ul>
-
-                        <hr class="my-4">
-
-                        <h4 class="mt-3">Part 3: Building Your Audience (Managing Recipients)</h4>
-                        <p>Now that you have a message, you need people to send it to. Let's look at how to manage your recipient lists.</p>
-                        <ul>
-                            <li><strong>Finding Your Recipients:</strong> From the dashboard, click on the "Recipients" section.</li>
-                            <li><strong>Adding One by One:</strong> If you just met someone new, click "Add Recipient" and fill in their details. It's quick and easy for single entries.</li>
-                            <li><strong>The Time-Saver - Bulk Upload:</strong> Have a whole list of people? Use the "Add in Bulk" feature. You'll need to upload a CSV or XLSX file. For the exact format (it's very specific!), please check the <a href="#bulk-add">Bulk Add section</a> below. This is the most powerful way to build your audience quickly.</li>
-                            <li><strong>Keeping Your List Clean:</strong> Made a typo in someone's email? No problem. Find them in the list and click "Edit". If someone asks to be removed, just click "Delete" to take them off your list respectfully.</li>
-                        </ul>
                     </div>
                 </div>
             </section>
@@ -189,38 +223,11 @@
             <section id="bulk-add" class="mb-5">
                 <div class="card bg-dark text-white">
                     <div class="card-header card-header-dark-custom">
-                        <h2><i class="fas fa-file-csv"></i> Bulk Add (CSV/XLSX) File Structure</h2>
+                        <h2><i class="fas fa-file-csv"></i> Bulk Add (CSV/XLSX)</h2>
                     </div>
                     <div class="card-body">
-                        <p>To add recipients in bulk, you must structure your CSV or XLSX file with the following columns in this exact order. The header row is mandatory.</p>
-                        <div class="alert alert-secondary">
-                            <strong>Note:</strong> The `email` column is the only mandatory field. Other fields are optional but recommended for personalization.
-                        </div>
+                        <p>Structure your file with these columns:</p>
                         <pre class="code-block"><code>email,name,receipent_category,source,comment</code></pre>
-                        <h5>Example:</h5>
-                        <table class="table table-bordered table-dark">
-                            <thead>
-                                <tr>
-                                    <th>email</th>
-                                    <th>name</th>
-                                    <th>receipent_category</th>
-                                    <th>comment</th></tr>
-                                </thead>
-                            <tbody>
-                                <tr>
-                                    <td>john.doe@example.com</td>
-                                    <td>John Doe</td>
-                                    <td>Customer</td>
-                                    <td>Interested in product A.</td>
-                                </tr>
-                                <tr>
-                                    <td>jane.smith@example.com</td>
-                                    <td>Jane Smith</td>
-                                    <td>Subscriber</td>
-                                    <td>Signed up on 2024-10-10.</td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </section>
@@ -229,39 +236,10 @@
             <section id="app-password" class="mb-5">
                 <div class="card bg-dark text-white">
                     <div class="card-header card-header-dark-custom">
-                        <h2><i class="fas fa-key"></i> What is an App Password?</h2>
+                        <h2><i class="fas fa-key"></i> App Passwords</h2>
                     </div>
                     <div class="card-body">
-                        <p>For sending emails through services like Gmail, Outlook, or Yahoo, you cannot use your regular account password directly in this application, especially if you have Two-Factor Authentication (2FA) enabled.</p>
-                        <p>An <strong>App Password</strong> is a 16-digit code that gives a third-party app (like this one) permission to access your email account. It's a security measure that allows you to send emails without exposing your main password.</p>
-                        <h5>How to Get an App Password (for Gmail):</h5>
-                        <ol>
-                            <li>Go to your Google Account settings: <a href="https://myaccount.google.com/" target="_blank">myaccount.google.com</a>.</li>
-                            <li>Navigate to the "Security" section.</li>
-                            <li>Under "Signing in to Google," make sure "2-Step Verification" is turned ON. You cannot create App Passwords without it.</li>
-                            <li>On the same page, find and click on "App passwords".</li>
-                            <li>When prompted, select "Mail" for the app and "Other (Custom name)" for the device. Give it a name like "Django Email Sender".</li>
-                            <li>Google will generate a 16-digit password. Copy this password (without spaces) and use it as your `EMAIL_HOST_PASSWORD` in the application's settings.</li>
-                        </ol>
-                        <div class="alert alert-warning"><strong>Important:</strong> Treat this App Password like a real password. Do not share it. You will enter it into the `EMAIL_HOST_PASSWORD` field in your user account settings within this application.</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Backend Operations Section -->
-            <section id="backend" class="mb-5">
-                <div class="card bg-dark text-white">
-                    <div class="card-header card-header-dark-custom">
-                        <h2><i class="fas fa-cogs"></i> Backend Operations</h2>
-                    </div>
-                    <div class="card-body">
-                        <p>The application is powered by the following technologies:</p>
-                        <ul>
-                            <li><strong>Framework:</strong> Django 4+</li>
-                            <li><strong>Language:</strong> Python 3.10+</li>
-                            <li><strong>Database:</strong> SQLite (default)</li>
-                            <li><strong>Email Protocol:</strong> SMTP, using Django's built-in email libraries. The user provides their email credentials (including an App Password) which are used to send emails.</li>
-                        </ul>
+                        <p>Use an App Password instead of your regular Gmail/Outlook password for security.</p>
                     </div>
                 </div>
             </section>
@@ -274,9 +252,8 @@
                     </div>
                     <div class="card-body">
                         <ul>
-                            <li>Do not use this service for sending unsolicited spam.</li>
-                            <li>Ensure you have consent from recipients before adding them to your lists.</li>
-                            <li>You are responsible for securing your account and your App Password.</li>
+                            <li>No spamming.</li>
+                            <li>Valid recipient consent required.</li>
                         </ul>
                     </div>
                 </div>
@@ -286,12 +263,10 @@
             <section id="developer" class="mb-5">
                 <div class="card bg-dark text-white">
                     <div class="card-header card-header-dark-custom">
-                        <h2><i class="fas fa-laptop-code"></i> Developer Info</h2>
+                        <h2><i class="fas fa-laptop-code"></i> Developer</h2>
                     </div>
                     <div class="card-body">
-                        <p>This application was developed by <strong><a target="_blank" href="https://portfolio-gxln.onrender.com/">Vikash Mehta</a></strong>.</p>
-                        <p>For inquiries, you can visit the <a href="{% url 'contact_us' %}">Contact Us</a> page or connect via GitHub.</p>
-                        <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System.git" class="btn btn-light"><i class="fab fa-github"></i> GitHub Repository</a>
+                        <p>Developed by <strong>Vikash Mehta</strong>.</p>
                     </div>
                 </div>
             </section>

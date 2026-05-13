@@ -1,0 +1,123 @@
+{% extends 'CreateUser/base.html' %}
+{% load static %}
+
+{% block title %}Campaign History - EmailAuto{% endblock %}
+
+{% block content %}
+<style>
+    .page-header { margin-bottom: 32px }
+    .page-header h1 { font-size: 26px; font-weight: 700; color: #f1f5f9 }
+    .page-header p { color: #64748b; margin-top: 4px; font-size: 14px }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px }
+    .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center }
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px }
+    .stat-card .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: .5px }
+    .stat-card.success .value { color: #10b981 }
+    .stat-card.danger .value { color: #ef4444 }
+    .stat-card.info .value { color: #667eea }
+    
+    .campaigns-table { background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow: hidden }
+    .table-header { padding: 20px 24px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between }
+    .table-header h3 { font-size: 15px; font-weight: 600; color: #f1f5f9 }
+    
+    .badge-completed { background: #064e3b; color: #10b981 }
+    .badge-running { background: #1e3a5f; color: #60a5fa; animation: pulse 1.5s infinite }
+    .badge-pending { background: #292524; color: #d4a017 }
+    .badge-failed { background: #7f1d1d; color: #f87171 }
+    
+    @keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: .6 } }
+    
+    .progress-bar-wrap { background: #0f172a; border-radius: 99px; height: 6px; overflow: hidden; min-width: 80px }
+    .progress-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #667eea, #10b981); transition: width .3s }
+</style>
+
+<div class="page-header">
+    <h1>📊 Campaign History</h1>
+    <p>Track all your email campaigns — performance, status, and logs.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card info">
+        <div class="value">{{ total_campaigns }}</div>
+        <div class="label">Total Campaigns</div>
+    </div>
+    <div class="stat-card success">
+        <div class="value">{{ total_sent }}</div>
+        <div class="label">Total Sent</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="value">{{ total_failed }}</div>
+        <div class="label">Total Failed</div>
+    </div>
+    <div class="stat-card success">
+        <div class="value">{{ avg_success }}%</div>
+        <div class="label">Avg Success Rate</div>
+    </div>
+</div>
+
+<div class="campaigns-table">
+    <div class="table-header">
+        <h3>All Campaigns</h3>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary"><i class="fas fa-plus"></i> New Send</a>
+    </div>
+    {% if campaigns %}
+    <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0">
+            <thead>
+                <tr>
+                    <th class="border-secondary">#</th>
+                    <th class="border-secondary">Campaign Name</th>
+                    <th class="border-secondary">Status</th>
+                    <th class="border-secondary">Progress</th>
+                    <th class="border-secondary">Sent / Total</th>
+                    <th class="border-secondary">Failed</th>
+                    <th class="border-secondary">Success Rate</th>
+                    <th class="border-secondary">Date</th>
+                    <th class="border-secondary">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in campaigns %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="fw-bold">{{ c.campaign_name }}</td>
+                    <td>
+                        <span class="badge badge-{{ c.status }}">{{ c.status|upper }}</span>
+                    </td>
+                    <td>
+                        {% if c.total_emails > 0 %}
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar" style="width:{{ c.success_rate }}%"></div>
+                        </div>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>{{ c.sent_count }} / {{ c.total_emails }}</td>
+                    <td class="text-{% if c.failed_count > 0 %}danger{% else %}success{% endif %}">
+                        {{ c.failed_count }}
+                    </td>
+                    <td class="fw-bold text-{% if c.success_rate >= 80 %}success{% elif c.success_rate >= 50 %}warning{% else %}danger{% endif %}">
+                        {{ c.success_rate }}%
+                    </td>
+                    <td>{{ c.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'campaign_detail' c.id %}" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No campaigns yet. Send your first bulk email from the dashboard!</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-1"></i> Start Sending
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

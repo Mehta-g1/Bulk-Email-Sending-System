@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            background: #1e293b;
+            padding: 24px 0;
+            border-right: 1px solid #334155;
+            z-index: 100;
+            display: flex;
+            flex-direction: column
+        }
+
+        .sidebar .brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 16px
+        }
+
+        .sidebar .brand h2 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all .2s;
+            border-left: 3px solid transparent
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #e2e8f0;
+            background: #0f172a;
+            border-left-color: #667eea
+        }
+
+        .nav-link i {
+            width: 18px;
+            text-align: center
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 32px
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 20px
+        }
+
+        .back-link:hover {
+            color: #764ba2
+        }
+
+        .campaign-header {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px
+        }
+
+        .campaign-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px
+        }
+
+        .campaign-meta {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 12px
+        }
+
+        .meta-item {
+            font-size: 12px;
+            color: #64748b
+        }
+
+        <br>.meta-item span {
+            color: #94a3b8;
+            font-weight: 500
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        .badge-completed {
+            background: #064e3b;
+            color: #10b981
+        }
+
+        .badge-running {
+            background: #1e3a5f;
+            color: #60a5fa
+        }
+
+        .badge-pending {
+            background: #292524;
+            color: #d4a017
+        }
+
+        .badge-failed {
+            background: #7f1d1d;
+            color: #f87171
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 24px
+        }
+
+        .stat-mini {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center
+        }
+
+        .stat-mini .val {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9
+        }
+
+        .stat-mini .lbl {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+            text-transform: uppercase
+        }
+
+        .stat-mini.green .val {
+            color: #10b981
+        }
+
+        .stat-mini.red .val {
+            color: #ef4444
+        }
+
+        .stat-mini.blue .val {
+            color: #60a5fa
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        .card-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid #334155;
+            font-size: 14px;
+            font-weight: 600;
+            color: #f1f5f9
+        }
+
+        .card-body {
+            padding: 20px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 1px solid #334155
+        }
+
+        td {
+            padding: 12px 14px;
+            font-size: 12px;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(51, 65, 85, .3)
+        }
+
+        tr:last-child td {
+            border-bottom: none
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px
+        }
+
+        .dot-sent {
+            background: #10b981
+        }
+
+        .dot-failed {
+            background: #ef4444
+        }
+
+        .dot-pending {
+            background: #f59e0b
+        }
+
+        .progress-outer {
+            background: #0f172a;
+            border-radius: 99px;
+            height: 8px;
+            overflow: hidden
+        }
+
+        .progress-inner {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #667eea, #10b981)
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #334155
+        }
+
+        .ftab {
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #334155;
+            background: transparent;
+            color: #64748b;
+            transition: all .2s
+        }
+
+        .ftab.active,
+        .ftab:hover {
+            border-color: #667eea;
+            color: #667eea;
+            background: rgba(102, 126, 234, .08)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">
+            <h2>📧 EmailAuto</h2>
+        </div>
+        <a href="{% url 'dashboard' %}" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{% url 'campaign_list' %}" class="nav-link active"><i class="fas fa-paper-plane"></i> Campaigns</a>
+        <a href="{% url 'templates' %}" class="nav-link"><i class="fas fa-file-code"></i> Templates</a>
+        <a href="{% url 'profile' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
+        <a href="{% url 'account_settings' %}" class="nav-link"><i class="fas fa-key"></i> API & Settings</a>
+        <a href="{% url 'logout' %}" class="nav-link" style="margin-top:auto"><i class="fas fa-sign-out-alt"></i>
+            Logout</a>
+    </div>
+
+    <div class="main">
+        <a href="{% url 'campaign_list' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Campaigns</a>
+
+        <div class="campaign-header">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <h1>{{ campaign.campaign_name }}</h1>
+                <span class="badge badge-{{ campaign.status }}">{{ campaign.status|upper }}</span>
+                <a href="{% url 'export_campaign_csv' campaign.id %}" class="ftab" style="text-decoration:none; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-file-csv"></i> Export Report
+                </a>
+            </div>
+            <div class="campaign-meta">
+                <span class="meta-item">Subject: <span>{{ campaign.subject }}</span></span>
+                <span class="meta-item">Created: <span>{{ campaign.created_at|date:"M d, Y H:i" }}</span></span>
+                {% if campaign.completed_at %}
+                <span class="meta-item">Completed: <span>{{ campaign.completed_at|date:"M d, Y H:i" }}</span></span>
+                {% endif %}
+            </div>
+            {% if campaign.status == 'running' %}
+            <div style="margin-top:16px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                    <span style="font-size:12px;color:#64748b">Progress</span>
+                    <span id="progress-pct" style="font-size:12px;color:#667eea;font-weight:600">Loading...</span>
+                </div>
+                <div class="progress-outer">
+                    <div class="progress-inner" id="progress-bar" style="width:0%"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-mini">
+                <div class="val">{{ campaign.total_emails }}</div>
+                <div class="lbl">Total</div>
+            </div>
+            <div class="stat-mini green">
+                <div class="val">{{ campaign.sent_count }}</div>
+                <div class="lbl">Sent</div>
+            </div>
+            <div class="stat-mini red">
+                <div class="val">{{ campaign.failed_count }}</div>
+                <div class="lbl">Failed</div>
+            </div>
+            <div class="stat-mini blue">
+                <div class="val">{{ campaign.pending_count }}</div>
+                <div class="lbl">Pending</div>
+            </div>
+            <div class="stat-mini green">
+                <div class="val">{{ open_rate }}%</div>
+                <div class="lbl">Open Rate</div>
+            </div>
+            <div class="stat-mini blue">
+                <div class="val">{{ click_rate }}%</div>
+                <div class="lbl">Click Rate</div>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div class="card">
+                <div class="card-head">📊 Delivery Breakdown</div>
+                <div class="card-body" style="display:flex;justify-content:center;align-items:center;height:200px">
+                    <canvas id="deliveryChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-head">👁 Engagement</div>
+                <div class="card-body" style="display:flex;justify-content:center;align-items:center;height:200px">
+                    <canvas id="engageChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-head d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-envelope-open-text me-2 text-primary"></i>Sent Email Content</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="font-size: 10px;">Snapshot</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="email-preview-container" style="background: #f8fafc; color: #1e293b; min-height: 200px;">
+                    <!-- Email Header Info -->
+                    <div class="email-header-info p-3 border-bottom" style="background: #fff; border-top-left-radius: 0; border-top-right-radius: 0;">
+                        <div class="mb-1">
+                            <span class="text-muted small fw-bold">Subject:</span>
+                            <span class="ms-1 fw-bold text-dark">{{ c.subject|default:"(No Subject)" }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted small fw-bold">From:</span>
+                            <span class="ms-1 small text-dark">{{ user.email_address }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Body -->
+                    <div class="email-body-content p-4" style="overflow-y: auto; max-height: 500px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                        {% if c.body %}
+                            <div class="rendered-html">
+                                {{ c.body|safe }}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-ghost fa-3x text-light mb-3"></i>
+                                <p class="text-muted">Template content was not stored for this campaign.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">📋 Email Logs</div>
+            <div class="filter-tabs">
+                <button class="ftab active" onclick="filterLogs('all',this)">All</button>
+                <button class="ftab" onclick="filterLogs('sent',this)">Sent</button>
+                <button class="ftab" onclick="filterLogs('failed',this)">Failed</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Recipient</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Opened</th>
+                        <th>Clicked</th>
+                        <th>Sent At</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody id="logs-tbody">
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.recipient_name }}</td>
+                        <td>{{ log.recipient_email }}</td>
+                        <td>
+                            <span class="status-dot dot-{{ log.status }}"></span>{{ log.status }}
+                        </td>
+                        <td>{% if log.opened %}<span style="color:#10b981">✓ Yes</span>{% else %}<span
+                                style="color:#4b5563">No</span>{% endif %}</td>
+                        <td>{% if log.clicked %}<span style="color:#60a5fa">✓ Yes</span>{% else %}<span
+                                style="color:#4b5563">No</span>{% endif %}</td>
+                        <td>{{ log.sent_at|date:"M d H:i"|default:"-" }}</td>
+                        <td style="color:#ef4444;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                            title="{{ log.error_message }}">
+                            {{ log.error_message|truncatechars:40|default:"-" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Delivery chart
+        new Chart(document.getElementById('deliveryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sent', 'Failed', 'Pending'],
+                datasets: [{
+                    data: [{{ campaign.sent_count }}, {{ campaign.failed_count }},{{ campaign.pending_count }}],
+            backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+            borderWidth: 0,
+        }]
+    },
+            options: { plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } }, cutout: '70%' }
+});
+
+        // Engagement chart
+        new Chart(document.getElementById('engageChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Opened', 'Clicked', 'Not Engaged'],
+                datasets: [{
+                    data: [{{ opened_count }}, {{ clicked_count }},{{ campaign.sent_count }}],
+            backgroundColor: ['#667eea', '#764ba2', '#1e293b'],
+            borderWidth: 0,
+        }]
+    },
+            options: { plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } }, cutout: '70%' }
+});
+
+        // Filter logs by status
+        function filterLogs(status, btn) {
+            document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            fetch(`{% url 'campaign_logs' campaign.id %}?status=${status === 'all' ? '' : status}`)
+                .then(r => r.json())
+                .then(data => {
+                    const tbody = document.getElementById('logs-tbody');
+                    tbody.innerHTML = data.logs.map(log => `
+          <tr>
+            <td>${log.name}</td>
+            <td>${log.email}</td>
+            <td><span class="status-dot dot-${log.status}"></span>${log.status}</td>
+            <td>${log.opened ? '<span style="color:#10b981">✓ Yes</span>' : '<span style="color:#4b5563">No</span>'}</td>
+            <td>${log.clicked ? '<span style="color:#60a5fa">✓ Yes</span>' : '<span style="color:#4b5563">No</span>'}</td>
+            <td>${log.sent_at ? new Date(log.sent_at).toLocaleString() : '-'}</td>
+            <td style="color:#ef4444">${log.error ? log.error.substring(0, 40) : '-'}</td>
+          </tr>
+        `).join('');
+                });
+        }
+
+        {% if campaign.status == 'running' %}
+        // Live progress polling
+        function pollProgress() {
+            fetch(`{% url 'campaign_progress' campaign.id %}`)
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById('progress-pct').textContent = d.percent + '%';
+                    document.getElementById('progress-bar').style.width = d.percent + '%';
+                    if (d.status === 'running') setTimeout(pollProgress, 2000);
+                    else location.reload();
+                });
+        }
+        pollProgress();
+        {% endif %}
+    </script>
+</body>
+
+</html>

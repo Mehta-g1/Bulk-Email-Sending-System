@@ -6,82 +6,27 @@
 {% block content %}
 
 
-<style>
-    .form-control.bg-dark::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-        opacity: 1;
-    }
-
-    .form-control.bg-dark:-ms-input-placeholder {}
-
-    .form-control.bg-dark::-ms-input-placeholder {
-        color: rgba(255, 255, 255, 0.5);
-    }
-</style>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Left-aligned items -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}">
-                        <i class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Right-aligned items -->
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                        <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2"
-                            style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                        <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i
-                                    class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'profile' %}">
-                                <span class="d-flex justify-content-between"><span>Profile Completion</span>
-                                    <span>{{ progress }}%</span></span>
-                                <div class="progress" style="height: 5px;">
-                                    <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;"
-                                        aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
-                                    class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+<div class="container-fluid py-2">
+    <!-- Top Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+        <div>
+            <h2 class="mb-0 fw-bold">Dashboard Overview</h2>
+            <p class="text-secondary small mb-0">Welcome back, {{ username }}! Manage your recipients and campaigns.</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end d-none d-md-block">
+                <div class="fw-bold">{{ username }}</div>
+                <div class="text-secondary small">Profile Completion: {{ progress }}%</div>
+            </div>
+            {% if image %}
+            <img src="{{ image.url }}" alt="User" class="rounded-circle border border-primary" style="width: 45px; height: 45px; object-fit: cover;">
+            {% else %}
+            <i class="fa-solid fa-user-circle fa-2xl text-primary"></i>
+            {% endif %}
         </div>
     </div>
-</nav>
-<hr>
 
-<div class="dashboard container  mt-4 mb-5  pb-4 rounded-4 shadow-lg bg-dark text-light">
+    <div class="card p-4 rounded-4 shadow-lg bg-dark text-light border-secondary">
     {% if messages %}
     {% for message in messages %}
     <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert"
@@ -90,6 +35,50 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
+    {% endif %}
+
+    <!-- Analytics Stats Row -->
+    <div class="row g-3 px-3 mb-3 mt-1">
+        <div class="col-6 col-md-3">
+            <div class="card text-center" style="background:#122339;border:1px solid #0f3460">
+                <div class="card-body py-2">
+                    <div class="fs-4 fw-bolder text-primary">{{ total_campaigns }}</div>
+                    <div class="text-secondary" style="font-size:11px">Campaigns</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center" style="background:#07372a;border:1px solid #065f46">
+                <div class="card-body py-2">
+                    <div class="fs-4 fw-bolder text-success">{{ total_sent }}</div>
+                    <div class="text-secondary" style="font-size:11px">Emails Sent</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center" style="background:#4b0202;border:1px solid #991b1b">
+                <div class="card-body py-2">
+                    <div class="fs-4 fw-bolder text-danger">{{ total_failed }}</div>
+                    <div class="text-secondary" style="font-size:11px">Failed</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center" style="background:#151241;border:1px solid #4338ca">
+                <div class="card-body py-2">
+                    <div class="fs-4 fw-bolder" style="color:#a5b4fc">{{ success_rate }}%</div>
+                    <div class="text-light" style="font-size:11px">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if running_campaign %}
+    <div class="alert alert-info mx-3 py-2" style="font-size:13px">
+        <i class="fas fa-spinner fa-spin me-2"></i>
+        Campaign <strong>"{{ running_campaign.campaign_name }}"</strong> is currently running —
+        <a href="{% url 'campaign_detail' running_campaign.id %}" class="alert-link">View Progress</a>
+    </div>
     {% endif %}
 
     <!-- Dashboard Header: Title, Search, and Actions -->
@@ -125,6 +114,9 @@
         <!-- Action Buttons -->
         <div class="col-12 col-lg-auto">
             <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2">
+                <a href="{% url 'campaign_list' %}" class="btn btn-outline-info">
+                    <i class="fas fa-chart-bar"></i> Campaigns
+                </a>
                 <div class="dropdown" id="addReceipient-btn">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
@@ -140,8 +132,25 @@
                 <button type="submit" class="btn btn-danger d-none" id="deleteSelectedBtn" form="recipientsForm"
                     onclick="return confirm('Are you sure you want to delete the selected recipients?');" name='action'
                     value='delete'><i class="fa-solid fa-trash"></i> Delete Selected</button>
-                <button type="submit" class="btn btn-success" form="recipientsForm" name='action' value='send'><i
-                        class="fa-solid fa-paper-plane"></i> Send</button>
+                <button type="button" class="btn btn-success" onclick="openSendModal()">
+                    <i class="fa-solid fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Campaign Modal -->
+    <div id="sendModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1050;align-items:center;justify-content:center">
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:32px;max-width:480px;width:90%">
+            <h5 style="color:#f1f5f9;margin-bottom:16px"><i class="fas fa-paper-plane me-2"></i>Send Email Campaign</h5>
+            <label style="color:#94a3b8;font-size:13px;display:block;margin-bottom:6px">Campaign Name (optional)</label>
+            <input type="text" id="modal_campaign_name" placeholder="e.g. May Newsletter"
+                style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:14px;margin-bottom:16px">
+            <div style="display:flex;gap:12px;justify-content:flex-end">
+                <button onclick="closeSendModal()" style="background:transparent;border:1px solid #334155;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer">Cancel</button>
+                <button onclick="submitSendForm()" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:600">
+                    <i class="fas fa-paper-plane me-1"></i> Send Now
+                </button>
             </div>
         </div>
     </div>
@@ -155,6 +164,7 @@
         {% endif %}
         <form method="post" id="recipientsForm" action=" {% url "submit_form" %} ">
             {% csrf_token %}
+            <input type="hidden" name="campaign_name" id="campaign_name_field" value="">
 
             <table class="table table-dark table-striped table-hover table-bordered table-responsive">
                 <thead>
@@ -210,4 +220,35 @@
 
 
 <script src="{% static "js/CreateUser/main.js" %}"></script>
+<script>
+function openSendModal() {
+    const checkboxes = document.querySelectorAll('.recipient-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Please select at least one recipient before sending.');
+        return;
+    }
+    document.getElementById('sendModal').style.display = 'flex';
+    document.getElementById('modal_campaign_name').focus();
+}
+function closeSendModal() {
+    document.getElementById('sendModal').style.display = 'none';
+}
+function submitSendForm() {
+    const name = document.getElementById('modal_campaign_name').value.trim();
+    document.getElementById('campaign_name_field').value = name;
+    document.getElementById('sendModal').style.display = 'none';
+    // Submit form with action=send
+    const form = document.getElementById('recipientsForm');
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = 'send';
+    form.appendChild(actionInput);
+    form.submit();
+}
+// Close modal on background click
+document.getElementById('sendModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSendModal();
+});
+</script>
 {% endblock %}

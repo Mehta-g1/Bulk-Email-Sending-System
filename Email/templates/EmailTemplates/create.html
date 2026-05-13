@@ -1,81 +1,137 @@
 {% extends "CreateUser/base.html" %}
 {% load static %}
 
-{% block title %}Create new  Email Template{% endblock %}
+{% block title %}Create Email Template{% endblock %}
 
 {% block content %}
 
+<div class="container-fluid py-2">
 
+<style>
+.placeholder-badge {
+    display: inline-block;
+    background: #1e3a5f;
+    border: 1px solid #3b82f6;
+    color: #60a5fa;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-family: monospace;
+    cursor: pointer;
+    margin: 3px;
+    transition: all .15s;
+}
+.placeholder-badge:hover { background: #2563eb; color: #fff; }
+.tox-tinymce { border-radius: 8px !important; }
+</style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i class="fa-solid fa-envelope-open-text me-1"></i>Mail Templates</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+<div class="card col-lg-8 p-4 shadow-lg mx-auto mt-3 mb-5" style="background:#171717;border:1px solid #333;color:#e2e8f0">
+    <div class="heading d-flex justify-content-between mb-4 border-bottom pb-3">
+        <h4 class="mb-0 fw-bold" style="color:#fff"><i class="fas fa-plus-circle me-2 text-primary"></i>Create Email Template</h4>
+        <a href="{% url "templates" %}" class="text-muted hover-light"><i class="fa-solid fa-xmark fa-xl"></i></a>
     </div>
-</nav> <hr>
 
-<div class="card col-6 p-4 shadow mx-auto mt-3">
-    <div class="heading d-flex justify-content-between">
-        <h4 class="mb-3">Create Email Template</h4>
-        <a href="{% url "templates" %}"> <i class="fa-solid fa-xmark fa-2xl" style="color: #e60a0a;"></i> </a>
+    <!-- Placeholder helper -->
+    <div class="mb-4 p-3" style="background:#0f172a;border-radius:8px;border:1px solid #334155">
+        <p style="font-size:12px;color:#94a3b8;margin-bottom:8px">
+            <i class="fas fa-magic me-1 text-warning"></i>
+            <strong>Dynamic Placeholders</strong> — Click to insert into editor:
+        </p>
+        <span class="placeholder-badge" onclick="insertPlaceholder('{name}')">{name}</span>
+        <span class="placeholder-badge" onclick="insertPlaceholder('{email}')">{email}</span>
+        <span class="placeholder-badge" onclick="insertPlaceholder('{company}')">{company}</span>
+        <p style="font-size:11px;color:#64748b;margin-top:8px;margin-bottom:0">
+            These are replaced with actual recipient data when emails are sent.
+        </p>
     </div>
-    <form method="post" action=' {% url "createTemplate" %} '>
+
+    <form method="post" action='{% url "createTemplate" %}'>
         {% csrf_token %}
-        
-        <!-- Template Name -->
+
         <div class="mb-3">
-            <label class="form-label fw-bold">Template Name</label>
-            <input type="text" class="form-control text-light" name='name'>
+            <label class="form-label fw-bold" style="color:#94a3b8">Template Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name='name' required
+                style="background:#0f172a;border:1px solid #334155;color:#e2e8f0"
+                placeholder="e.g. Monthly Newsletter">
         </div>
 
-        <!-- Subject -->
         <div class="mb-3">
-            <label class="form-label fw-bold">Subject</label>
-            <input type="text" class="form-control text-light"  name='subject'>
+            <label class="form-label fw-bold" style="color:#94a3b8">Subject <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name='subject' id="subject_input" required
+                style="background:#0f172a;border:1px solid #334155;color:#e2e8f0"
+                placeholder="e.g. Hello {name}, here's your update!">
         </div>
 
-        <!-- Body -->
         <div class="mb-3">
-            <label class="form-label fw-bold">Email Body</label>
-            <textarea class="form-control text-light" rows="8" name="body"></textarea>
+            <label class="form-label fw-bold" style="color:#94a3b8">
+                Email Body
+                <span style="font-size:11px;color:#64748b;font-weight:normal;margin-left:8px">
+                    Type your message below. <b>Ctrl+B</b> for Bold, <b>Ctrl+U</b> for Underline.
+                </span>
+            </label>
+            <!-- Custom Lite Editor Toolbar -->
+            <div id="lite_editor_toolbar" class="d-flex gap-2 p-2 mb-0" style="background:#0f172a; border: 1px solid #334155; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('bold')" title="Bold (Ctrl+B)"><i class="fas fa-bold"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('italic')" title="Italic (Ctrl+I)"><i class="fas fa-italic"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('underline')" title="Underline (Ctrl+U)"><i class="fas fa-underline"></i></button>
+                <div class="vr mx-1" style="background-color: #334155;"></div>
+                <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('insertUnorderedList')" title="List"><i class="fas fa-list-ul"></i></button>
+            </div>
+            <!-- Editor Surface -->
+            <div id="lite_editor" contenteditable="true" 
+                style="background:#0f172a; border: 1px solid #334155; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; min-height: 350px; padding: 15px; color: #e2e8f0; outline: none; overflow-y: auto;">
+                <p>Hello {{name}},</p>
+                <p><br></p>
+            </div>
+            <input type="hidden" name="body" id="body_hidden">
         </div>
-        <div class='mb-3'>
-            <input type="checkbox" name='primary' id='is_primary'>
-            <label for='is_primary' class='form-label fw-bold'>Make it primary template</label>
+
+        <div class='mb-4' style="background:#0f172a;padding:12px;border-radius:8px;border:1px solid #334155">
+            <input type="checkbox" name='primary' id='is_primary' class="form-check-input">
+            <label for='is_primary' class='form-label fw-bold ms-2' style="color:#94a3b8">
+                <i class="fas fa-star text-warning me-1"></i>Make this the Primary Template
+            </label>
+            <p style="font-size:11px;color:#64748b;margin:4px 0 0 28px">
+                The primary template is used for bulk sends from the dashboard.
+            </p>
         </div>
-        <!-- Actions -->
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a href=" {% url "templates" %} " class="btn btn-secondary">Cancel</a>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save Template</button>
+            <a href="{% url "templates" %}" class="btn btn-outline-secondary px-4">Cancel</a>
+        </div>
     </form>
 </div>
+
+<script>
+    const editor = document.getElementById('lite_editor');
+    const hiddenInput = document.getElementById('body_hidden');
+
+    // Exec commands for formatting (bold, italic, etc)
+    function execCmd(command) {
+        document.execCommand(command, false, null);
+        editor.focus();
+    }
+
+    // Sync content to hidden input before form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        hiddenInput.value = editor.innerHTML;
+    });
+
+    // Insert placeholders at cursor position
+    function insertPlaceholder(text) {
+        editor.focus();
+        document.execCommand('insertText', false, text);
+    }
+
+    // Keyboard Shortcuts (Ctrl+B, Ctrl+U are native, but we can prevent default if needed)
+    editor.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'b') {
+            // Native bold handles it
+        }
+        if (e.ctrlKey && e.key === 'u') {
+            // Native underline handles it
+        }
+    });
+</script>
 {% endblock %}

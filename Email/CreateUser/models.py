@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+import secrets
 
 # Create your models here.
 
@@ -11,6 +12,11 @@ class emailUsers(models.Model):
     email_host = models.CharField(max_length=100, default="smtp.gmail.com")
     email_port = models.IntegerField(default=587,null=True)
     use_tls = models.BooleanField(default=True)
+
+    # API Authentication
+    api_key = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    api_key_created_at = models.DateTimeField(null=True, blank=True)
+    api_usage_count = models.IntegerField(default=0)
     login_password = models.CharField(max_length=50, null=False, default="test1234")
 
     # Disignation info

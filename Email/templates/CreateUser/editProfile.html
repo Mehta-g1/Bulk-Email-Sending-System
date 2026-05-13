@@ -4,153 +4,125 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<style>
-    body {
-        background-color: #e9ecef;
-        color: #212529;
-    }
-    .card {
-        background-color: #ffffff;
-        border: none;
-        border-radius: .5rem;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    hr{
-        color:white;
-        margin-top: 0;
-    }
-</style>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "dashboard" %}"><i class="fa-solid fa-arrow-left me-1"></i>Back to Dashboard</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+<div class="container-fluid py-2">
+    <!-- Top Header -->
+    <div class="dashboard-header-bg d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0 fw-bold text-white"><i class="fas fa-user-edit me-2"></i>Edit Profile</h2>
+            <p class="text-white-50 small mb-0">Keep your personal and professional information up to date.</p>
         </div>
+        <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm px-3">
+            <i class="fas fa-arrow-left me-1"></i> Back to Profile
+        </a>
     </div>
-</nav> <hr>
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: {{ message.color|default:'' }};">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-2"></i>
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
     {% endif %}
 
-
-<div class="container mt-2 mb-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between">
-                    <h4 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Edit Profile </h4>
-                    <a href="{% url 'dashboard' %}" class=" me-3 ms-1">
-                                <i class="fa-solid fa-xmark fa-xl text-danger"></i>
-                            </a>
-                </div>
-                <div class="card-body">
+        <div class="col-xl-9">
+            <div class="card shadow-lg border-0" style="background: #171717; border: 1px solid #333 !important;">
+                <div class="card-body p-4 p-md-5">
                     <form method="POST" action="{% url 'edit_profile_process' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                        <!-- Personal Information Section -->
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-user text-primary"></i>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label">Login Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email_address }}" readonly>
-                            </div>
+                            <h5 class="mb-0 fw-bold text-white">Personal Information</h5>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="personalEmail" class="form-label">Alternate Email</label>
-                                <input type="email" class="form-control" id="personalEmail" name="personalEmail" value="{{ user.personalEmail|default:'' }}">
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label text-secondary small fw-bold">Full Name</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="name" name="name" value="{{ user.name }}" placeholder="Your full name">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label text-secondary small fw-bold">Login Email (Read Only)</label>
+                                <input type="email" class="form-control bg-dark border-secondary text-white-50" id="email" name="email" value="{{ user.email_address }}" readonly style="cursor: not-allowed;">
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="dob" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob|date:'Y-m-d' }}">
+                            <div class="col-md-6">
+                                <label for="personalEmail" class="form-label text-secondary small fw-bold">Alternate Email</label>
+                                <input type="email" class="form-control bg-dark border-secondary text-white" id="personalEmail" name="personalEmail" value="{{ user.personalEmail|default:'' }}" placeholder="personal@example.com">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="image" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="image" name="image">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label text-secondary small fw-bold">Phone Number</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="phone" name="phone" value="{{ user.phone|default:'' }}" placeholder="+91 00000 00000">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dob" class="form-label text-secondary small fw-bold">Date of Birth</label>
+                                <input type="date" class="form-control bg-dark border-secondary text-white" id="dob" name="dob" value="{{ user.dob|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="image" class="form-label text-secondary small fw-bold">Profile Picture</label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control bg-dark border-secondary text-white" id="image" name="image">
+                                </div>
                                 {% if user.image %}
-                                    <small class="form-text text-light">Currently: <a href="{{ user.image.url }}" target="_blank">{{ user.image.name }}</a></small>
+                                    <div class="mt-2 d-flex align-items-center">
+                                        <img src="{{ user.image.url }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                        <small class="text-white-50">Current: {{ user.image.name|truncatechars:20 }}</small>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
 
-                        <hr class="my-4">
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="org_name" class="form-label">Organization</label>
-                                <input type="text" class="form-control" id="org_name" name="org_name" value="{{ user.org_name|default:'' }}">
+                        <!-- Professional Details Section -->
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-info bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-briefcase text-info"></i>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="post" class="form-label">Designation / Post</label>
-                                <input type="text" class="form-control" id="post" name="post" value="{{ user.post|default:'' }}">
+                            <h5 class="mb-0 fw-bold text-white">Professional Details</h5>
+                        </div>
+
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <label for="org_name" class="form-label text-secondary small fw-bold">Organization</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="org_name" name="org_name" value="{{ user.org_name|default:'' }}" placeholder="Company or Institution">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="post" class="form-label text-secondary small fw-bold">Designation / Post</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="post" name="post" value="{{ user.post|default:'' }}" placeholder="e.g. Software Engineer">
+                            </div>
+                            <div class="col-12">
+                                <label for="department" class="form-label text-secondary small fw-bold">Department</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="department" name="department" value="{{ user.department|default:'' }}" placeholder="e.g. Marketing or IT">
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label text-secondary small fw-bold">Address</label>
+                                <textarea class="form-control bg-dark border-secondary text-white" id="address" name="address" rows="3" placeholder="Your current location or office address">{{ user.address|default:'' }}</textarea>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="department" class="form-label">Department</label>
-                            <input type="text" class="form-control" id="department" name="department" value="{{ user.department|default:'' }}">
+                        <!-- Bio Section -->
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-info-circle text-warning"></i>
+                            </div>
+                            <h5 class="mb-0 fw-bold text-white">Bio & Description</h5>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3">{{ user.address|default:'' }}</textarea>
+                        <div class="mb-5">
+                            <label for="about_you" class="form-label text-secondary small fw-bold">About You</label>
+                            <textarea class="form-control bg-dark border-secondary text-white" id="about_you" name="about_you" rows="4" placeholder="Tell us a little about yourself...">{{ user.about_you|default:'' }}</textarea>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="about_you" class="form-label">About You</label>
-                            <textarea class="form-control" id="about_you" name="about_you" rows="4">{{ user.about_you|default:'' }}</textarea>
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-end gap-3 border-top pt-4">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold rounded-pill">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
                         </div>
-
-                        <div class="d-flex justify-content-end mt-4">
-                            <a href="{% url 'profile' %}" class="btn btn-secondary me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
-
                     </form>
                 </div>
             </div>
@@ -158,19 +130,15 @@
     </div>
 </div>
 
-
-<script>
-    const input = document.querySelectorAll('input')
-    input.forEach((i)=>{
-        i.style.color = 'white'
-        i.style.fontWeight = 'bold'
-    })
-
-    const textarea = document.querySelectorAll('textarea')
-    textarea.forEach((i)=>{
-        i.style.color = 'white'
-        i.style.fontWeight = 'bold'
-    })
-</script>
+<style>
+    .form-control:focus {
+        background-color: #0d0d0d !important;
+        border-color: #4a148c !important;
+        box-shadow: 0 0 0 0.25rem rgba(74, 20, 140, 0.25);
+    }
+    .form-control::placeholder {
+        color: #4b5563;
+    }
+</style>
 
 {% endblock %}

@@ -70,63 +70,28 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i
-                            class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                        <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2"
-                            style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                        <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i
-                                    class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
-                                    class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+<div class="container-fluid py-2">
+    <!-- Top Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+        <div>
+            <h2 class="mb-0 fw-bold">My Profile</h2>
+            <p class="text-light-secondary small mb-0">View and manage your account information and recent activity.</p>
         </div>
     </div>
-</nav>
-<hr>
 
+    {% if messages %}
+    <div class="px-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert"
-    style="background-color: {{ message.color|default:'' }};">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-{% endif %}
-
-<div class="container my-5">
-    <div class="row profile-page-container text-light">
+<div class="container-fluid px-3">
+    <div class="row text-light">
         <div class="col-lg-4">
             <div class="card bg-dark mb-4">
                 <div class="card-body text-center">
@@ -396,5 +361,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

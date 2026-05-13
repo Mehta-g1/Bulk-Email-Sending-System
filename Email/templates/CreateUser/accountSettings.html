@@ -5,154 +5,91 @@
 
 {% block content %}
 <style>
-    body {
-        background-color: #e9ecef;
-        color: #212529;
-    }
-
     .card {
-        background-color: #ffffff;
-        border: none;
+        background-color: #1e293b;
+        border: 1px solid #334155;
         border-radius: .5rem;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .list-group-item a {
-        text-decoration: none;
-        color: #0d6efd;
-    }
-
-    .list-group-item a:hover {
-        text-decoration: underline;
-    }
-
-    hr {
-        color: white;
-        margin-top: 0;
+        color: #f1f5f9;
     }
 
     .profile-img {
         width: 150px;
         height: 150px;
         object-fit: cover;
-        border: 5px solid #fff;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border: 4px solid #334155;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-control,
+    .form-select {
+        background-color: #0f172a !important;
+        border: 1px solid #334155 !important;
+        color: #f1f5f9 !important;
     }
 </style>
 
-
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i
-                            class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                        <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2"
-                            style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                        <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i
-                                    class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
-                                    class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+<div class="container-fluid py-2">
+    <!-- Top Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+        <div>
+            <h2 class="mb-0 fw-bold">API & Account Settings</h2>
+            <p class="text-secondary small mb-0">Configure your email SMTP credentials and manage your API keys.</p>
         </div>
     </div>
-</nav>
-<hr>
 
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert1 alert-{{ message.tags }} alert-dismissible fade show" role="alert"
-    style="background-color: {{ message.color|default:'' }};">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-{% endif %}
+    {% if messages %}
+    <div class="px-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-<div class="container mt-5 mb-5">
-    <div class="row ">
-        <div class="col-lg-5  rounded-3">
-            <div class="card mb-3">
-                <div class="card-body text-center">
-                    <div class="d-flex justify-content-arround mb-4">
-                        <div>
-                            {% if user.image %}
-                            <img src="{{ user.image.url }}" alt="avatar" class="rounded-circle img-fluid profile-img">
-                            {% else %}
-                            <img src="{% static 'images/default.png' %}" alt="avatar"
-                                class="rounded-circle img-fluid profile-img">
-                            {% endif %}
+    <div class="row g-4 px-3">
+        <div class="col-lg-4 ">
+            <div class="card h-100" style="background: #0d1016;">
+                <div class="card-body text-center py-4">
+                    <div class="mb-4">
+                        {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="avatar" class="rounded-circle profile-img">
+                        {% else %}
+                        <i class="fas fa-user-circle fa-7x text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ user.name }}</h4>
+                    <p class="text-secondary small mb-3">{{ user.email_address }}</p>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Profile Completion</span>
+                            <span>{{ progress }}%</span>
                         </div>
-                        <div class="ms-5 text-start">
-                            <h4 class="my-2"><strong>{{ user.name }}</strong></h4>
-                            <p class="mb-1">{{ user.post|default:"N/A" }}</p>
-                            <p class="mb-2">{{ user.address|default:"-" }}</p>
-                            <p class='mb-1'><strong>No. of Email Sent: </strong> {{total_sent_mail}}</p>
-                            <p class='mb-4'><strong>No. of Groups: </strong> {{ groups }}</p>
+                        <div class="progress" style="height: 6px; background: #0f172a">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ progress }}%">
+                            </div>
                         </div>
-
                     </div>
 
-
-                    <div class="d-flex justify-content-center mb-2">
-                        <a href="{% url 'edit_profile' %}" class="btn btn-primary me-2">Edit Profile</a>
-                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary ms-1 me-2"><i
-                                class="fa-solid fa-chart-line"></i> Dashboard</a>
-                        <a href=" {% url "account_settings" %} " class='btn btn-outline-warning ms-1 me-2'><i
-                                class="fa-solid fa-gear"></i> Settings</a>
-                        <br>
-                        <a href="{% url 'logout' %}" class="btn btn-outline-danger ms-1 me-2"><i
-                                class="fa-solid fa-right-from-bracket"></i> Logout</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card mb-2">
-                <div class="card-body">
-                    <p class="mb-4 d-flex justify-content-between ">
-                        <span class="font-italic me-1">Profile Completion</span>
-                        <a href="{% url 'edit_profile' %}" class="btn btn-primary me-3">Complete Profile</a>
-                    </p>
-                    <p class="mb-1" style="font-size: .77rem;">{{ progress }}% Complete</p>
-                    <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%"
-                            aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-7">
             <div class="card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header text-white" style="background: #27385a;">
                     <h4 class="mb-0">Email Account Settings</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="background: #0d1016;">
                     <form method="POST" action="{% url 'account_settings' %}">
                         {% csrf_token %}
 
@@ -171,7 +108,8 @@
                                     <strong class="text-primary">strongly recommended</strong> to use an <strong
                                         class="text-primary">App Password</strong> instead of your regular account
                                     password. An App Password is a unique 16-digit code that gives this application
-                                    permission to send emails from your account without exposing your main password.</p>
+                                    permission to send emails from your account without exposing your main password.
+                                </p>
                                 <p class="mb-1">Learn how to create one:</p>
                                 <ul class="mb-0" style="padding-left: 1.5rem;">
                                     <li><a href="https://help.zoho.com/portal/en/kb/bigin/channels/email/articles/generate-an-app-specific-password#What_is_TFA_Two_factor_Authentication"
@@ -188,8 +126,10 @@
                             <div class="col-md-8 mb-3">
                                 <div class="fs-5">
                                     <label for="email">Email Address</label> <br>
-                                    <input type="email" name="email" id="email" class="form-control bg-secondary  text-black" value="{{ user.email_address }}" disabled>
-                                    
+                                    <input type="email" name="email" id="email"
+                                        class="form-control bg-secondary  text-black" value="{{ user.email_address }}"
+                                        disabled>
+
                                 </div>
                             </div>
                         </div>
@@ -198,23 +138,17 @@
                                 <label for="email_host_select" class="form-label">Email Host</label>
                                 <select class="form-select bg-dark text-light" id="email_host_select"
                                     name="email_host_select">
-                                    <option value="smtp.gmail.com"
-                                        {% if user.email_host == 'smtp.gmail.com' or not user.email_host %}selected{% endif %}>
+                                    <option value="smtp.gmail.com" {% if user.email_host == 'smtp.gmail.com' or not user.email_host %}selected{% endif %}>
                                         smtp.gmail.com (Gmail)</option>
-                                    <option value="smtp.mail.yahoo.com"
-                                        {% if user.email_host == 'smtp.mail.yahoo.com' %}selected{% endif %}>
+                                    <option value="smtp.mail.yahoo.com" {% if user.email_host == 'smtp.mail.yahoo.com' %}selected{% endif %}>
                                         smtp.mail.yahoo.com (Yahoo)</option>
-                                    <option value="smtp.office365.com"
-                                        {% if user.email_host == 'smtp.office365.com' %}selected{% endif %}>
+                                    <option value="smtp.office365.com" {% if user.email_host == 'smtp.office365.com' %}selected{% endif %}>
                                         smtp.office365.com (Outlook)</option>
-                                    <option value="smtp.mail.me.com"
-                                        {% if user.email_host == 'smtp.mail.me.com' %}selected{% endif %}>
+                                    <option value="smtp.mail.me.com" {% if user.email_host == 'smtp.mail.me.com' %}selected{% endif %}>
                                         smtp.mail.me.com (iCloud)</option>
-                                    <option value="smtp.zoho.in"
-                                        {% if user.email_host == 'smtp.zoho.in' %}selected{% endif %}>smtp.zoho.in (Zoho
+                                    <option value="smtp.zoho.in" {% if user.email_host == 'smtp.zoho.in' %}selected{% endif %}>smtp.zoho.in (Zoho
                                         Mail)</option>
-                                    <option value="custom"
-                                        {% if user.email_host and user.email_host not in "smtp.gmail.com,smtp.mail.yahoo.com,smtp.office365.com,smtp.mail.me.com,smtp.zoho.com" %}selected{% endif %}>
+                                    <option value="custom" {% if user.email_host and user.email_host not in "smtp.gmail.com,smtp.mail.yahoo.com,smtp.office365.com,smtp.mail.me.com,smtp.zoho.com" %}selected{% endif %}>
                                         Custom (Not Recommended)</option>
                                 </select>
                                 <input type="text" class="form-control mt-2" id="email_host_custom"
@@ -227,16 +161,10 @@
                                 <label for="email_port_select" class="form-label">Port</label>
                                 <select class="form-select bg-dark text-light" id="email_port_select"
                                     name="email_port_select">
-                                    <option value="587"
-                                        {% if user.email_port == 587 or not user.email_port %}selected{% endif %}>587
-                                        (TLS - Recommended)</option>
-                                    <option value="465" {% if user.email_port == 465 %}selected{% endif %}>465 (SSL for
-                                        Zoho or Yahoo Mail)</option>
-                                    <option value="25" {% if user.email_port == 25 %}selected{% endif %}>25 (Insecure)
-                                    </option>
-                                    <option value="custom"
-                                        {% if user.email_port and user.email_port not in "587,465,25" %}selected{% endif %}>
-                                        Custom (Not Recommended)</option>
+                                    <option value="587" {% if user.email_port == 587 or not user.email_port %}selected{% endif %}>587 (TLS - Recommended)</option>
+                                    <option value="465" {% if user.email_port == 465 %}selected{% endif %}>465 (SSL for Zoho or Yahoo Mail)</option>
+                                    <option value="25" {% if user.email_port == 25 %}selected{% endif %}>25 (Insecure)</option>
+                                    <option value="custom" {% if user.email_port and user.email_port not in "587,465,25" %}selected{% endif %}>Custom (Not Recommended)</option>
                                 </select>
                                 <input type="number" class="form-control mt-2" id="email_port_custom"
                                     name="email_port_custom" placeholder="Enter port" style="display: none;"
@@ -247,8 +175,7 @@
                         </div>
 
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="use_tls" name="use_tls"
-                                {% if user.use_tls %}checked{% endif %}>
+                            <input class="form-check-input" type="checkbox" id="use_tls" name="use_tls" {% if user.use_tls %}checked{% endif %}>
                             <label class="form-check-label" for="use_tls">
                                 Use TLS (Recommended for port 587)
                             </label>
@@ -264,7 +191,196 @@
             </div>
         </div>
     </div>
+
+    <!-- API Key Management Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card" style="background:#1a1a2e;border:2px solid #484949;color:#e0e0e0">
+                <div class="card-header" style="background:linear-gradient(135deg,#1b2033,#132b35);color:#fff">
+                    <h4 class="mb-0"><i class="fas fa-key me-2"></i>API Key Management</h4>
+                    <small>Use your API key to integrate email sending into your applications.</small>
+                </div>
+                <div class="card-body" style="background:#0d1016">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 style="color:#e0e0e0">Your API Key</h5>
+                            {% if api_key %}
+                            <div class="input-group mb-3">
+                                <input type="password" id="api_key_input" class="form-control" value="{{ api_key }}"
+                                    readonly
+                                    style="background:#0f172a;color:#10b981;border:1px solid #334155;font-family:monospace">
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKey()">
+                                    <i class="fas fa-eye" id="api_eye_icon"></i>
+                                </button>
+                                <button class="btn btn-outline-success" type="button" onclick="copyApiKey()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <p style="font-size:12px;color:#64748b">
+                                Created: {{ api_key_created_at|date:"M d, Y H:i"|default:"N/A" }} |
+                                Usage count: <strong style="color:#667eea">{{ api_usage_count }}</strong>
+                            </p>
+                            {% else %}
+                            <div class="alert" style="background:#1e293b;border:1px solid #334155;color:#94a3b8">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No API key generated yet. Click the button below to create one.
+                            </div>
+                            {% endif %}
+                            <form method="POST" action="{% url 'api_generate_key' %}" id="generate_key_form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning"
+                                    onclick="return confirm('{% if api_key %}Regenerate API key? The old key will stop working.{% else %}Generate a new API key?{% endif %}')">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    {% if api_key %}Regenerate API Key{% else %}Generate API Key{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 style="color:#e0e0e0"><i class="fas fa-book me-2"></i>API Integration Guide</h5>
+                            <div class="accordion" id="apiDocs"
+                                style="--bs-accordion-bg: #0f172a; --bs-accordion-btn-bg: #1e293b; --bs-accordion-btn-color: #e2e8f0; --bs-accordion-active-bg: #2d3748; --bs-accordion-active-color: #667eea; border: 1px solid #334155; border-radius: 8px; overflow: hidden;">
+                                <!-- Auth -->
+                                <div class="accordion-item" style="border-bottom: 1px solid #334155;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseAuth">
+                                            <i class="fas fa-shield-alt me-2"></i>Authentication
+                                        </button>
+                                    </h2>
+                                    <div id="collapseAuth" class="accordion-collapse collapse"
+                                        data-bs-parent="#apiDocs">
+                                        <div class="accordion-body" style="font-size: 13px; color: #94a3b8;">
+                                            Include your API key in the <code>Authorization</code> header for all
+                                            requests:
+                                            <pre class="bg-dark p-2 rounded mt-2"
+                                                style="color: #60a5fa; font-size: 11px;">Authorization: Bearer YOUR_API_KEY</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Send Email -->
+                                <div class="accordion-item" style="border-bottom: 1px solid #334155;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseSend">
+                                            <i class="fas fa-envelope me-2"></i>Send Email
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSend" class="accordion-collapse collapse"
+                                        data-bs-parent="#apiDocs">
+                                        <div class="accordion-body" style="font-size: 13px; color: #94a3b8;">
+                                            <strong>Endpoint:</strong> <code>POST /api/send-email/</code>
+                                            <div class="mt-2"><strong>Payload:</strong></div>
+                                            <pre class="bg-dark p-2 rounded" style="color: #10b981; font-size: 11px;">{
+  "to_email": "recipient@example.com",
+  "subject": "Hello",
+  "body": "&lt;h1&gt;HTML Content&lt;/h1&gt;"
+}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Campaigns -->
+                                <div class="accordion-item" style="border-bottom: 1px solid #334155;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseCampaigns">
+                                            <i class="fas fa-list me-2"></i>Campaigns & Stats
+                                        </button>
+                                    </h2>
+                                    <div id="collapseCampaigns" class="accordion-collapse collapse"
+                                        data-bs-parent="#apiDocs">
+                                        <div class="accordion-body" style="font-size: 13px; color: #94a3b8;">
+                                            <ul class="mb-0 list-unstyled">
+                                                <li><i class="fas fa-check-circle me-1 text-primary"></i>
+                                                    <code>GET /api/campaigns/</code> - List all</li>
+                                                <li><i class="fas fa-check-circle me-1 text-primary"></i>
+                                                    <code>GET /api/stats/</code> - Usage stats</li>
+                                                <li><i class="fas fa-check-circle me-1 text-primary"></i>
+                                                    <code>GET /api/logs/</code> - View history</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- OTP -->
+                                <div class="accordion-item" style="border-bottom: 1px solid #334155;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseOTP">
+                                            <i class="fas fa-key me-2"></i>OTP Service
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOTP" class="accordion-collapse collapse" data-bs-parent="#apiDocs">
+                                        <div class="accordion-body" style="font-size: 13px; color: #94a3b8;">
+                                            Send 6-digit verification codes to any email.
+                                            <div class="mt-2"><code>POST /api/send-otp/</code></div>
+                                            <pre class="bg-dark p-2 rounded"
+                                                style="color: #f59e0b; font-size: 11px;">{"email": "user@test.com"}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- JS Example -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseJS">
+                                            <i class="fab fa-js me-2"></i>JavaScript (Fetch)
+                                        </button>
+                                    </h2>
+                                    <div id="collapseJS" class="accordion-collapse collapse" data-bs-parent="#apiDocs">
+                                        <div class="accordion-body" style="font-size: 13px; color: #94a3b8;">
+                                            Example of sending an email using JS:
+                                            <pre class="bg-dark p-2 rounded mt-2"
+                                                style="color: #f8fafc; font-size: 11px; overflow-x: auto;">
+fetch('/api/send-email/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    to_email: 'test@example.com',
+    subject: 'API Test',
+    body: '&lt;p&gt;Hello from JS!&lt;/p&gt;'
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data));</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{% url 'documentation' %}" class="btn btn-sm btn-primary w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>Full Documentation
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    function toggleApiKey() {
+        const inp = document.getElementById('api_key_input');
+        const icon = document.getElementById('api_eye_icon');
+        if (inp.type === 'password') {
+            inp.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            inp.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+    function copyApiKey() {
+        const inp = document.getElementById('api_key_input');
+        const val = inp.value;
+        navigator.clipboard.writeText(val).then(() => {
+            alert('API key copied to clipboard!');
+        });
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -12,9 +12,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    # Existing apps
     "CreateUser",
     "Home",
     "EmailTemplates",
+    # New apps
+    "campaigns",
+    "otp",
+    "api",
+    "tracking",
+    # Dev tools
     "django_browser_reload",
 ]
 
@@ -57,6 +65,20 @@ DATABASES = {
     }
 }
 
+
+# online database
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',  # Database name from your connection string
+#         'USER': 'postgres',  # Username
+#         'PASSWORD': 'ZxibGEpi0sVO8Mom',  # Password from your connection string
+#         'HOST': 'db.nsdgysgglgvijsbfvsom.supabase.co',  # Host
+#         'PORT': '5432',  # Port
+#     }
+# }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -79,9 +101,31 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# PRODUCTION SETTINGS - Change these based on environment
-DEBUG = True
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
+# PRODUCTION SETTINGS - Automatically managed via environment variables
+DEBUG = config("DEBUG", default=True, cast=bool)
+
+if DEBUG:
+    import socket
+    ALLOWED_HOSTS = ["*"]
+    # Add local network IP dynamically
+    try:
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        ALLOWED_HOSTS.append(local_ip)
+    except:
+        pass
+else:
+    # Set this in your .env for production (e.g., yourdomain.com,www.yourdomain.com)
+    ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
+
+# Security settings for production
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+    X_FRAME_OPTIONS = 'DENY'
 
 DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
@@ -101,3 +145,28 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Sites framework (needed for get_current_site)
+SITE_ID = 1
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {module}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

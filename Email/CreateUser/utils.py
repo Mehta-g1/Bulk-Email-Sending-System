@@ -216,54 +216,91 @@ def extract_receipients_from_file(user, file, group,  request):
         return False
     
     try:
+        # Determine file path
+        file_path = file.file.path
         if file.file_type.lower() == 'csv':
-            df = pd.read_csv(file.file)
+            # Try reading with header first
+            df = pd.read_csv(file_path)
+            # Check if headers actually look like headers or data
+            # If the first row (headers) contains an email-like string, it might be headerless
+            first_row_str = ' '.join(df.columns.astype(str))
+            if '@' in first_row_str and '.' in first_row_str:
+                df = pd.read_csv(file_path, header=None)
         else:
-            # Excel read (wrap in BytesIO)
-            file.file.open('rb')
-            df = pd.read_excel(BytesIO(file.file.read()), engine='openpyxl')
-            file.file.close()
+            df = pd.read_excel(file_path, engine='openpyxl')
     except Exception as e:
         logger.error(f"Error reading file: {e}")
         messages.warning(request, "There was an error reading the file. Please ensure it is a valid CSV/XLS/XLSX file.")
         return False
         
     try:
-        # Normalize columns to lowercase to find matches
+        # Normalize columns to lowercase strings
         df.columns = [str(c).lower().strip() for c in df.columns]
         
-        # Smart Column Matching
-        name_col = next((c for c in df.columns if c in ['name', 'fullname', 'user', 'username', 'client']), None)
+        # 1. Try Smart Column Matching (by header name)
+        name_col = next((c for c in df.columns if c in ['name', 'fullname', 'user', 'username', 'client', 'customer']), None)
         email_col = next((c for c in df.columns if c in ['email', 'email_address', 'e-mail', 'mail']), None)
-        category_col = next((c for c in df.columns if c in ['category', 'type', 'designation']), 'category') # default if exists
-        comment_col = next((c for c in df.columns if c in ['comment', 'comments', 'description', 'remark']), 'comment')
+        category_col = next((c for c in df.columns if c in ['category', 'type', 'designation']), None)
+        comment_col = next((c for c in df.columns if c in ['comment', 'comments', 'description', 'remark']), None)
+
+        # 2. Heuristic Fallback (if headers don't match or are numeric)
+        if not email_col:
+            # Look for the first column where the first non-null value looks like an email
+            for col in df.columns:
+                try:
+                    first_val = str(df[col].dropna().iloc[0]) if not df[col].dropna().empty else ""
+                    if '@' in first_val and '.' in first_val:
+                        email_col = col
+                        break
+                except: continue
+        
+        if not name_col and email_col is not None:
+            # If we found email but not name, assume the column before email is Name
+            try:
+                col_idx = list(df.columns).index(email_col)
+                if col_idx > 0:
+                    name_col = df.columns[col_idx - 1]
+                elif len(df.columns) > 1:
+                    name_col = df.columns[col_idx + 1]
+            except: pass
+
+        # 3. Final Fallback (Index based)
+        if not email_col and len(df.columns) >= 2:
+            name_col, email_col = df.columns[0], df.columns[1]
+        elif not email_col and len(df.columns) == 1:
+            email_col = df.columns[0]
 
         # Check critical columns
-        if not name_col or not email_col:
-            missing = []
-            if not name_col: missing.append("Name")
-            if not email_col: missing.append("Email")
-            messages.error(request, f"Missing required columns: {', '.join(missing)}. Please check your file headers.")
+        if not email_col:
+            messages.error(request, "Could not identify an 'Email' column. Please check your file headers.")
             return False
 
         added_count = 0
         skipped_count = 0
+        duplicate_count = 0
         
-        # Use transaction to ensure all-or-nothing (Atomicity)
         with transaction.atomic():
             for _, row in df.iterrows():
-                name = row[name_col]
-                email = row[email_col]
-                
-                # Get optional fields safely
-                category = row[category_col] if category_col in df.columns else 'N/A'
-                comments = row[comment_col] if comment_col in df.columns else ''
+                try:
+                    email = str(row[email_col]).strip() if pd.notna(row[email_col]) else ""
+                    if not email or '@' not in email or '.' not in email:
+                        skipped_count += 1
+                        continue
+                    
+                    name = str(row[name_col]).strip() if name_col and pd.notna(row[name_col]) else "Customer"
+                    if not name or name.lower() == 'nan': name = "Customer"
+                    
+                    category = str(row[category_col]).strip() if category_col and pd.notna(row[category_col]) else 'N/A'
+                    if not category or category.lower() == 'nan': category = 'N/A'
+                    
+                    comments = str(row[comment_col]).strip() if comment_col and pd.notna(row[comment_col]) else ''
+                    if not comments or comments.lower() == 'nan': comments = ''
 
-                # Handle NaN/None
-                if pd.isna(category): category = 'N/A'
-                if pd.isna(comments): comments = ''
-                
-                if not Receipent.objects.filter(Sender=user, email=email).exists() and is_validEmail(str(email)):
+                    # Check for duplicates in this group
+                    if Receipent.objects.filter(Sender=user, email=email, group=group).exists():
+                        duplicate_count += 1
+                        continue
+
                     Receipent.objects.create(
                         Sender=user,
                         name=name,
@@ -274,17 +311,23 @@ def extract_receipients_from_file(user, file, group,  request):
                         group=group
                     )
                     added_count += 1
-                else:
+                except:
                     skipped_count += 1
         
-        messages.success(request, f"{added_count} recipients added successfully, {skipped_count} skipped.")
-    
-    except Exception as e:
-        logger.error(f"Error processing file content: {e}")
-        messages.error(request, f"Error processing file. Ensure correct format. {e}")
-        return False
+        if added_count > 0:
+            res_msg = f"Successfully added {added_count} recipients."
+            if skipped_count > 0: res_msg += f" {skipped_count} invalid rows skipped."
+            if duplicate_count > 0: res_msg += f" {duplicate_count} duplicates ignored."
+            messages.success(request, res_msg)
+            return True
+        else:
+            messages.warning(request, "No new recipients were added. Please check your file content.")
+            return False
 
-    return True
+    except Exception as e:
+        logger.error(f"Error extracting recipients: {e}")
+        messages.error(request, f"An unexpected error occurred while processing the file: {e}")
+        return False
 
 
 def send_welcome_message(user, request):

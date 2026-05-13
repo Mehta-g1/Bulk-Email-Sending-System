@@ -7,72 +7,93 @@
 
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i class="fa-solid fa-envelope-open-text me-1"></i>Mail Templates</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+<div class="container-fluid py-2">
+    <div class="card col-lg-8 p-4 shadow-lg mx-auto mt-3 mb-5"
+        style="background:#171717;border:1px solid #333;color:#e2e8f0">
+        <div class="heading d-flex justify-content-between mb-4 border-bottom pb-3">
+            <h4 class="mb-0 fw-bold" style="color:#fff"><i class="fas fa-edit me-2 text-primary"></i>Edit Email Template
+            </h4>
         </div>
+        <form method="post" action=' {% url "editTemplate" id %} '>
+            {% csrf_token %}
+
+            <!-- Template Name -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color:#94a3b8">Template Name <span
+                        class="text-danger">*</span></label>
+                <input type="text" class="form-control" value="{{name}}" name='name' required
+                    style="background:#0f172a;border:1px solid #334155;color:#e2e8f0">
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color:#94a3b8">Subject <span
+                        class="text-danger">*</span></label>
+                <input type="text" class="form-control" value="{{subject}}" name='subject' required
+                    style="background:#0f172a;border:1px solid #334155;color:#e2e8f0">
+            </div>
+
+            <!-- Body -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Email Body</label>
+                <div class="mb-2">
+                    <small class="text-secondary">Dynamic Placeholders (Click to insert): </small>
+                    <span class="placeholder-badge"
+                        style="cursor:pointer;background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:2px 10px;border-radius:99px;font-size:12px;font-family:monospace;margin:2px"
+                        onclick="insertPlaceholder('{name}')">{name}</span>
+                    <span class="placeholder-badge"
+                        style="cursor:pointer;background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:2px 10px;border-radius:99px;font-size:12px;font-family:monospace;margin:2px"
+                        onclick="insertPlaceholder('{email}')">{email}</span>
+                    <span class="placeholder-badge"
+                        style="cursor:pointer;background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:2px 10px;border-radius:99px;font-size:12px;font-family:monospace;margin:2px"
+                        onclick="insertPlaceholder('{company}')">{company}</span>
+                </div>
+
+                <!-- Custom Lite Editor Toolbar -->
+                <div id="lite_editor_toolbar" class="d-flex gap-2 p-2 mb-0"
+                    style="background:#0f172a; border: 1px solid #334155; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('bold')"
+                        title="Bold (Ctrl+B)"><i class="fas fa-bold"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('italic')"
+                        title="Italic (Ctrl+I)"><i class="fas fa-italic"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-light border-0" onclick="execCmd('underline')"
+                        title="Underline (Ctrl+U)"><i class="fas fa-underline"></i></button>
+                    <div class="vr mx-1" style="background-color: #334155;"></div>
+                    <button type="button" class="btn btn-sm btn-outline-light border-0"
+                        onclick="execCmd('insertUnorderedList')" title="List"><i class="fas fa-list-ul"></i></button>
+                </div>
+                <!-- Editor Surface -->
+                <div id="lite_editor" contenteditable="true"
+                    style="background:#0f172a; border: 1px solid #334155; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; min-height: 350px; padding: 15px; color: #e2e8f0; outline: none; overflow-y: auto;">
+                    {{body|safe}}
+                </div>
+                <input type="hidden" name="body" id="body_hidden">
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save Changes</button>
+                <a href="{% url 'templates' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+            </div>
+        </form>
     </div>
-</nav> <hr>
 
-<div class="card col-6 p-4 shadow mx-auto mt-3">
-    <div class="heading d-flex justify-content-between">
-        <h4 class="mb-3">Edit Email Template</h4>
-        <a href=" {% url "templates" %} "> <i class="fa-solid fa-xmark fa-2xl" style="color: #e60a0a;"></i></a>
-    </div>
-    <form method="post" action=' {% url "editTemplate" id %} '>
-        {% csrf_token %}
-        
-        <!-- Template Name -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">Template Name</label>
-            <input type="text" class="form-control text-light" value="{{name}}" name='name'>
-        </div>
+    <script>
+        const editor = document.getElementById('lite_editor');
+        const hiddenInput = document.getElementById('body_hidden');
 
-        <!-- Subject -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">Subject</label>
-            <input type="text" class="form-control text-light" value="{{subject}}" name='subject'>
-        </div>
+        function execCmd(command) {
+            document.execCommand(command, false, null);
+            editor.focus();
+        }
 
-        <!-- Body -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">Email Body</label>
-            <textarea class="form-control text-light" rows="8" name="body">{{body}}</textarea>
-        </div>
+        document.querySelector('form').addEventListener('submit', function () {
+            hiddenInput.value = editor.innerHTML;
+        });
 
-        <!-- Actions -->
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a href=" {% url "templates" %} " class="btn btn-secondary">Cancel</a>
-    </form>
-</div>
-{% endblock %}
+        function insertPlaceholder(text) {
+            editor.focus();
+            document.execCommand('insertText', false, text);
+        }
+    </script>
+    {% endblock %}

@@ -2,7 +2,9 @@ from django.shortcuts import render,redirect
 from .models import emailUsers, Receipent, reset_link, UserFiles, Receipent_Group
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
-from .utils import send_bulk_email, check_token, send_forget_password_link,profileCompletetion, extract_receipients_from_file, send_welcome_message
+from .utils import send_bulk_email, check_token, send_forget_password_link, profileCompletetion, extract_receipients_from_file, send_welcome_message
+from services.email_service import send_bulk_email_campaign
+from services.analytics_service import get_user_stats
 from django.utils.crypto import get_random_string
 from django.db.models import Q
 from django.utils.timezone import now
@@ -117,7 +119,10 @@ def dashboard(request):
     ]
 
     title = f"Welcome, {user.name}"
-    
+
+    # Analytics stats
+    stats = get_user_stats(user)
+
     return render(
         request,
         'CreateUser/dashboard.html',
@@ -130,6 +135,17 @@ def dashboard(request):
             'search_query': search_query,
             'user_groups': user_groups,
             'selected_group_id': int(selected_group_id) if selected_group_id and selected_group_id != 'all' else None,
+            # Analytics
+            'total_campaigns': stats['total_campaigns'],
+            'total_sent': stats['total_sent'],
+            'total_failed': stats['total_failed'],
+            'success_rate': stats['success_rate'],
+            'open_rate': stats['open_rate'],
+            'click_rate': stats['click_rate'],
+            'daily_data': stats['daily_data'],
+            'top_campaigns': stats['top_campaigns'],
+            'recent_logs': stats['recent_logs'],
+            'running_campaign': stats['running_campaign'],
         }
     )
 
@@ -599,20 +615,40 @@ def sendMail(request):
         return redirect('edit_profile')
 
     if request.method == "POST":
-        selected_ids = request.POST.getlist("selected") 
-        
+        selected_ids = request.POST.getlist("selected")
+        campaign_name = request.POST.get('campaign_name', '').strip()
+
         if not selected_ids:
             messages.warning(request, "No recipients selected!")
             return redirect("dashboard")
 
-        if send_bulk_email(user_id, selected_ids):
-
-        # for r in Receipent.objects.filter(id__in=selected_ids):
-        #     messages.success(request,f"Sending mail to: {r.email}") 
-
-            messages.success(request, f"Emails sent to {len(selected_ids)} recipient(s)!")
-        else:
-            messages.warning(request, "Something went wrong !")
+        try:
+            base_url = request.build_absolute_uri('/').rstrip('/')
+            
+            # Use background processing for all campaigns to ensure a smooth UI
+            campaign = send_bulk_email_campaign(
+                user_id=user_id,
+                selected_ids=selected_ids,
+                campaign_name=campaign_name or None,
+                base_url=base_url,
+                run_in_background=True
+            )
+            
+            if len(selected_ids) > 10:
+                messages.success(
+                    request,
+                    f"Campaign '{campaign.campaign_name}' started in the background. "
+                    f"Processing {len(selected_ids)} emails across multiple threads. "
+                    "Check the Campaigns dashboard for progress."
+                )
+            else:
+                messages.success(request, f"Campaign '{campaign.campaign_name}' initiated.")
+                
+        except ValueError as e:
+            messages.warning(request, str(e))
+        except Exception as e:
+            logger.error(f"sendMail error: {e}")
+            messages.warning(request, "Something went wrong while initiating the campaign.")
         return redirect("dashboard")
     else:
         return redirect("dashboard")
@@ -642,13 +678,15 @@ def account_settings(request):
     return render(request, 'CreateUser/accountSettings.html', 
             {
                 'user': user,
-                'title': 'Account Settings',
+                'title': f'Account Settings -{username}',
                 'progress': progress,
                 'image': image,
                 'username': username,
-                'title': f'Account Settings -{username}',
-                'total_sent_mail':total_sent_mail,
-                'groups':groups,
+                'total_sent_mail': total_sent_mail,
+                'groups': groups,
+                'api_key': user.api_key,
+                'api_usage_count': user.api_usage_count,
+                'api_key_created_at': user.api_key_created_at,
             })
 
 
