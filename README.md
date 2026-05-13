@@ -1,241 +1,145 @@
-# Bulk Email Sending System
+# 📧 EmailAuto: Enterprise-Grade Email Automation & API Ecosystem
 
-A powerful, user-friendly, and secure Django-based web application designed for sending bulk emails efficiently. This system allows multi-user support where each user can manage their own recipients, groups, templates, and SMTP configurations to run personalized email campaigns.
+[![Python Version](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org)
+[![Django Version](https://img.shields.io/badge/django-5.2+-green.svg)](https://www.djangoproject.com)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
-**Live Demo:** [https://emailsender.pythonanywhere.com/](https://emailsender.pythonanywhere.com/)
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Setup](#environment-setup)
-- [User Guide](#user-guide)
-  - [Authentication](#authentication)
-  - [Dashboard & Analytics](#dashboard--analytics)
-  - [Group Management](#group-management)
-  - [Recipient Management (Bulk Upload Policy)](#recipient-management)
-  - [Template System](#template-system)
-  - [SMTP Configuration (BYOS)](#smtp-configuration-byos)
-  - [Sending Emails](#sending-emails)
-- [API & URL Map](#api--url-map)
-- [Future Improvements](#future-improvements)
-- [Contributing](#contributing)
-- [License](#license)
+**EmailAuto** is a robust, full-stack email marketing and developer-centric automation platform. It bridges the gap between simple email scripts and complex enterprise SaaS by offering high-concurrency multi-threading, deep engagement analytics, and a powerful REST API for seamless integration.
 
 ---
 
-## Features
-
-*   **Secure Authentication**: Complete sign-up, login, password reset (via email link), and functionality to manage personal profiles.
-*   **Custom SMTP Configuration (BYOS)**: "Bring Your Own Server" model. Each user configures their own SMTP credentials (Gmail, Outlook, Zoho, etc.) directly in their account settings, ensuring their campaigns use their own reputation and limits.
-*   **Group Management**: Create, edit, and delete groups to organize recipients effectively (e.g., "Newsletter", "Clients", "Team").
-*   **Smart Bulk Import**: Upload recipients via CSV or Excel (XLS/XLSX). The system intelligently maps columns (finding flexible matches like 'Name', 'Fullname', 'Email', 'E-mail') and ignores duplicates automatically.
-*   **Template Engine**: Create rich HTML email templates. Set a "Primary" template for quick access.
-*   **Dashboard Analytics**: Visual progress bars for profile completion, quick stats on groups, and recent activity logs.
-*   **Bulk Emailing**: Select individual recipients or filter by group to send emails in bulk with a single click.
-*   **Attachment Handling**: Manages uploaded files for bulk import with options to read/delete file history.
+## 📑 Table of Contents
+1. [Executive Summary](#-executive-summary)
+2. [Feature Deep-Dive](#-feature-deep-dive)
+3. [System Architecture](#-system-architecture)
+4. [Data Model & Relationships](#-data-model--relationships)
+5. [Internal Workflow & Logic](#-internal-workflow--logic)
+6. [API Documentation](#-api-documentation)
+7. [Installation & Deployment](#-installation--deployment)
+8. [Comprehensive Screenshots Guide](#-comprehensive-screenshots-guide)
 
 ---
 
-## Screenshots
+## 🚀 Executive Summary
 
-| Feature | Description |
+EmailAuto is designed for developers and businesses that require **control**, **speed**, and **intelligence**. Unlike standard tools, it allows for custom SMTP rotation, provides raw engagement data, and handles thousands of recipients without blocking the user interface.
+
+---
+
+## 💎 Feature Deep-Dive
+
+### 📡 Multi-Threaded Campaign Engine
+The heart of the platform is a dynamic threading engine that optimizes itself based on the workload:
+*   **Dynamic Scaling**: For lists larger than 10, the system automatically spawns up to 5 concurrent threads.
+*   **Asynchronous Backgrounding**: All campaigns are moved to a background worker immediately upon initiation. This prevents request timeouts and allows the user to navigate the site while sending occurs.
+*   **SMTP Connection Pooling**: Reuses connections across threads to minimize the handshake overhead with providers like Gmail or Outlook.
+
+### 📊 Engagement Intelligence
+*   **Zero-Latency Tracking**: Tracking links and pixels are processed in milliseconds to ensure zero impact on recipient load times.
+*   **Link Rewriting Engine**: A custom regex-based parser that identifies all `<a>` tags in your HTML and wraps them in unique tracking redirects.
+*   **Open Rate Analysis**: Uses 1x1 transparent GIF injection to detect "Seen" status.
+
+### 🧠 Smart Data Intake
+*   **Heuristic Column Detection**: Our Pandas-powered engine scans column content to find email addresses and names, even if the file has no headers.
+*   **Bulk Operations**: Support for `.csv`, `.xls`, and `.xlsx` with automatic duplicate detection and data sanitization.
+
+---
+
+## 🏗️ System Architecture
+
+The platform follows a modular **Service-Oriented Architecture (SOA)**:
+
+| Module | Responsibility |
 | :--- | :--- |
-| **Home Page** | Landing page with project overview. |
-| **Dashboard** | Central hub showing recipient stats and groups. |
-| **Account Settings** | **Unique Feature:** Configure your personal SMTP (Gmail/Outlook) here. |
-| **Group Manager** | specialized interface to create and manage recipient groups. |
-| **Template Editor** | Create reusable email contents with subjects. |
-
-*(See specific screenshots in the `screenshots` directory)*
+| **`services/email_service.py`** | Handles threading, SMTP logic, and campaign orchestration. |
+| **`tracking/`** | Handles incoming pixel hits and link redirects. |
+| **`api/`** | Exposes core functionality to external developers via REST. |
+| **`campaigns/`** | Stores snapshots of sent content, stats, and recipient logs. |
 
 ---
 
-## Technology Stack
+## 🧬 Data Model & Relationships
 
-*   **Backend Framework**: Django 5.x (Python 3.10+)
-*   **Database**: SQLite (Default) - Can be easily switched to PostgreSQL/MySQL via Django settings.
-*   **Frontend**: HTML5, CSS3, Vanilla JavaScript (No heavy framework overhead).
-*   **Data Processing**: Pandas (for robust CSV/Excel parsing).
-*   **Configuration**: Python-Decouple (for environment variable management).
-*   **Static Files**: Whitenoise (for serving static assets in production).
+The database is designed with a hierarchical relationship to ensure data integrity and trackability.
 
----
+### Entity Relationship Overview:
+1.  **`emailUsers` (The Center)**:
+    *   `1 : N` with `Receipent_Group`: A user can have multiple groups.
+    *   `1 : N` with `Template`: A user can design multiple email templates.
+    *   `1 : N` with `Campaign`: A user can launch many campaigns.
+2.  **`Receipent_Group`**:
+    *   `1 : N` with `Receipent`: A group contains many recipients.
+3.  **`Campaign`**:
+    *   `1 : N` with `EmailLog`: Each campaign generates a log for every recipient it targeted.
+4.  **`EmailLog`**:
+    *   `1 : 1` link to a unique tracking UUID for open/click events.
 
-## Project Structure
-
-```text
-Email Send/
-├── .env                  # Environment variables (created by you)
-├── requirements.txt      # Python dependencies
-├── README.md             # Documentation
-├── Email/                # Main Project Directory
-    ├── manage.py         # Django management script
-    ├── Email/            # Project Settings
-    │   ├── settings.py   # Main configuration
-    │   ├── urls.py       # Global URL routing
-    │   └── wsgi.py       # WSGI entry point
-    ├── CreateUser/       # App: Auth, Dashboard, Recipients, Groups
-    │   ├── views.py      # Core logic
-    │   ├── models.py     # DB Models (emailUsers, Receipent, etc.)
-    │   └── utils.py      # Helpers (Email sending, File parsing)
-    ├── EmailTemplates/   # App: Template Management
-    └── Home/             # App: Landing pages
-```
+### Database Connection Philosophy:
+While the project currently uses **SQLite** for development (zero-config), the models are written using **Django ORM**, making it "DB Agnostic." You can switch to **PostgreSQL** or **MySQL** by simply updating the `DATABASES` setting in `settings.py`. All complex queries (like analytics aggregation) use Django's `F` expressions and `Count` aggregates to ensure performance across different database engines.
 
 ---
 
-## Getting Started
+## 🔄 Internal Workflow & Logic
 
-### Prerequisites
-
-*   **Python 3.10** or higher
-*   **pip** (Python Packet Manager)
-*   **Git**
-
-### Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Mehta-g1/Bulk-Email-Sending-System.git
-    cd Bulk-Email-Sending-System
-    ```
-
-2.  **Create a virtual environment:**
-    ```bash
-    # Windows
-    python -m venv .venv
-    .venv\Scripts\activate
-
-    # macOS/Linux
-    python3 -m venv .venv
-    source .venv/bin/activate
-    ```
-
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-### Environment Setup
-
-Create a `.env` file in the `Email` directory (same level as `manage.py` is usually fine, or inside the inner `Email` config folder depending on how you run it, but standard practice is project root or inner folder. *Note: The settings.py looks for .env in usage with python-decouple*).
-
-**Required `.env` Variables:**
-
-```ini
-# Security
-SECRET_KEY=your-secure-random-key-here
-DEBUG=True
-ALLOWED_HOSTS=127.0.0.1,localhost
-
-# System Email (Used for Password Resets & Welcome Emails)
-# This is the "Admin" email address. Users will use their OWN credentials for sending campaigns.
-EMAIL_HOST_USER=admin-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-password
-```
-
-4.  **Apply Migrations:**
-    ```bash
-    cd Email
-    python manage.py migrate
-    ```
-
-5.  **Run Server:**
-    ```bash
-    python manage.py runserver
-    ```
-    Access the app at `http://127.0.0.1:8000/`.
+### 1. The Sending Lifecycle
+1.  **Request**: User selects a group and template.
+2.  **Snapshot**: The system takes a "Content Snapshot" of the template (Subject/Body).
+3.  **Log Generation**: `EmailLog` records are pre-generated in a `Pending` state.
+4.  **Distribution**: The `ThreadPoolExecutor` picks up tasks. Each thread handles its own placeholders (`{{name}}`, etc.).
+5.  **Tracking**: As emails are opened/clicked, the `tracking` app updates logs in real-time.
 
 ---
 
-## User Guide
+## 🔌 API Documentation
 
 ### Authentication
-*   **Sign Up**: Create an account with Name, Email, Phone.
-*   **Login**: Access your private dashboard.
-*   **Forgot Password**: Secure reset link sent to your registered email. 
-    *   *Note: This system email is sent using the credentials in `.env`.*
+Include your API Key in the header: `X-API-KEY: your_generated_key`
 
-### Dashboard & Analytics
-Once logged in, the dashboard provides a snapshot of your recipients. You can use the **Search Bar** to filter recipients by name, email, or group.
-
-### Group Management
-Go to **View Profile -> Groups**.
-*   **Create Group**: Add a new tag (e.g., "HR Dept").
-*   **Filter**: On the dashboard, use the dropdown to view recipients only from specific groups.
-
-### Recipient Management
-You can add recipients in two ways:
-
-1.  **Manually**: Enter Name, Email, Group, and Category one by one.
-2.  **Bulk Upload**: Upload a CSV or Excel file.
-    *   **Smart Matching**: The system looks for headers like `Name`, `Fullname`, `Email`, `Mail`.
-    *   **Duplicate Check**: Automatically skips emails that are already in your list.
-    *   **File History**: View uploaded files and their extraction status in your Profile.
-
-### Template System
-Navigate to **Templates**.
-*   Create rich text emails (Subject + Body).
-*   **Primary Template**: Mark one template as primary to be auto-selected when sending quick emails.
-
-### SMTP Configuration (BYOS)
-**Critical Step for Sending:**
-1.  Go to **View Profile -> Account Settings**.
-2.  Enter **your personal** Email, Password (App Password recommended), Host (e.g., `smtp.gmail.com`), and Port (`587`).
-3.  The system uses *these* credentials to send your bulk campaigns, ensuring high deliverability and personal branding.
-
-### Sending Emails
-1.  On the Dashboard, check the boxes next to the recipients you want to contact.
-2.  (Optional) Select "All" or filter by a Group first.
-3.  Click **Send Email**.
-4.  The system uses your **Primary Template** and your **Account Settings** SMTP to dispatch the mails.
+### Endpoint: Send Bulk Email
+`POST /api/v1/send-bulk/`
+```json
+{
+  "template_id": 12,
+  "recipient_ids": [101, 102, 103],
+  "campaign_name": "Product Launch"
+}
+```
 
 ---
 
-## API & URL Map
+## 📸 Comprehensive Screenshots Guide
 
-| Endpoint | Function |
-| :--- | :--- |
-| `/` | Landing Page |
-| `/user/login/` | User Login |
-| `/user/dashboard/` | Main User Dashboard |
-| `/user/receipient/add/` | Add Single Recipient |
-| `/user/receipient/bulk-add/` | Upload CSV/Excel |
-| `/user/templates/` | Manage Templates |
-| `/user/group/create/` | Create New Group |
-| `/user/account-settings/` | **SMTP Config Page** |
-| `/user/submit-form/` | Action Handler (Send/Delete) |
+*To complete this README, replace the text below with actual images.*
 
----
+### 1. Unified Dashboard
+> ![Home Page](screenshots/home.png)
+> *Key View: Global analytics charts and quick-action buttons.*
 
-## Future Improvements
+### 2. Campaign Deep-Dive & Tracking
+> ![Home Page](screenshots/campaigns_deep.png)
+> *Key View: Real-time progress bars and engagement metrics.*
 
-*   **HTML Rich Text Editor**: Integrate a WYSIWYG editor for templates (e.g., CKEditor).
-*   **Scheduled Sending**: Cron jobs to send emails at specific times.
-*   **Open Tracking**: Pixel tracking to see if recipients opened the email.
-*   **Unsubscribe Link**: Auto-inject footer links for compliance.
 
----
+### 3. Template Editor & Personalization
+> ![Placeholder: Rich text editor showing {{name}} placeholders](screenshots/template_editor.png)
+> *Key View: Designing responsive HTML templates.*
 
-## Contributing
+### 4. Sent Content Snapshot
+> ![Placeholder: The fixed snapshot of the email body as it was sent](screenshots/delivered.jpeg)
+> *Key View: Proof of exactly what was delivered to customers.*
 
-Contributions are welcome!
-1.  Fork the Project.
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the Branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+### 5. API & SMTP Configuration
+> ![Placeholder: API key generation and SMTP provider settings](screenshots/api_configure.png)
+> *Key View: Configuring Gmail/Zoho/Outlook credentials.*
 
 ---
 
-## License
+## ⚙️ Installation
 
-Distributed under the MIT License. See `LICENSE` for more information.
+```bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+**© 2025 EmailAuto Platform. Optimized for performance and deliverability.**
