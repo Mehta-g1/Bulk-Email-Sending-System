@@ -1,4 +1,4 @@
-from django.core.mail import EmailMessage, get_connection, send_mail, EmailMultiAlternatives
+from django.core.mail import send_mail, EmailMultiAlternatives
 from .models import emailUsers, Receipent, reset_link
 from django.conf import settings
 from django.utils.timezone import now
@@ -9,7 +9,6 @@ from django.contrib import messages
 from django.db import transaction
 from django.contrib.sites.shortcuts import get_current_site
 import pandas as pd
-from io import BytesIO
 import re
 import logging
 
@@ -44,102 +43,6 @@ def profileCompletetion(user):
 
 
 # Utilities functions
-
-def get_filtered_recipients(user_id, selected_ids):
-    recipients = Receipent.objects.filter(Sender__id=user_id, id__in=selected_ids)
-    return [r.email for r in recipients]
-
-def update_recipients_send_time(selected_ids):
-    receipients = Receipent.objects.filter(id__in=selected_ids)
-    for r in receipients:
-        r.send_time+=1
-        r.save()
-    
-
-
-def send_bulk_email(user_id, selected_ids):
-    account = emailUsers.objects.get(id=user_id)
-
-    # Normalize and prepare defaults
-    host = account.email_host.lower().strip()
-    port = account.email_port or 587
-    use_tls = account.use_tls
-    use_ssl = False
-
-    # --- Auto configuration per provider ---
-    if 'zoho' in host:
-        host = 'smtp.zoho.in' if host.endswith('.in') else 'smtp.zoho.com'
-        port = 465
-        use_ssl = True
-        use_tls = False
-
-    elif 'gmail' in host:
-        host = 'smtp.gmail.com'
-        port = 587
-        use_tls = True
-        use_ssl = False
-
-    elif 'outlook' in host or 'office365' in host or 'live' in host:
-        host = 'smtp.office365.com'
-        port = 587
-        use_tls = True
-        use_ssl = False
-
-    elif 'yahoo' in host:
-        host = 'smtp.mail.yahoo.com'
-        port = 465
-        use_ssl = True
-        use_tls = False
-
-    elif 'icloud' in host or 'me.com' in host:
-        host = 'smtp.mail.me.com'
-        port = 587
-        use_tls = True
-        use_ssl = False
-
-    try:
-        # Explicitly clear both TLS/SSL defaults
-        connection = get_connection(
-            host=host,
-            port=port,
-            username=account.email_address,
-            password=account.email_password,
-            use_tls=False,
-            use_ssl=False,
-        )
-
-        # Now enable only one
-        if use_ssl:
-            connection.use_ssl = True
-        elif use_tls:
-            connection.use_tls = True
-
-        # Test connection with your template
-        template = Template.objects.get(
-            user=get_object_or_404(emailUsers, id=user_id),
-            primary=True
-        )
-
-        email = EmailMessage(
-            subject=template.subject,
-            body=template.body,
-            from_email=account.email_address,
-            to=get_filtered_recipients(user_id, selected_ids),
-            connection=connection,
-        )
-        email.content_subtype = "html"
-        email.send()
-
-        # Update info
-        template.no_of_time_used = int(template.no_of_time_used) + len(selected_ids)
-        template.save()
-        update_recipients_send_time(selected_ids)
-
-    except Exception as e:
-        logger.error(f"Error while sending email: {e}")
-        return False
-
-    return True
 
 def send_forget_password_link(request, user_email, token):
     """

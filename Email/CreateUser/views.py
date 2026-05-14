@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from .models import emailUsers, Receipent, reset_link, UserFiles, Receipent_Group
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib import messages
-from .utils import send_bulk_email, check_token, send_forget_password_link, profileCompletetion, extract_receipients_from_file, send_welcome_message
+from .utils import check_token, send_forget_password_link, profileCompletetion, extract_receipients_from_file, send_welcome_message
 from services.email_service import send_bulk_email_campaign
 from services.analytics_service import get_user_stats
 from django.utils.crypto import get_random_string

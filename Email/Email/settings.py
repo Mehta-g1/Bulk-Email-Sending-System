@@ -38,6 +38,12 @@ MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app',
+]
+
+
 ROOT_URLCONF = "Email.urls"
 
 TEMPLATES = [

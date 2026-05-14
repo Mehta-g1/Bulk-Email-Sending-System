@@ -2,62 +2,238 @@
 {% extends "Home/base.html" %}
 {% load static %}
 
-{% block title %} Contact Us {% endblock %}
+{% block title %} Contact Us | EmailAuto {% endblock %}
 
 {% block content %}
-<div class="container contact-container">
-    <div class="row ">
-        <div class="col-md-5 mx-auto">
-            <div class="card contact-card ">
-                <div class="card-body">
-                    <div class="contact-form">
-                        <h2 class="text-center">Contact Us</h2>
-                        <hr>
+<style>
+    .contact-wrapper {
+        padding: 60px 0;
+        background: #0f172a;
+        min-height: calc(100vh - 100px);
+    }
+
+    .contact-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #222451 0%, #2a2c19 100%);
+        padding: 30px;
+        text-align: center;
+        color: white;
+    }
+
+    .card-header-custom h2 {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .card-header-custom p {
+        opacity: 0.9;
+        font-size: 16px;
+    }
+
+    .form-label {
+        color: #94a3b8;
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: #f1f5f9;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        background: #0f172a;
+        /* border-color: #667eea; */
+        color: #fff;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+    .form-control::placeholder{
+        color: #94a3b8;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        border-radius: 8px;
+        width: 100%;
+        margin-top: 10px;
+        transition: transform 0.2s;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+
+    .info-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        height: 100%;
+        transition: border-color 0.3s;
+    }
+
+    .info-card:hover {
+        border-color: #667eea;
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .info-card h4 {
+        color: #f1f5f9;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .info-card p {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 0;
+    }
+
+    .social-links a {
+        color: #94a3b8;
+        font-size: 20px;
+        margin-right: 15px;
+        transition: color 0.3s;
+    }
+
+    .social-links a:hover {
+        color: #667eea;
+    }
+
+    .alert {
+        border-radius: 10px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="contact-wrapper">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <!-- Left Side: Contact Form -->
+            <div class="col-lg-6">
+                <div class="card contact-card">
+                    <div class="card-header-custom">
+                        <h2>Get in Touch</h2>
+                        <p>Have a question or feedback? We'd love to hear from you.</p>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
                         {% if messages %}
                             {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-0" role="alert">
                                     {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             {% endfor %}
                         {% endif %}
+
                         <form action="{% url 'contact_us' %}" method="post">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label>Are you a registered user?</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="user_type" id="registered" value="registered" checked>
-                                    <label class="form-check-label" for="registered">Yes</label>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Account Status</label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="user_type" id="registered" value="registered" checked>
+                                        <label class="form-check-label text-light" for="registered" style="font-size: 13px;">Registered User</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="user_type" id="unregistered" value="unregistered">
+                                        <label class="form-check-label text-light" for="unregistered" style="font-size: 13px;">Visitor</label>
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="user_type" id="unregistered" value="unregistered">
-                                    <label class="form-check-label" for="unregistered">No</label>
-                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="email">Email address</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
                             </div>
-                            <div class="form-group">
-                                <label for="query">Query</label>
-                                <textarea class="form-control" id="query" name="query" rows="3" required></textarea>
+
+                            <div class="mb-3">
+                                <label for="query" class="form-label">How can we help?</label>
+                                <textarea class="form-control" id="query" name="query" rows="4" placeholder="Your question or issue..." required></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="suggestion">Suggestion/Feedback</label>
-                                <textarea class="form-control" id="suggestion" name="suggestion" rows="3"></textarea>
+
+                            <div class="mb-4">
+                                <label for="suggestion" class="form-label">Feedback (Optional)</label>
+                                <textarea class="form-control" id="suggestion" name="suggestion" rows="2" placeholder="Tell us how we can improve."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block m-3">Submit</button>
-                            <a class="btn btn-secondary m-3 btn-block" href=" {% url "home" %} "><i class="fa-solid fa-house-chimney"></i> Back to Home</a>
+
+                            <button type="submit" class="btn btn-primary btn-submit text-white">Send Message</button>
+                            
+                            <div class="text-center mt-4">
+                                <a href="{% url 'home' %}" class="text-decoration-none text-muted small"><i class="fas fa-home me-1"></i> Back to Home</a>
+                            </div>
                         </form>
                     </div>
-                    <div class="developer-info">
-                        <h3 class="text-center">Developer Contact</h3>
-                        <hr>
-                        <p class="text-center">
-                            <a href="https://github.com/mehta-g1" target="_blank"><i class="fab fa-github"></i> GitHub</a> |
-                            <a href="https://linkedin.com/in/mehta-g1" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a> |
-                            <a href="#"><i class="fas fa-envelope"></i> Vikashmehta@mail.com</a>
-                        </p>
+                </div>
+            </div>
+
+            <!-- Right Side: Contact Info -->
+            <div class="col-lg-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope-open-text"></i>
+                            </div>
+                            <h4>Support Email</h4>
+                            <p>Our team usually responds within 24 hours.</p>
+                            <p class="mt-2 text-white fw-500">support@emailauto.com</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h4>Developer Contact</h4>
+                            <p>For technical integration and API queries.</p>
+                            <p class="mt-2 text-white fw-500">Vikashmehta@mail.com</p>
+                            <div class="social-links mt-3">
+                                <a href="https://github.com/mehta-g1" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                                <a href="https://linkedin.com/in/mehta-g1" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-file-code"></i>
+                            </div>
+                            <h4>Documentation</h4>
+                            <p>Check our API guides for quick setup.</p>
+                            <a href="{% url 'documentation' %}" class="text-decoration-none text-primary small d-block mt-2 fw-bold">Read Docs →</a>
+                        </div>
                     </div>
                 </div>
             </div>

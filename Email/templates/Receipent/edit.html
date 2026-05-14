@@ -1,87 +1,178 @@
+
 {% extends "CreateUser/base.html" %}
 {% load static %}
 
-{% block title %}Edit Recipient{% endblock %}
+{% block title %}Edit Recipient | EmailAuto{% endblock %}
 
 {% block content %}
+<style>
+    .edit-recipient-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        max-width: 600px;
+        margin: 40px auto;
+        overflow: hidden;
+    }
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3" href="{% url "dashboard" %}">Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "home" %}">
-                        <i class="fa-solid fa-house me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url "templates" %}"><i class="fa-solid fa-envelope-open-text me-1"></i>Configure Mail Templates</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image %}
-                            <img src="{{ image.url }}" alt="User" class="img-fluid rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                            <i class="fa-solid fa-user-circle fa-xl me-2"></i>
-                        {% endif %}
-                        <span class="d-none d-lg-inline">{{ username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user-cog me-2"></i>View Profile</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+    .edit-header {
+        background: linear-gradient(135deg, #222451 0%, #2a2c19 100%);
+        padding: 25px 30px;
+        border-bottom: 1px solid #334155;
+    }
+
+    .edit-header h3 {
+        color: #f1f5f9;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .edit-header h3 i {
+        color: #667eea;
+    }
+
+    .edit-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        color: #94a3b8;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: #f1f5f9;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        background: #0f172a;
+        border-color: #667eea;
+        color: #fff;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    .edit-footer {
+        padding: 20px 30px;
+        background: rgba(15, 23, 42, 0.5);
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid #334155;
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        flex: 1;
+        transition: transform 0.2s;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid #334155;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .btn-cancel:hover {
+        background: #334155;
+        color: #f1f5f9;
+    }
+
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon-wrap i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #475569;
+        font-size: 14px;
+    }
+
+    .input-icon-wrap .form-control {
+        padding-left: 38px;
+    }
+</style>
+
+<div class="container">
+    <div class="edit-recipient-card">
+        <div class="edit-header">
+            <h3><i class="fas fa-user-edit"></i> Update Recipient Info</h3>
         </div>
-    </div>
-</nav> <hr>
 
-
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg">
-        <div class="card-body">
-          <h3 class="card-title text-center fw-bolder">✏️ Edit Recipient</h3>
-          <hr>
-          <form method="POST">
+        <form method="POST">
             {% csrf_token %}
-            
-            <div class="mb-3">
-              <label class="form-label fw-bolder">Name</label>
-              <input type="text" name="name" class="form-control" value="{{ receipient.name }}" required>
+            <div class="edit-body">
+                <div class="mb-4">
+                    <label class="form-label">Full Name</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="name" class="form-control" value="{{ receipient.name }}" required placeholder="e.g. John Doe">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" class="form-control" value="{{ receipient.email }}" required placeholder="name@example.com">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Category / Label</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-tags"></i>
+                        <input type="text" name="category" class="form-control" value="{{ receipient.receipent_category }}" placeholder="e.g. VIP, Client, Lead">
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Internal Notes</label>
+                    <textarea name="comment" class="form-control" rows="4" placeholder="Additional details about this recipient...">{{ receipient.comment }}</textarea>
+                </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bolder">Email</label>
-              <input type="email" name="email" class="form-control" value="{{ receipient.email }}" required>
+            <div class="edit-footer">
+                <a href="{% url 'dashboard' %}" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-update">
+                    <i class="fas fa-save me-2"></i> Save Changes
+                </button>
             </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-bolder">Category</label>
-              <input type="text" name="category" class="form-control" value="{{ receipient.receipent_category }}">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-bolder">Comment</label>
-              <textarea name="comment" class="form-control">{{ receipient.comment }}</textarea>
-            </div>
-
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary fw-bolder">💾 Update Recipient</button>
-              <a href="{% url 'dashboard' %}" class="btn btn-secondary fw-bolder">⬅ Back to Dashboard</a>
-              {% comment %} <a href="{% url 'delete_recipient' r.id %}"  class="btn btn-danger fw-bolder">🗑 Delete</a> {% endcomment %}
-            </div>
-          </form>
-        </div>
-      </div>
+        </form>
     </div>
-  </div>
 </div>
 {% endblock %}
