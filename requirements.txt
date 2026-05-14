@@ -1,5 +1,6 @@
 Django>=5.2.0
 pandas>=2.0.0
+numpy>=1.24.0
 python-decouple>=3.8
 whitenoise>=6.5.0
 openpyxl>=3.1.0
@@ -7,3 +8,9 @@ requests>=2.31.0
 python-dotenv>=1.0.0
 django-browser-reload>=1.12.0
 gunicorn>=21.2.0
+urllib3>=2.0.0
+tzdata>=2023.3
+sqlparse>=0.4.4
+asgiref>=3.7.2
+psycopg2-binary>=2.9.9
+django-cors-headers>=4.3.0
