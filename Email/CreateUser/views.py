@@ -284,9 +284,7 @@ def forgot_password(request):
         send_forget_password_link(request, email, token)
         messages.success(request, "Reset link sent to registered email")
         return redirect('Login')
-    else:
-        messages.error(request, "Something went wrong!")
-        return redirect("forgot_password")
+
     
     return render(request, 'CreateUser/forgot_password.html')
 
