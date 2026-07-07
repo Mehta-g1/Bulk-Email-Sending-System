@@ -60,13 +60,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Email.wsgi.application"
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+# STORAGES = {
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# }
 
 DATABASES = {
     "default": {
@@ -112,14 +112,14 @@ USE_I18N = True
 USE_TZ = True
 
 # PRODUCTION SETTINGS - Automatically managed via environment variables
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=True)
 
 if DEBUG:
     import socket
     ALLOWED_HOSTS = ["*"]
     # Add local network IP dynamically
-    INSTALLED_APPS.append("django_browser_reload")
-    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
+    # INSTALLED_APPS.append("django_browser_reload")
+    # MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
     try:
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)

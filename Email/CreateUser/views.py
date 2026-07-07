@@ -282,7 +282,9 @@ def forgot_password(request):
             messages.success(request, "Reset link sent to registered email")
             return redirect('Login')
         else:
-            messages(request, "Something went wrong !, May be user does not exists !")
+            messages.error(request, "Something went wrong !, May be user does not exists !")
+            return redirect("forgot_password")
+    
     return render(request, 'CreateUser/forgot_password.html')
 
 def reset_password(request, token):
