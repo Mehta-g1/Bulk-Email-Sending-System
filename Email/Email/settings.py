@@ -68,26 +68,26 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #     },
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE":  "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE":  "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # online database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',  # Database name from your connection string
-#         'USER': 'postgres',  # Username
-#         'PASSWORD': 'ZxibGEpi0sVO8Mom',  # Password from your connection string
-#         'HOST': 'db.nsdgysgglgvijsbfvsom.supabase.co',  # Host
-#         'PORT': '5432',  # Port
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  # Database name from your connection string
+        'USER': 'postgres',  # Username
+        'PASSWORD': 'ZxibGEpi0sVO8Mom',  # Password from your connection string
+        'HOST': 'db.nsdgysgglgvijsbfvsom.supabase.co',  # Host
+        'PORT': '5432',  # Port
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -268,22 +268,25 @@ def change_password(request):
 def forgot_password(request):
     if request.method == "POST":
         email = request.POST.get('email')
-        
-        user = get_object_or_404(emailUsers,email_address = email )
-        if user:
-            token = get_random_string(32)
-            
-            reset_link.objects.create(
-                user = user,
-                token = token
-            )
-            
-            send_forget_password_link(request, email, token)
-            messages.success(request, "Reset link sent to registered email")
-            return redirect('Login')
-        else:
-            messages.error(request, "Something went wrong !, May be user does not exists !")
+        try:
+            user = emailUsers.objects.get(email_address = email )
+        except emailUsers.DoesNotExist:
+            messages.error(request, "User Does Not Exists!")
             return redirect("forgot_password")
+        
+        token = get_random_string(32)
+        
+        reset_link.objects.create(
+            user = user,
+            token = token
+        )
+            
+        send_forget_password_link(request, email, token)
+        messages.success(request, "Reset link sent to registered email")
+        return redirect('Login')
+    else:
+        messages.error(request, "Something went wrong!")
+        return redirect("forgot_password")
     
     return render(request, 'CreateUser/forgot_password.html')
 
