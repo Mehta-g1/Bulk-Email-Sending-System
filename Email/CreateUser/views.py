@@ -36,7 +36,7 @@ def Login(request):
             else:
                 messages.warning(request, "Incorrect password. Please try again.")
         except emailUsers.DoesNotExist:
-            messages.warning(request, "This email is not registered. Please sign up first.")
+            messages.warning(request, "This email is not registered with us. Please sign up first.")
             return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
     return render(request, 'CreateUser/login.html' ,{'title':'Login Page'})
 

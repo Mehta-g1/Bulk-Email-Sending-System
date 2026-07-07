@@ -29,5 +29,3 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Binaries
-ngrok.exe

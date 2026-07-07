@@ -244,12 +244,12 @@ def send_welcome_message(user, request):
     html_content = f"""
     <html>
     <body style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2>Welcome to <strong>Email Sender</strong> 🚀</h2>
+        <h2>Welcome to <strong>EmailAuto - Advanced Email Automation & API Ecosystem</strong> 🚀</h2>
 
         <p>Hi <strong>{user.name}</strong>,</p>
 
         <p>
-            Your account has been successfully created on <strong>Email Sender</strong>.
+            Your account has been successfully created on <strong>EmailAuto</strong>.
             You can now start managing and sending bulk emails with ease.
         </p>
 
@@ -271,7 +271,7 @@ def send_welcome_message(user, request):
 
         <p>
             Thanks,<br>
-            <strong>Email Sender Team</strong>
+            <strong>EmailAuto Team</strong>
         </p>
     </body>
     </html>

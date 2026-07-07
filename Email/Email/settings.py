@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     "api",
     "tracking",
     # Dev tools
-    "django_browser_reload",
+    # "django_browser_reload",
 ]
 
 MIDDLEWARE = [
@@ -35,13 +35,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.ngrok-free.app',
-]
+CSRF_TRUSTED_ORIGINS = [config("CSRF_TRUSTED_ORIGINS", default="https://*.ngrok-free.app")]
 
 
 ROOT_URLCONF = "Email.urls"
@@ -62,7 +60,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Email.wsgi.application"
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 DATABASES = {
     "default": {
@@ -103,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-your-default-key")
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE="Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
 
@@ -114,6 +118,8 @@ if DEBUG:
     import socket
     ALLOWED_HOSTS = ["*"]
     # Add local network IP dynamically
+    INSTALLED_APPS.append("django_browser_reload")
+    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
     try:
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)
