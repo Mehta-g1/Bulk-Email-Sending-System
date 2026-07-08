@@ -288,6 +288,19 @@ def forgot_password(request):
     
     return render(request, 'CreateUser/forgot_password.html')
 
+
+
+import socket
+
+def smtp_test(request):
+    try:
+        ip = socket.gethostbyname("smtp.gmail.com")
+        return HttpResponse(f"Resolved IP: {ip}")
+    except Exception as e:
+        return HttpResponse(f"DNS Error: {e}")
+
+
+
 def reset_password(request, token):
 
     if request.method == "POST":

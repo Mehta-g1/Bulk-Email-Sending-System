@@ -78,16 +78,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # online database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',  # Database name from your connection string
-#         'USER': 'postgres',  # Username
-#         'PASSWORD': 'ZxibGEpi0sVO8Mom',  # Password from your connection string
-#         'HOST': 'db.nsdgysgglgvijsbfvsom.supabase.co',  # Host
-#         'PORT': '5432',  # Port
-#     }
-# }
+
 
 DATABASES = {
     "default": {

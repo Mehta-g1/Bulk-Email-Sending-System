@@ -32,4 +32,7 @@ urlpatterns = [
     path('group/delete/<int:group_id>/', views.delete_group, name='delete_group'),
 
     path('templates/', include('EmailTemplates.urls')),
+
+    # test
+    path("smtp-test/", views.smtp_test, name="smtp_test"),
 ]
