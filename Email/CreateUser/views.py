@@ -295,9 +295,11 @@ import socket
 def smtp_test(request):
     try:
         ip = socket.gethostbyname("smtp.gmail.com")
-        return HttpResponse(f"Resolved IP: {ip}")
+        s = socket.create_connection((ip, 587), timeout=10)
+        s.close()
+        return HttpResponse("SMTP Connected Successfully")
     except Exception as e:
-        return HttpResponse(f"DNS Error: {e}")
+        return HttpResponse(str(e))
 
 
 
