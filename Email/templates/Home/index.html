@@ -5,14 +5,84 @@
 {% block content %}
 
 
+{% if "onrender.com" in request.get_host %}
+    <div class="modal fade" id="demoNotice" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        ⚠️ Live Demo Notice
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <p>
+                        Thank you for trying <strong>EmailAuto</strong>.
+                    </p>
+
+                    <p>
+                        This live demo is hosted on <strong>Render Free Tier</strong>.
+                        Due to outbound SMTP network limitations on the current hosting
+                        environment, email-related features such as
+                        <strong>Welcome Email, Password Reset, OTP Verification,
+                        and Bulk Email Campaigns</strong>
+                        may not function as expected.
+                    </p>
+
+                    <p>
+                        The application works correctly when run locally or on a hosting
+                        provider that supports outbound SMTP connections.
+                    </p>
+
+                    <hr>
+
+                    <p>
+                        <strong>GitHub Repository</strong><br>
+
+                        <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System"
+                        target="_blank">
+                            https://github.com/Mehta-g1/Bulk-Email-Sending-System
+                        </a>
+                    </p>
+
+                    <p class="mb-0">
+                        For a complete evaluation, please review the source code or
+                        run the project locally using the setup instructions provided
+                        in the repository.
+                    </p>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <a href="https://github.com/Mehta-g1/Bulk-Email-Sending-System"
+                    target="_blank"
+                    class="btn btn-primary">
+                        View GitHub
+                    </a>
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Continue to Demo
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 <main class="hero-section text-center text-white">
     <div class="container">
         <h1 class="display-4">Send Emails with Ease</h1>
         <p class="lead">A powerful and reliable solution for all your email needs.</p>
         {% if username %}
             <h2>Welcome, {{ username }}!</h2>
-            <a href=" {% url "dashboard" %}" class="btn btn-lg btn-primary"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</a>
-            <a href=" {% url "logout" %} " class="btn btn-lg btn-outline-danger py-2"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href=" {% url 'dashboard' %}" class="btn btn-lg btn-primary"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</a>
+            <a href=" {% url 'logout' %}" class="btn btn-lg btn-outline-danger py-2"><i class="fas fa-sign-out-alt"></i> Logout</a>
 
         {% else %}
         <a href="{% url 'Login' %}" class="btn btn-lg btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Get Started</a>
@@ -53,4 +123,14 @@
         </div>
     </div>
 </section>
+
+
+{% if "onrender.com" in request.get_host %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = new bootstrap.Modal(document.getElementById("demoNotice"));
+            modal.show();
+        });
+    </script>
+{% endif %}
 {% endblock %}
